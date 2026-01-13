@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
 		    return vbox(legend_elems);
 		}()
 
-	    }) | border | size(WIDTH, EQUAL, 30)
+	    }) | border | flex | size(WIDTH, GREATER_THAN, 30)
 	});
     });
 
