@@ -35,8 +35,27 @@
             
   <section id="tutorial-creating-an-app">
 <span id="tutorial"></span><h1>Tutorial: Creating an App<a class="headerlink" href="#tutorial-creating-an-app" title="Link to this heading">¶</a></h1>
-<p>This page will provide a brief tutorial on creating a new PVTUI application. In this tutorial we will
-create a TUI for the following EPICS database:</p>
+<p>This page will provide a brief tutorial on creating a new PVTUI application. It is assumed you
+have already downloaded and compiled the PVTUI library. If not, (see <a class="reference internal" href="building.html#building"><span class="std std-ref">Building from Source</span></a>).
+If you choose to use CMake for your application, a minimal CMakeLists.txt file is given below:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">3.22</span><span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span><span class="s">pvtui-example</span><span class="w"> </span><span class="s">LANGUAGES</span><span class="w"> </span><span class="s">CXX</span><span class="p">)</span>
+
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD</span><span class="w"> </span><span class="s">17</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_CXX_STANDARD_REQUIRED</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="s">CMAKE_EXPORT_COMPILE_COMMANDS</span><span class="w"> </span><span class="s">ON</span><span class="p">)</span>
+
+<span class="c"># Find pvtui</span>
+<span class="c"># Unless pvtui is installed in a standard location (e.g. /usr/lib)</span>
+<span class="c"># you&#39;ll need to set -Dpvtui_DIR=/path/to/lib/cmake/pvtui</span>
+<span class="nb">find_package</span><span class="p">(</span><span class="s">pvtui</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="c"># Add exectuble and link libraries</span>
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">pvtui-example</span><span class="w"> </span><span class="s">main.cpp</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">pvtui-example</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="s">pvtui::pvtui</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this tutorial we will create a TUI for the following EPICS database:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">record</span><span class="p">(</span><span class="n">ao</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)Value&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">field</span><span class="p">(</span><span class="n">DESC</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tutorial!&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="n">field</span><span class="p">(</span><span class="n">VAL</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">)</span>
