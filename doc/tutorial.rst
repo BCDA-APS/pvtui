@@ -3,8 +3,30 @@
 Tutorial: Creating an App
 =========================
 
-This page will provide a brief tutorial on creating a new PVTUI application. In this tutorial we will
-create a TUI for the following EPICS database:
+This page will provide a brief tutorial on creating a new PVTUI application. It is assumed you
+have already downloaded and compiled the PVTUI library. If not, (see :ref:`building`).
+If you choose to use CMake for your application, a minimal CMakeLists.txt file is given below:
+
+.. code-block:: cmake
+
+    cmake_minimum_required(VERSION 3.22)
+    project(pvtui-example LANGUAGES CXX)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+    # Find pvtui
+    # Unless pvtui is installed in a standard location (e.g. /usr/lib)
+    # you'll need to set -Dpvtui_DIR=/path/to/lib/cmake/pvtui
+    find_package(pvtui REQUIRED)
+
+    # Add exectuble and link libraries
+    add_executable(pvtui-example main.cpp)
+    target_link_libraries(pvtui-example PRIVATE pvtui::pvtui)
+
+
+In this tutorial we will create a TUI for the following EPICS database:
 
 .. code-block:: cpp
 
