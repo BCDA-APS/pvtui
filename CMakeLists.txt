@@ -92,8 +92,6 @@ if (BUILD_LIB)
     endif()
     message(STATUS "EPICS_HOST_ARCH: ${EPICS_HOST_ARCH}")
 
-    link_directories(${EPICS_BASE}/lib/${EPICS_HOST_ARCH})
-
     if(APPLE)
 	set(EPICS_LIB_EXT ".dylib")
     elseif(UNIX)
@@ -110,7 +108,8 @@ if (BUILD_LIB)
 	"${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libCom${EPICS_LIB_EXT}"
     )
 
-    set(EPICS_BASE_INCLUDES
+    # List all possible directories
+    set(POTENTIAL_EPICS_INCLUDES
 	${EPICS_BASE}/include
 	${EPICS_BASE}/include/compiler/gcc
 	${EPICS_BASE}/include/compiler/clang
@@ -119,11 +118,20 @@ if (BUILD_LIB)
 	${EPICS_BASE}/include/os/Linux
 	${EPICS_BASE}/include/os/Darwin
     )
+
+    # Only add directories that actually exist
+    set(EPICS_BASE_INCLUDES "")
+    foreach(DIR ${POTENTIAL_EPICS_INCLUDES})
+	if(IS_DIRECTORY "${DIR}")
+	    list(APPEND EPICS_BASE_INCLUDES "${DIR}")
+	endif()
+    endforeach()
     # ------------------------------------------------------------------------------
 
     # --- PVTUI static library -----------------------------------------------------
     add_library(pvtui STATIC pvtui/pvtui.cpp pvtui/pvgroup.cpp)
-    target_compile_options(pvtui PUBLIC -Wall -Wextra -Wpedantic -std=c++17)
+    target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(pvtui PUBLIC -std=c++17)
     target_include_directories(pvtui
 	PUBLIC
 	    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -144,8 +152,8 @@ if (BUILD_LIB)
 
     # --- Installation/CMake config ------------------------------------------------
     # Install library headers
-    install(DIRECTORY pvtui/
-	    DESTINATION include/pvtui
+    install(DIRECTORY pvtui
+	    DESTINATION include
 	    FILES_MATCHING
 		PATTERN "*.hpp"
 		PATTERN "*.h")
