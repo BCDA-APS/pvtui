@@ -63,7 +63,7 @@ ftxui::Element SmallMotorDisplay::get_renderer() {
 		| color(Color::Red),
 	    text(egu.value())
 		| center
-		| color(Color::Black)
+		| EPICSColor::readback(egu)
 	}) | center,
 
 	hbox({

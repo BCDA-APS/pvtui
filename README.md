@@ -1,7 +1,6 @@
 # PVTUI
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue)](https://nmarks99.github.io/pvtui/)
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue)](https://bcda-aps.github.io/pvtui/)
 
 PVTUI is a library for creating terminal/text based user interfaces for EPICS built on [FTXUI](https://github.com/ArthurSonzogni/FTXUI)
 and [pvAccessCPP](https://github.com/epics-base/pvAccessCPP).
