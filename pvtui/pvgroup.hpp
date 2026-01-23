@@ -24,7 +24,7 @@ struct PVEnum {
 };
 
 /**
- * @brief A variant type that holds a pointer to a variable monitored by a PV.
+ * @brief A variant type that holds a variable monitored by a PV.
  *
  * This allows a single mechanism to update variables of different types.
  */
