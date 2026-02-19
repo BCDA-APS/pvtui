@@ -145,7 +145,9 @@ ftxui::Element MediumMotorDisplay::get_renderer() {
 		EPICSColor::edit(val);
 
     return ftxui::vbox({
-	desc.component()->Render() | color(Color::Black) | bgcolor(Color::RGB(210,210,210)) | size(WIDTH, EQUAL, 22) | center,
+	desc.component()->Render()
+	    | EPICSColor::custom(desc, color(Color::Black) | bgcolor(Color::RGB(210,210,210)))
+	    | size(WIDTH, EQUAL, 22) | center,
 	separatorEmpty(),
 
 	// 6 column hbox of vbox's
@@ -214,7 +216,7 @@ ftxui::Element MediumMotorDisplay::get_renderer() {
 	}) | center,
 	separatorEmpty(),
 
-    })| center | EPICSColor::background();
+    }) | center | EPICSColor::background();
 }
 
 AllMotorDisplay::AllMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args)
@@ -322,7 +324,6 @@ ftxui::Element AllMotorDisplay::get_renderer() {
 		    | center,
 		val.component()->Render()
 		    | center
-		    | (able.value().index==0 ? EPICSColor::edit(able) : ColorDisabled)
 		    | val_bg,
 		llm.component()->Render() | EPICSColor::edit(llm),
 		rlv.component()->Render() | EPICSColor::edit(rlv)
@@ -336,7 +337,6 @@ ftxui::Element AllMotorDisplay::get_renderer() {
 		    | center,
 		dval.component()->Render()
 		    | center
-		    | (able.value().index==0 ? EPICSColor::edit(able) : ColorDisabled)
 		    | val_bg,
 		dllm.component()->Render() | EPICSColor::edit(dllm),
 		filler() | size(WIDTH, EQUAL, 10),
@@ -461,7 +461,9 @@ ftxui::Element AllMotorDisplay::get_renderer() {
     }) | size(WIDTH, EQUAL, 26) | color(Color::Black);
 
     auto title = hbox({
-	desc.component()->Render() | size(WIDTH, EQUAL, 26),
+	desc.component()->Render()
+	    | EPICSColor::custom(desc, color(Color::Black) | bgcolor(Color::RGB(210,210,210)))
+	    | size(WIDTH, EQUAL, 26),
 	filler(),
 	text("(" + args.macros.at("P") + args.macros.at("M") + ")")
 	    | color(Color::Black)
