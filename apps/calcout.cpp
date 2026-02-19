@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
 		flnk.component()->Render() | size(WIDTH, EQUAL, 18) | EPICSColor::link(flnk)
 	    }),
 
-	}) | center | bgcolor(Color::RGB(196,196,196));
+	}) | border | color(Color::Black) | size(WIDTH, EQUAL, 52) | center | EPICSColor::background();
     });
 
     app.run(main_renderer);
