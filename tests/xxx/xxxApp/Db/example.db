@@ -2,6 +2,19 @@ record(longout, "$(P)long") {
     field(VAL, "42")
 }
 
+record(longout, "$(P)int8") {
+    field(DRVH, "255")
+    field(DRVL, "0")
+    field(VAL, 85)
+}
+
+record(calcout, "$(P)cylce_int8") {
+    field(INPA, "$(P)int8.VAL")
+    field(CALC, "A < 255 ? A + 1 : 0")
+    field(OUT, "$(P)int8.VAL PP")
+    field(SCAN, ".1 second")
+}
+
 record(ao, "$(P)float") {
     field(VAL, "3.14")
     field(PREC, 3)
