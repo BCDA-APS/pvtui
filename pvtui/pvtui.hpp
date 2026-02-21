@@ -356,8 +356,7 @@ class BitsWidget : public WidgetBase {
      * @param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
      * @param labels String labels to draw next to each bit.
      */
-    BitsWidget(PVGroup &pvgroup, const ArgParser &args, const std::string &pv_name,
-               const std::vector<std::string> &labels);
+    BitsWidget(PVGroup &pvgroup, const ArgParser &args, const std::string &pv_name, size_t nbits);
 
     /**
      * @brief Constructs a BitsWidget without macros.
@@ -365,7 +364,7 @@ class BitsWidget : public WidgetBase {
      * @param pv_name The PV name.
      * @param labels String labels to draw next to each bit.
      */
-    BitsWidget(App &app, const std::string &pv_name, const std::vector<std::string> &labels);
+    BitsWidget(App &app, const std::string &pv_name, size_t nbits);
 
     /**
      * @brief Gets the current integer value displayed in the UI.

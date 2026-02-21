@@ -42,6 +42,8 @@ int main(int argc, char *argv[]) {
     ButtonWidget plus(app, P+"add1.PROC", " + ");
     ButtonWidget minus(app, P+"subtract1.PROC", " - ");
 
+    BitsWidget bits(app, P+"int8.VAL", 8);
+
     // ftxui container to define interactivity of components
     auto main_container = Container::Vertical({
         ftxui::Container::Vertical({
@@ -55,6 +57,7 @@ int main(int argc, char *argv[]) {
             enum1_h.component(),
             enum1_v.component(),
             enum1_d.component(),
+	    bits.component(),
         })
     });
 
@@ -73,6 +76,10 @@ int main(int argc, char *argv[]) {
                     text(P+"long") | color(Color::Black),
                     separatorEmpty(),
                     text(P+"enum") | color(Color::Black),
+                    separatorEmpty(),
+                    separatorEmpty(),
+                    separatorEmpty(),
+                    text(P+"int8") | color(Color::Black),
                 }) | size(WIDTH, EQUAL, 30),
 
                 separator() | color(Color::Black),
@@ -97,6 +104,20 @@ int main(int argc, char *argv[]) {
                         separatorEmpty(),
                         vbox({ enum1_d.component()->Render() | EPICSColor::edit(enum1_d) | xflex}),
                     }),
+		    separatorEmpty(),
+		    hbox({
+			vbox({
+			    text("0:"),
+			    text("1:"),
+			    text("2:"),
+			    text("3:"),
+			    text("4:"),
+			    text("5:"),
+			    text("6:"),
+			    text("7:")}
+			) | color(Color::Black),
+			bits.component()->Render() | center
+		    }) | center
                 }) | size(WIDTH, EQUAL, 30),
 
                 separator() | color(Color::Black),
@@ -112,6 +133,9 @@ int main(int argc, char *argv[]) {
                     separatorEmpty(),
                     text("Index = " + std::to_string(enum1_h.value().index)) | EPICSColor::readback(enum1_h),
                     text("Choice = " + enum1_h.value().choice) | EPICSColor::readback(enum1_h),
+                    separatorEmpty(),
+                    separatorEmpty(),
+		    text(std::to_string(bits.value())) | EPICSColor::readback(bits)
                 }) | size(WIDTH, EQUAL, 30),
             }),
 

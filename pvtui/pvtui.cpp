@@ -157,18 +157,15 @@ ftxui::Component make_dropdown_widget(PVHandler& pv, const std::vector<std::stri
     return ftxui::Dropdown(dropdown_op);
 }
 
-ftxui::Component make_bits_widget(int& value, const std::vector<std::string>& labels) {
+ftxui::Component make_bits_widget(int& value, size_t nbits) {
     using namespace ftxui;
-    return Renderer([&]{
+    return Renderer([&value, nbits]{
 	Elements rows;
-	for (size_t i = 0; i < labels.size(); i++) {
+	for (size_t i = 0; i < nbits; i++) {
 	    int v = value & (1<<i);
 	    auto clr = v ? color(Color::Green) : color(Color::GrayDark);
 	    rows.push_back(
-		hbox({
-		    text(labels.at(i)),
-		    text(unicode::rectangle(2)) | clr
-		})
+		text(unicode::rectangle(2)) | clr
 	    );
 	}
 	return vbox({
@@ -306,16 +303,16 @@ InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType
 
 const std::string& InputWidget::value() const { return *value_ptr_; }
 
-BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, const std::vector<std::string>& labels)
-    : WidgetBase(pvgroup, args, pv_name) {
+BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits)
+    : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, labels);
+    component_ = make_bits_widget(*value_ptr_, nbits);
 }
 
-BitsWidget::BitsWidget(App& app, const std::string& pv_name, const std::vector<std::string>& labels)
+BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits)
     : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, labels);
+    component_ = make_bits_widget(*value_ptr_, nbits);
 }
 
 const int& BitsWidget::value() const { return *value_ptr_; }
