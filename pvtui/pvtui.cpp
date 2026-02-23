@@ -88,17 +88,17 @@ ftxui::Component make_choice_h_widget(PVHandler& pv, const std::vector<std::stri
         }
     };
 
-    op.entries_option.transform = [&pv](const ftxui::EntryState& state) {
-        ftxui::Element e = pv.connected() ? ftxui::text(state.label) : ftxui::text("    ");
-        auto color = ftxui::color(ftxui::Color::Black);
-        if (state.focused) {
-            e |= color | ftxui::inverted;
-        }
-        if (!state.focused && !state.active) {
-            e |= color | ftxui::dim;
-        }
-        return e;
-    };
+    // op.entries_option.transform = [&pv](const ftxui::EntryState& state) {
+        // ftxui::Element e = pv.connected() ? ftxui::text(state.label) : ftxui::text("    ");
+	// auto color = ftxui::color(ftxui::Color::Black);
+	// if (state.focused) {
+	    // e |= color | ftxui::inverted;
+	// }
+	// if (!state.focused && !state.active) {
+	    // e |= color | ftxui::dim;
+	// }
+        // return e;
+    // };
 
     return ftxui::Menu(op);
 }
@@ -155,6 +155,23 @@ ftxui::Component make_dropdown_widget(PVHandler& pv, const std::vector<std::stri
         });
     };
     return ftxui::Dropdown(dropdown_op);
+}
+
+ftxui::Component make_bits_widget(int& value, size_t nbits) {
+    using namespace ftxui;
+    return Renderer([&value, nbits]{
+	Elements rows;
+	for (size_t i = 0; i < nbits; i++) {
+	    int v = value & (1<<i);
+	    auto clr = v ? color(Color::Green) : color(Color::GrayDark);
+	    rows.push_back(
+		text(unicode::rectangle(2)) | clr
+	    );
+	}
+	return vbox({
+	    rows
+	});
+    });
 }
 
 ArgParser::ArgParser(int argc, char* argv[]) {
@@ -289,6 +306,20 @@ InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType
 }
 
 const std::string& InputWidget::value() const { return *value_ptr_; }
+
+BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits)
+    : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<int>()) {
+    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    component_ = make_bits_widget(*value_ptr_, nbits);
+}
+
+BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits)
+    : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<int>()) {
+    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    component_ = make_bits_widget(*value_ptr_, nbits);
+}
+
+const int& BitsWidget::value() const { return *value_ptr_; }
 
 ChoiceWidget::ChoiceWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
                            ChoiceStyle style)

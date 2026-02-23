@@ -1,17 +1,14 @@
-#include <string>
-
-#include <ftxui/dom/elements.hpp>
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/component_base.hpp>
-#include <ftxui/component/loop.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/component/event.hpp>
-#include <ftxui/dom/node.hpp>
-
 #include <pvtui/pvtui.hpp>
+#include <ftxui/component/component.hpp>
+
+const std::string PVTUI_TEXT = R"(
+██████╗ ██╗   ██╗████████╗██╗   ██╗██╗
+██╔══██╗██║   ██║╚══██╔══╝██║   ██║██║
+██████╔╝██║   ██║   ██║   ██║   ██║██║
+██╔═══╝ ╚██╗ ██╔╝   ██║   ██║   ██║██║
+██║      ╚████╔╝    ██║   ╚██████╔╝██║
+╚═╝       ╚═══╝     ╚═╝    ╚═════╝ ╚═╝
+)";
 
 using namespace ftxui;
 using namespace pvtui;
@@ -26,97 +23,127 @@ int main(int argc, char *argv[]) {
     }
     std::string P = app.args.macros.at("P");
 
-    // Create all the widgets
-    InputWidget string1(app, P+"string", PVPutType::String);
-    InputWidget float1(app, P+"float", PVPutType::Double);
-    InputWidget long1(app, P+"long", PVPutType::Integer);
+    InputWidget inp1(app, P+"string.VAL", PVPutType::String);
+    ButtonWidget plus_button(app, P+"add1.PROC", " + ");
+    ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
+    VarWidget<std::string> int_val(app, P+"long.VAL");
+    ChoiceWidget enum_h(app, P+"enum.VAL", ChoiceStyle::Horizontal);
+    ChoiceWidget enum_v(app, P+"enum.VAL", ChoiceStyle::Vertical);
+    ChoiceWidget enum_d(app, P+"enum.VAL", ChoiceStyle::Dropdown);
 
-    VarWidget<std::string> string1_rbv(app, P+"string");
-    VarWidget<std::string> float1_rbv(app, P+"float");
-    VarWidget<std::string> long1_rbv(app, P+"long");
-
-    ChoiceWidget enum1_h(app, P+"enum", ChoiceStyle::Horizontal);
-    ChoiceWidget enum1_v(app, P+"enum", ChoiceStyle::Vertical);
-    ChoiceWidget enum1_d(app, P+"enum", ChoiceStyle::Dropdown);
-
-    ButtonWidget plus(app, P+"add1.PROC", " + ");
-    ButtonWidget minus(app, P+"subtract1.PROC", " - ");
+    // BitsWidget displays an integer's individual bits
+    size_t nbits = 8;
+    BitsWidget bits(app, P+"int8.VAL", nbits);
+    Elements labs;
+    for (size_t i = 0; i < nbits; i++) {
+	labs.push_back(text(std::to_string(i) + ":") | color(Color::White));
+    }
+    auto bit_labels = vbox(labs);
 
     // ftxui container to define interactivity of components
     auto main_container = Container::Vertical({
-        ftxui::Container::Vertical({
-            string1.component(),
-            float1.component(),
-            Container::Horizontal({
-                long1.component(),
-                minus.component(),
-                plus.component(),
-            }),
-            enum1_h.component(),
-            enum1_v.component(),
-            enum1_d.component(),
-        })
+	inp1.component(),
+	plus_button.component(),
+	minus_button.component(),
+	enum_h.component(),
+	enum_v.component(),
+	enum_d.component(),
+	bits.component(),
     });
 
     // ftxui renderer defines the visual layout
     auto main_renderer = Renderer(main_container, [&] {
-        return vbox({
-            separator() | color(Color::Black),
-            hbox({
-                vbox({
-                    text("PV") | color(Color::Black) | size(WIDTH, EQUAL, 30),
-                    separator() | color(Color::Black),
-                    text(P+"string") | color(Color::Black),
-                    separatorEmpty(),
-                    text(P+"float") | color(Color::Black),
-                    separatorEmpty(),
-                    text(P+"long") | color(Color::Black),
-                    separatorEmpty(),
-                    text(P+"enum") | color(Color::Black),
-                }) | size(WIDTH, EQUAL, 30),
 
-                separator() | color(Color::Black),
+	auto row1 = hbox({
+	    vbox({
+		text("Input      ") | color(Color::White),
+	    }) | center,
+	    separator(),
+	    vbox({
+		inp1.component()->Render() | color(Color::White) | bgcolor(Color::GrayDark),
+	    }) | center
+	});
 
-                vbox({
-                    text("Input") | color(Color::Black) | size(WIDTH, EQUAL, 30),
-                    separator() | color(Color::Black),
-                    string1.component()->Render() | EPICSColor::edit(string1),
-                    separatorEmpty(),
-                    float1.component()->Render() | EPICSColor::edit(float1),
-                    separatorEmpty(),
-                    hbox({
-                        long1.component()->Render() | EPICSColor::edit(long1),
-                        minus.component()->Render() | color(Color::Black),
-                        plus.component()->Render() | color(Color::Black),
-                    }),
-                    separatorEmpty(),
-                    hbox({
-                        vbox({ enum1_h.component()->Render() | EPICSColor::edit(enum1_h) | xflex}),
-                        separatorEmpty(),
-                        vbox({ enum1_v.component()->Render() | EPICSColor::edit(enum1_v) | xflex}),
-                        separatorEmpty(),
-                        vbox({ enum1_d.component()->Render() | EPICSColor::edit(enum1_d) | xflex}),
-                    }),
-                }) | size(WIDTH, EQUAL, 30),
+	auto row2 = hbox({
+	    vbox({
+		text("Buttons    ")
+	    }) | center,
+	    separator(),
+	    vbox({
+		hbox({
+		    plus_button.component()->Render(),
+		    separatorEmpty(),
+		    minus_button.component()->Render(),
+		}),
+	    }) | center,
+	});
 
-                separator() | color(Color::Black),
+	auto row3 = hbox({
+	    vbox({
+		text("Readback   ")
+	    }) | center,
+	    separator(),
+	    vbox({
+		text(int_val.value()) | color(Color::LightSlateBlue)
+	    })
+	});
 
-                vbox({
-                    text("Readback") | color(Color::Black) | size(WIDTH, EQUAL, 30),
-                    separator() | color(Color::Black),
-                    text(string1_rbv.value()) | EPICSColor::readback(string1_rbv),
-                    separatorEmpty(),
-                    text(float1_rbv.value()) | EPICSColor::readback(float1_rbv),
-                    separatorEmpty(),
-                    text(long1_rbv.value()) | EPICSColor::readback(long1_rbv),
-                    separatorEmpty(),
-                    text("Index = " + std::to_string(enum1_h.value().index)) | EPICSColor::readback(enum1_h),
-                    text("Choice = " + enum1_h.value().choice) | EPICSColor::readback(enum1_h),
-                }) | size(WIDTH, EQUAL, 30),
-            }),
+	auto row4 = hbox({
+	    vbox({
+		text("Menu       ") | color(Color::White)
+	    }) | center,
+	    separator(),
+	    hbox({
+		vbox({
+		    separatorEmpty(),
+		    enum_h.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+		separatorEmpty(),
+		separatorEmpty(),
+		vbox({
+		    separatorEmpty(),
+		    enum_v.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+		separatorEmpty(),
+		separatorEmpty(),
+		vbox({
+		    separatorEmpty(),
+		    enum_d.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+	    }) | center | size(HEIGHT, EQUAL, 6),
+	});
 
-        }) | center | EPICSColor::background();
-    });
+	auto row5 = hbox({
+	    vbox({
+		text("Bit monitor") | color(Color::White),
+	    }) | center,
+	    separator(),
+	    vbox({
+		hbox({
+		    separatorEmpty(),
+		    bit_labels, bits.component()->Render()
+		}),
+	    }) | center
+	});
+
+	return vbox({
+	    paragraph(PVTUI_TEXT) | color(Color::Blue),
+	    separator(),
+	    row1,
+	    separator(),
+	    row2,
+	    separator(),
+	    row3,
+	    separator(),
+	    row4,
+	    separator(),
+	    row5,
+	    separator(),
+	}) | size(WIDTH, EQUAL, 50);
+    }) | bgcolor(Color::Black);
 
     // Main loop
     app.run(main_renderer);

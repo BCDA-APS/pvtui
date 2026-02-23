@@ -65,16 +65,9 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pfield)
         [&](auto& var) {
             using VarType = std::decay_t<decltype(var)>;
 
-            if constexpr (std::is_same_v<VarType, int>) {
+            if constexpr (std::is_arithmetic_v<VarType>) {
                 if (auto val_field = pfield->getSubFieldT<pvd::PVScalar>("value")) {
-                    var = val_field->getAs<int>();
-                    success = true;
-                };
-            }
-
-            else if constexpr (std::is_same_v<VarType, double>) {
-                if (auto val_field = pfield->getSubFieldT<pvd::PVDouble>("value")) {
-                    var = val_field->getAs<double>();
+                    var = val_field->getAs<VarType>();
                     success = true;
                 };
             }
