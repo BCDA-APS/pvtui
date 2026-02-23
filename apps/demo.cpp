@@ -1,14 +1,6 @@
-#include <string>
-// #include <pv/caProvider.h>
-// #include <pva/client.h>
-
+#include <pvtui/pvtui.hpp>
 #include <ftxui/component/component.hpp>
-// #include <ftxui/dom/elements.hpp>
-// #include <ftxui/component/component_base.hpp>
-// #include <ftxui/component/loop.hpp>
-// #include <ftxui/component/screen_interactive.hpp>
-// #include <ftxui/component/event.hpp>
-// #include <ftxui/dom/node.hpp>
+
 const std::string PVTUI_TEXT = R"(
 ██████╗ ██╗   ██╗████████╗██╗   ██╗██╗
 ██╔══██╗██║   ██║╚══██╔══╝██║   ██║██║
@@ -17,8 +9,6 @@ const std::string PVTUI_TEXT = R"(
 ██║      ╚████╔╝    ██║   ╚██████╔╝██║
 ╚═╝       ╚═══╝     ╚═╝    ╚═════╝ ╚═╝
 )";
-
-#include <pvtui/pvtui.hpp>
 
 using namespace ftxui;
 using namespace pvtui;
@@ -33,7 +23,7 @@ int main(int argc, char *argv[]) {
     }
     std::string P = app.args.macros.at("P");
 
-    InputWidget str_inp(app, P+"string.VAL", PVPutType::String);
+    InputWidget inp1(app, P+"string.VAL", PVPutType::String);
     ButtonWidget plus_button(app, P+"add1.PROC", " + ");
     ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
     VarWidget<std::string> int_val(app, P+"long.VAL");
@@ -52,18 +42,17 @@ int main(int argc, char *argv[]) {
 
     // ftxui container to define interactivity of components
     auto main_container = Container::Vertical({
-	str_inp.component(),
-	bits.component(),
+	inp1.component(),
 	plus_button.component(),
 	minus_button.component(),
 	enum_h.component(),
 	enum_v.component(),
 	enum_d.component(),
+	bits.component(),
     });
 
     // ftxui renderer defines the visual layout
     auto main_renderer = Renderer(main_container, [&] {
-
 
 	auto row1 = hbox({
 	    vbox({
@@ -71,7 +60,7 @@ int main(int argc, char *argv[]) {
 	    }) | center,
 	    separator(),
 	    vbox({
-		str_inp.component()->Render() | bgcolor(Color::White),
+		inp1.component()->Render() | color(Color::White) | bgcolor(Color::GrayDark),
 	    }) | center
 	});
 
@@ -95,24 +84,11 @@ int main(int argc, char *argv[]) {
 	    }) | center,
 	    separator(),
 	    vbox({
-		text(int_val.value()) | color(Color::Blue)
+		text(int_val.value()) | color(Color::LightSlateBlue)
 	    })
 	});
 
 	auto row4 = hbox({
-	    vbox({
-		text("Bit monitor") | color(Color::White),
-	    }) | center,
-	    separator(),
-	    vbox({
-		hbox({
-		    separatorEmpty(),
-		    bit_labels, bits.component()->Render()
-		}),
-	    }) | center
-	});
-
-	auto row5 = hbox({
 	    vbox({
 		text("Menu       ") | color(Color::White)
 	    }) | center,
@@ -138,6 +114,19 @@ int main(int argc, char *argv[]) {
 		    separatorEmpty(),
 		}),
 	    }) | center | size(HEIGHT, EQUAL, 6),
+	});
+
+	auto row5 = hbox({
+	    vbox({
+		text("Bit monitor") | color(Color::White),
+	    }) | center,
+	    separator(),
+	    vbox({
+		hbox({
+		    separatorEmpty(),
+		    bit_labels, bits.component()->Render()
+		}),
+	    }) | center
 	});
 
 	return vbox({
