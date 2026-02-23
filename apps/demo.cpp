@@ -37,6 +37,9 @@ int main(int argc, char *argv[]) {
     ButtonWidget plus_button(app, P+"add1.PROC", " + ");
     ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
     VarWidget<std::string> int_val(app, P+"long.VAL");
+    ChoiceWidget enum_h(app, P+"enum.VAL", ChoiceStyle::Horizontal);
+    ChoiceWidget enum_v(app, P+"enum.VAL", ChoiceStyle::Vertical);
+    ChoiceWidget enum_d(app, P+"enum.VAL", ChoiceStyle::Dropdown);
 
     // BitsWidget displays an integer's individual bits
     size_t nbits = 8;
@@ -53,6 +56,9 @@ int main(int argc, char *argv[]) {
 	bits.component(),
 	plus_button.component(),
 	minus_button.component(),
+	enum_h.component(),
+	enum_v.component(),
+	enum_d.component(),
     });
 
     // ftxui renderer defines the visual layout
@@ -100,13 +106,42 @@ int main(int argc, char *argv[]) {
 	    separator(),
 	    vbox({
 		hbox({
+		    separatorEmpty(),
 		    bit_labels, bits.component()->Render()
 		}),
 	    }) | center
 	});
 
+	auto row5 = hbox({
+	    vbox({
+		text("Menu       ") | color(Color::White)
+	    }) | center,
+	    separator(),
+	    hbox({
+		vbox({
+		    separatorEmpty(),
+		    enum_h.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+		separatorEmpty(),
+		separatorEmpty(),
+		vbox({
+		    separatorEmpty(),
+		    enum_v.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+		separatorEmpty(),
+		separatorEmpty(),
+		vbox({
+		    separatorEmpty(),
+		    enum_d.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+		    separatorEmpty(),
+		}),
+	    }) | center | size(HEIGHT, EQUAL, 6),
+	});
+
 	return vbox({
-	    paragraph(PVTUI_TEXT),
+	    paragraph(PVTUI_TEXT) | color(Color::Blue),
 	    separator(),
 	    row1,
 	    separator(),
@@ -116,8 +151,10 @@ int main(int argc, char *argv[]) {
 	    separator(),
 	    row4,
 	    separator(),
+	    row5,
+	    separator(),
 	}) | size(WIDTH, EQUAL, 50);
-    });
+    }) | bgcolor(Color::Black);
 
     // Main loop
     app.run(main_renderer);

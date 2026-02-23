@@ -88,17 +88,17 @@ ftxui::Component make_choice_h_widget(PVHandler& pv, const std::vector<std::stri
         }
     };
 
-    op.entries_option.transform = [&pv](const ftxui::EntryState& state) {
-        ftxui::Element e = pv.connected() ? ftxui::text(state.label) : ftxui::text("    ");
-        auto color = ftxui::color(ftxui::Color::Black);
-        if (state.focused) {
-            e |= color | ftxui::inverted;
-        }
-        if (!state.focused && !state.active) {
-            e |= color | ftxui::dim;
-        }
-        return e;
-    };
+    // op.entries_option.transform = [&pv](const ftxui::EntryState& state) {
+        // ftxui::Element e = pv.connected() ? ftxui::text(state.label) : ftxui::text("    ");
+	// auto color = ftxui::color(ftxui::Color::Black);
+	// if (state.focused) {
+	    // e |= color | ftxui::inverted;
+	// }
+	// if (!state.focused && !state.active) {
+	    // e |= color | ftxui::dim;
+	// }
+        // return e;
+    // };
 
     return ftxui::Menu(op);
 }
