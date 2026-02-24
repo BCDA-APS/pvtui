@@ -29,6 +29,25 @@ ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int
     return ftxui::Button(op);
 };
 
+
+template<typename T>
+bool put_string_as(std::string_view str, PVHandler& pv) {
+    T val{};
+    try {
+	if constexpr (std::is_same_v<T, double>) {
+	    val = std::stod(str.data());
+	} else if constexpr (std::is_same_v<T, int>) {
+	    val = std::stoi(str.data());
+	} else if constexpr (std::is_same_v<T, std::string>) {
+	    val = str;
+	}
+	pv.channel.put().set("value", val).exec();
+    } catch (...) {
+	return false;
+    }
+    return true;
+}
+
 ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutType put_type,
                                    InputTransform tf = nullptr) {
 
@@ -54,25 +73,15 @@ ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutTy
     input_op.transform = tf ? tf : default_input_transform;
     input_op.multiline = false;
     input_op.on_enter = [&pv, &disp_str, put_type]() {
-        if (pv.connected()) {
-            if (put_type == PVPutType::Double) {
-                try {
-                    double val_double = std::stod(disp_str);
-                    pv.channel.put().set("value", val_double).exec();
-                } catch (const std::exception&) {
-                    // handle parse error if needed
-                }
-            } else if (put_type == PVPutType::String) {
-                pv.channel.put().set("value", disp_str).exec();
-            } else if (put_type == PVPutType::Integer) {
-                try {
-                    int val_int = std::stoi(disp_str);
-                    pv.channel.put().set("value", val_int).exec();
-                } catch (const std::exception&) {
-                    // handle parse error if needed
-                }
-            }
-        }
+	if (pv.connected()) {
+	    if (put_type == PVPutType::Double) {
+		put_string_as<double>(disp_str, pv);
+	    } else if (put_type == PVPutType::Integer) {
+		put_string_as<int>(disp_str, pv);
+	    } else if (put_type == PVPutType::String) {
+		put_string_as<std::string>(disp_str, pv);
+	    }
+	}
     };
 
     return ftxui::Input(input_op);
@@ -87,19 +96,6 @@ ftxui::Component make_choice_h_widget(PVHandler& pv, const std::vector<std::stri
             pv.channel.put().set("value.index", selected).exec();
         }
     };
-
-    // op.entries_option.transform = [&pv](const ftxui::EntryState& state) {
-        // ftxui::Element e = pv.connected() ? ftxui::text(state.label) : ftxui::text("    ");
-	// auto color = ftxui::color(ftxui::Color::Black);
-	// if (state.focused) {
-	    // e |= color | ftxui::inverted;
-	// }
-	// if (!state.focused && !state.active) {
-	    // e |= color | ftxui::dim;
-	// }
-        // return e;
-    // };
-
     return ftxui::Menu(op);
 }
 
