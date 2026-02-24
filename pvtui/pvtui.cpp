@@ -48,30 +48,29 @@ bool put_string_as(std::string_view str, PVHandler& pv) {
     return true;
 }
 
-ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutType put_type,
-                                   InputTransform tf = nullptr) {
 
-    auto default_input_transform = [&pv, &disp_str](ftxui::InputState s) {
-        if (not pv.connected()) {
-            disp_str = "";
-        }
-        s.element |= ftxui::color(ftxui::Color::Black);
-        if (s.is_placeholder) {
-            s.element |= ftxui::dim;
-        }
-        if (s.focused) {
-            s.element |= ftxui::inverted;
-        } else if (s.hovered) {
-            s.element |= ftxui::bgcolor(ftxui::Color::GrayDark);
-        }
-        return s.element;
-    };
+ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutType put_type, ftxui::Color fg, ftxui::Color hover) {
 
     ftxui::InputOption input_op;
 
     input_op.content = &disp_str;
-    input_op.transform = tf ? tf : default_input_transform;
     input_op.multiline = false;
+
+    input_op.transform = [&pv, &disp_str, fg, hover](ftxui::InputState s) {
+	if (not pv.connected()) {
+	    disp_str = "";
+	}
+	if (s.is_placeholder) {
+	    s.element |= ftxui::dim;
+	}
+	if (s.focused) {
+	    s.element |= ftxui::inverted;
+	} else if (s.hovered) {
+	    s.element |= ftxui::bgcolor(hover);
+	}
+	return s.element | ftxui::color(fg);
+    };
+
     input_op.on_enter = [&pv, &disp_str, put_type]() {
 	if (pv.connected()) {
 	    if (put_type == PVPutType::Double) {
@@ -279,22 +278,22 @@ ftxui::Component WidgetBase::component() const {
 }
 
 InputWidget::InputWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
-                         PVPutType put_type, InputTransform tf)
+                         PVPutType put_type, ftxui::Color fg, ftxui::Color hover)
     : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<std::string>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, tf);
+    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
 
-InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type)
+InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type, ftxui::Color fg, ftxui::Color hover)
     : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<std::string>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, put_type);
+    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
 
-InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type)
+InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type, ftxui::Color fg, ftxui::Color hover)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type);
+    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
 
 const std::string& InputWidget::value() const { return *value_ptr_; }

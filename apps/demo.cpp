@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     }
     std::string P = app.args.macros.at("P");
 
-    InputWidget inp1(app, P+"string.VAL", PVPutType::String);
+    InputWidget inp1(app, P+"string.VAL", PVPutType::String, Color::Black, Color::White);
     ButtonWidget plus_button(app, P+"add1.PROC", " + ");
     ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
     VarWidget<int> int_val(app, P+"long.VAL");
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 	    }) | center,
 	    separator(),
 	    vbox({
-		inp1.component()->Render() | color(Color::Black) | bgcolor(Color::White),
+		inp1.component()->Render() | bgcolor(Color::GrayLight),
 	    }) | xflex
 	});
 
