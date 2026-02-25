@@ -23,10 +23,10 @@ int main(int argc, char *argv[]) {
     }
     std::string P = app.args.macros.at("P");
 
-    InputWidget inp1(app, P+"string.VAL", PVPutType::String);
+    InputWidget inp1(app, P+"string.VAL", PVPutType::String, Color::Black, Color::White);
     ButtonWidget plus_button(app, P+"add1.PROC", " + ");
     ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
-    VarWidget<std::string> int_val(app, P+"long.VAL");
+    VarWidget<int> int_val(app, P+"long.VAL");
     ChoiceWidget enum_h(app, P+"enum.VAL", ChoiceStyle::Horizontal);
     ChoiceWidget enum_v(app, P+"enum.VAL", ChoiceStyle::Vertical);
     ChoiceWidget enum_d(app, P+"enum.VAL", ChoiceStyle::Dropdown);
@@ -60,8 +60,8 @@ int main(int argc, char *argv[]) {
 	    }) | center,
 	    separator(),
 	    vbox({
-		inp1.component()->Render() | color(Color::White) | bgcolor(Color::GrayDark),
-	    }) | center
+		inp1.component()->Render() | bgcolor(Color::GrayLight),
+	    }) | xflex
 	});
 
 	auto row2 = hbox({
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 	    }) | center,
 	    separator(),
 	    vbox({
-		text(int_val.value()) | color(Color::LightSlateBlue)
+		text(std::to_string(int_val.value())) | color(Color::LightSlateBlue)
 	    })
 	});
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 		    enum_d.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
 		    separatorEmpty(),
 		}),
-	    }) | center | size(HEIGHT, EQUAL, 6),
+	    }) | center | size(HEIGHT, EQUAL, 5),
 	});
 
 	auto row5 = hbox({
@@ -129,6 +129,16 @@ int main(int argc, char *argv[]) {
 	    }) | center
 	});
 
+	auto row6 = hbox({
+	    vbox({
+		text("Gauge:     ") | color(Color::White)
+	    }) | center,
+	    separator(),
+	    vbox({
+		gaugeRight(bits.value()/255.0) | color(Color::Purple)
+	    }) | xflex,
+	});
+
 	return vbox({
 	    paragraph(PVTUI_TEXT) | color(Color::Blue),
 	    separator(),
@@ -141,6 +151,8 @@ int main(int argc, char *argv[]) {
 	    row4,
 	    separator(),
 	    row5,
+	    separator(),
+	    row6,
 	    separator(),
 	}) | size(WIDTH, EQUAL, 50);
     }) | bgcolor(Color::Black);

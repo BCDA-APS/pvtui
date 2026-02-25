@@ -41,6 +41,10 @@ UI Widgets
    :project: pvtui
    :members:
 
+.. doxygenclass:: pvtui::BitsWidget
+   :project: pvtui
+   :members:
+
 .. doxygenclass:: pvtui::WidgetBase
    :project: pvtui
    :members:
@@ -71,7 +75,4 @@ Enums and Types
    :project: pvtui
 
 .. doxygenenum:: pvtui::ChoiceStyle
-   :project: pvtui
-
-.. doxygentypedef:: pvtui::InputTransform
    :project: pvtui
