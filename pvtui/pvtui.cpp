@@ -301,6 +301,12 @@ BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::strin
     component_ = make_bits_widget(*value_ptr_, nbits);
 }
 
+BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits)
+    : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
+    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    component_ = make_bits_widget(*value_ptr_, nbits);
+}
+
 BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits)
     : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);

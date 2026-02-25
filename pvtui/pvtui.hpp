@@ -221,7 +221,8 @@ class InputWidget : public WidgetBase {
      * @param args ArgParser for macro replacement.
      * @param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
      * @param put_type Specifies how the input value is written to the PV.
-     * @param tf optional ftxui transformation function
+     * @param fg Optional ftxui color for the input foreground (cursor and text).
+     * @param hover Optional ftxui color for the input box's background when hovered.
      */
     InputWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, PVPutType put_type,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
@@ -231,6 +232,8 @@ class InputWidget : public WidgetBase {
      * @param pvgroup The PVGroup managing the PVs used in this widget.
      * @param pv_name The PV name.
      * @param put_type Specifies how the input value is written to the PV.
+     * @param fg Optional ftxui color for the input foreground (cursor and text).
+     * @param hover Optional ftxui color for the input box's background when hovered.
      */
     InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
@@ -240,6 +243,8 @@ class InputWidget : public WidgetBase {
      * @param app A reference to the App.
      * @param pv_name The PV name.
      * @param put_type Specifies how the input value is written to the PV.
+     * @param fg Optional ftxui color for the input foreground (cursor and text).
+     * @param hover Optional ftxui color for the input box's background when hovered.
      */
     InputWidget(App& app, const std::string& pv_name, PVPutType put_type,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
@@ -355,15 +360,23 @@ class BitsWidget : public WidgetBase {
      * @param pvgroup The PVGroup managing the PVs used in this widget.
      * @param args ArgParser for macro replacement.
      * @param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-     * @param labels String labels to draw next to each bit.
+     * @param nbits Number of bits to display
      */
     BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits);
 
     /**
-     * @brief Constructs a BitsWidget without macros.
+     * @brief Constructs a BitsWidget with an expanded PV name.
      * @param pvgroup The PVGroup managing the PVs used in this widget.
      * @param pv_name The PV name.
-     * @param labels String labels to draw next to each bit.
+     * @param nbits Number of bits to display.
+     */
+    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits);
+
+    /**
+     * @brief Constructs a BitsWidget from an App class
+     * @param app A reference to the App.
+     * @param pv_name The PV name.
+     * @param nbits Number of bits to display.
      */
     BitsWidget(App& app, const std::string& pv_name, size_t nbits);
 
