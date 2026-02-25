@@ -451,7 +451,8 @@
 <li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
 <li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
 <li><p><strong>put_type</strong> – Specifies how the input value is written to the PV. </p></li>
-<li><p><strong>tf</strong> – optional ftxui transformation function </p></li>
+<li><p><strong>fg</strong> – Optional ftxui color for the input foreground (cursor and text). </p></li>
+<li><p><strong>hover</strong> – Optional ftxui color for the input box’s background when hovered. </p></li>
 </ul>
 </dd>
 </dl>
@@ -467,6 +468,8 @@
 <li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#de/d3e/structpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
 <li><p><strong>pv_name</strong> – The PV name. </p></li>
 <li><p><strong>put_type</strong> – Specifies how the input value is written to the PV. </p></li>
+<li><p><strong>fg</strong> – Optional ftxui color for the input foreground (cursor and text). </p></li>
+<li><p><strong>hover</strong> – Optional ftxui color for the input box’s background when hovered. </p></li>
 </ul>
 </dd>
 </dl>
@@ -482,6 +485,8 @@
 <li><p><strong>app</strong> – A reference to the <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a>. </p></li>
 <li><p><strong>pv_name</strong> – The PV name. </p></li>
 <li><p><strong>put_type</strong> – Specifies how the input value is written to the PV. </p></li>
+<li><p><strong>fg</strong> – Optional ftxui color for the input foreground (cursor and text). </p></li>
+<li><p><strong>hover</strong> – Optional ftxui color for the input box’s background when hovered. </p></li>
 </ul>
 </dd>
 </dl>
@@ -702,11 +707,77 @@
 </dd></dl>
 
 <dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidgetE">
+<span id="_CPPv3N5pvtui10BitsWidgetE"></span><span id="_CPPv2N5pvtui10BitsWidgetE"></span><span id="pvtui::BitsWidget"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">pvtui</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N5pvtui10WidgetBaseE" title="pvtui::WidgetBase"><span class="n"><span class="pre">WidgetBase</span></span></a><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidgetE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>A widget to display an integer in binary. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t">
+<span id="_CPPv3N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t"></span><span id="_CPPv2N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t"></span><span id="pvtui::BitsWidget::BitsWidget__PVGroupR.ArgParserCR.ssCR.s"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1ab9607425c1481523269ce66297d3ec65"></span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nbits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a> with macro expansion. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#de/d3e/structpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
+<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
+<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
+<li><p><strong>nbits</strong> – Number of bits to display </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t">
+<span id="_CPPv3N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t"></span><span id="_CPPv2N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t"></span><span id="pvtui::BitsWidget::BitsWidget__PVGroupR.ssCR.s"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1a2490fbe145af2937aaec8e2aa83ca57a"></span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nbits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a> with an expanded PV name. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#de/d3e/structpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
+<li><p><strong>pv_name</strong> – The PV name. </p></li>
+<li><p><strong>nbits</strong> – Number of bits to display. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidget10BitsWidgetER3AppRKNSt6stringE6size_t">
+<span id="_CPPv3N5pvtui10BitsWidget10BitsWidgetER3AppRKNSt6stringE6size_t"></span><span id="_CPPv2N5pvtui10BitsWidget10BitsWidgetER3AppRKNSt6stringE6size_t"></span><span id="pvtui::BitsWidget::BitsWidget__AppR.ssCR.s"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1a58c448f35b36dba13e0d3fdd022b8516"></span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui3AppE" title="pvtui::App"><span class="n"><span class="pre">App</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">app</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nbits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidget10BitsWidgetER3AppRKNSt6stringE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a> from an <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a> class. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> – A reference to the <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a>. </p></li>
+<li><p><strong>pv_name</strong> – The PV name. </p></li>
+<li><p><strong>nbits</strong> – Number of bits to display. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui10BitsWidget5valueEv">
+<span id="_CPPv3NK5pvtui10BitsWidget5valueEv"></span><span id="_CPPv2NK5pvtui10BitsWidget5valueEv"></span><span id="pvtui::BitsWidget::valueC"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1af264a3a3a48eee1b7c4abec17ca3d75e"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5pvtui10BitsWidget5valueEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Gets the current integer value displayed in the UI. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current integer value from the UI. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui10WidgetBaseE">
 <span id="_CPPv3N5pvtui10WidgetBaseE"></span><span id="_CPPv2N5pvtui10WidgetBaseE"></span><span id="pvtui::WidgetBase"></span><span class="target" id="de/dc4/classpvtui_1_1WidgetBase"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WidgetBase</span></span></span><a class="headerlink" href="#_CPPv4N5pvtui10WidgetBaseE" title="Link to this definition">¶</a><br /></dt>
 <dd><p>A base class for all TUI widgets that interact with EPICS PVs. </p>
 <p>This class provides a standard interface for managing PV connections, accessing PV names, and retrieving the underlying FTXUI component. </p>
-<p>Subclassed by pvtui::BitsWidget, <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">pvtui::ButtonWidget</span></a>, <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">pvtui::ChoiceWidget</span></a>, <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">pvtui::InputWidget</span></a>, <a class="reference internal" href="#d1/dba/classpvtui_1_1VarWidget"><span class="std std-ref">pvtui::VarWidget&lt; T &gt;</span></a></p>
+<p>Subclassed by <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">pvtui::BitsWidget</span></a>, <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">pvtui::ButtonWidget</span></a>, <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">pvtui::ChoiceWidget</span></a>, <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">pvtui::InputWidget</span></a>, <a class="reference internal" href="#d1/dba/classpvtui_1_1VarWidget"><span class="std std-ref">pvtui::VarWidget&lt; T &gt;</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
@@ -994,10 +1065,6 @@
 
 </dd></dl>
 
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygentypedef: Cannot find typedef “pvtui::InputTransform” in doxygen xml output for project “pvtui” from directory: /home/runner/work/pvtui/pvtui/build/doc/xml</p>
-</div>
 </section>
 </section>
 
@@ -1044,6 +1111,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui12ButtonWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::ButtonWidget</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN5pvtui9VarWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::VarWidget</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui12ChoiceWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::ChoiceWidget</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui10BitsWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::BitsWidget</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui10WidgetBaseE"><code class="docutils literal notranslate"><span class="pre">pvtui::WidgetBase</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui11DisplayBaseE"><code class="docutils literal notranslate"><span class="pre">pvtui::DisplayBase</span></code></a></li>
 </ul>
