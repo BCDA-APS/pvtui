@@ -1,5 +1,4 @@
 #include <pvtui/pvgroup.hpp>
-#include <regex>
 
 namespace pvtui {
 
@@ -23,15 +22,33 @@ void PVHandler::monitorEvent(const pvac::MonitorEvent& evt) {
         }
         break;
     case pvac::MonitorEvent::Disconnect:
-	break;
+        break;
     case pvac::MonitorEvent::Fail:
-	break;
+        break;
     case pvac::MonitorEvent::Cancel:
-	break;
+        break;
     }
 }
 
 bool PVHandler::connected() const { return connection_monitor_->connected(); }
+
+size_t get_precision(const epics::pvData::PVStructure* pstruct) {
+    size_t prec = 4;
+    if (auto display_struct = pstruct->getSubField<epics::pvData::PVStructure>("display")) {
+        if (auto format_field = display_struct->getSubField<epics::pvData::PVString>("format")) {
+            std::string fstr = format_field->get();
+            size_t iF = fstr.find('F');
+            size_t idot = fstr.find('.');
+            if (iF != std::string::npos && idot != std::string::npos) {
+                try {
+                    prec = std::stoi(fstr.substr(idot + 1));
+                } catch (...) {
+                }
+            }
+        }
+    }
+    return prec;
+}
 
 void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pstruct) {
     namespace pvd = epics::pvData;
@@ -44,62 +61,30 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pstruct
         incoming = monitor_var_internal_;
     }
 
-    // get the display precision
-    constexpr int DEFAULT_PRECISION = 4;
-    static std::regex fmt_regex(R"(F\d+\.(\d+))");
-    int precision = DEFAULT_PRECISION;
-    auto display_struct = pstruct->getSubField<pvd::PVStructure>("display");
-    if (display_struct) {
-        auto format_field = display_struct->getSubField<pvd::PVString>("format");
-        if (format_field) {
-            std::string prec_str = format_field->get();
-            std::smatch match;
-            if (std::regex_match(prec_str, match, fmt_regex) && match.size() == 2) {
-                precision = std::stoi(match[1]);
-            }
-        }
-    }
-
     bool success = false;
     std::visit(
         [&](auto& var) {
             using VarType = std::decay_t<decltype(var)>;
 
-            if constexpr (std::is_arithmetic_v<VarType> || std::is_same_v<VarType, std::string>) {
+            if constexpr (std::is_arithmetic_v<VarType>) {
                 if (auto val_field = pstruct->getSubField<pvd::PVScalar>("value")) {
-		    // TODO: if VarType==string, but pfield != pvScalar::string,
-		    // need to deal with precision
                     var = val_field->getAs<VarType>();
                     success = true;
                 }
             }
 
-	    // When does byte[] come up?
-            // else if constexpr (std::is_same_v<VarType, std::string>) {
-                // std::string type_str = pstruct->getStructure()->getField("value")->getID();
-                // if (type_str == "string") {
-                    // if (auto val_field = pstruct->getSubField<pvd::PVString>("value")) {
-                        // var = val_field->getAs<std::string>();
-                        // success = true;
-                    // }
-                // } else if (type_str == "byte[]") {
-                    // pvd::shared_vector<const signed char> vals =
-                        // pstruct->getSubFieldT<pvd::PVByteArray>("value")->view();
-                    // auto last_ind = std::find_if(vals.rbegin(), vals.rend(), [](const signed char c) {
-                        // return std::isalnum(static_cast<unsigned char>(c));
-                    // });
-                    // var = std::string(vals.begin(), last_ind.base());
-                    // success = true;
-                // } else {
-                    // std::ostringstream oss;
-                    // oss << std::fixed << std::setprecision(precision);
-                    // if (auto val_field = pstruct->getSubField("value")) {
-                        // val_field->dumpValue(oss);
-                        // var = oss.str();
-                        // success = true;
-                    // }
-                // }
-            // }
+            else if constexpr (std::is_same_v<VarType, std::string>) {
+                if (auto val_field = pstruct->getSubField<pvd::PVString>("value")) {
+                    var = val_field->getAs<std::string>();
+                    success = true;
+                } else if (auto val_field = pstruct->getSubField("value")) {
+                    std::ostringstream oss;
+                    oss << std::fixed << std::setprecision(get_precision(pstruct));
+                    val_field->dumpValue(oss);
+                    var = oss.str();
+                    success = true;
+                }
+            }
 
             else if constexpr (std::is_same_v<VarType, PVEnum>) {
                 pvd::shared_vector<const std::string> choices =
@@ -127,7 +112,6 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pstruct
             }
 
             else if constexpr (std::is_same_v<VarType, std::vector<int>>) {
-		std::cout << "here?\n";
                 pvd::shared_vector<const int> vals = pstruct->getSubFieldT<pvd::PVIntArray>("value")->view();
                 if (var.size() != vals.size()) {
                     var.resize(vals.size());
@@ -160,8 +144,8 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pstruct
         }
         new_data_.store(true, std::memory_order_release);
     } else {
-	std::cerr << "Incompatible types for monitor: " << this->channel.name() << "\n";
-	std::abort();
+        std::cerr << "Incompatible types for monitor: " << this->channel.name() << "\n";
+        std::abort();
     }
 }
 
