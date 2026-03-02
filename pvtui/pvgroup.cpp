@@ -18,7 +18,7 @@ void PVHandler::monitorEvent(const pvac::MonitorEvent& evt) {
     switch (evt.event) {
     case pvac::MonitorEvent::Data:
         while (monitor_.poll()) {
-            this->get_monitored_variable(monitor_.root.get());
+            this->update_monitored_variable(monitor_.root.get());
         }
         break;
     case pvac::MonitorEvent::Disconnect:
@@ -50,7 +50,7 @@ size_t get_precision(const epics::pvData::PVStructure* pstruct) {
     return prec;
 }
 
-void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pstruct) {
+void PVHandler::update_monitored_variable(const epics::pvData::PVStructure* pstruct) {
     namespace pvd = epics::pvData;
 
     MonitorVar incoming;
