@@ -87,17 +87,17 @@ void PVHandler::update_monitored_variable(const epics::pvData::PVStructure* pstr
             }
 
             else if constexpr (std::is_same_v<VarType, PVEnum>) {
-                pvd::shared_vector<const std::string> choices =
-                    pstruct->getSubFieldT<pvd::PVStringArray>("value.choices")->view();
-                size_t index = pstruct->getSubFieldT<pvd::PVInt>("value.index")->getAs<int>();
-                if (choices.size() > index) {
-                    var.index = index;
-                    var.choice = choices.at(index);
-                    if (var.choices.size() != choices.size()) {
-                        var.choices.resize(choices.size());
+                auto pchoices = pstruct->getSubField<pvd::PVStringArray>("value.choices");
+                auto pindex = pstruct->getSubField<pvd::PVInt>("value.index");
+                if (pchoices && pindex) {
+                    pvd::shared_vector<const std::string> choices = pchoices->view();
+                    size_t index = pindex->getAs<size_t>();
+                    if (choices.size() > index) {
+                        var.index = index;
+                        var.choice = choices.at(index);
+                        var.choices.assign(choices.begin(), choices.end());
+                        success = true;
                     }
-                    std::copy(choices.begin(), choices.end(), var.choices.begin());
-                    success = true;
                 }
             }
 
