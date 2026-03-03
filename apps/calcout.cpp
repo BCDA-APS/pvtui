@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
     InputWidget ocal(app, "$(P)$(C).OCAL", PVPutType::String);
     InputWidget out(app, "$(P)$(C).OUT", PVPutType::String);
     InputWidget flnk(app, "$(P)$(C).FLNK", PVPutType::String);
-    VarWidget<std::string> val(app, "$(P)$(C).VAL");
-    VarWidget<std::string> oval(app, "$(P)$(C).OVAL");
+    Monitor<std::string> val(app, "$(P)$(C).VAL");
+    Monitor<std::string> oval(app, "$(P)$(C).OVAL");
     ChoiceWidget dopt(app, "$(P)$(C).DOPT", ChoiceStyle::Dropdown);
     ChoiceWidget ivoa(app, "$(P)$(C).IVOA", ChoiceStyle::Dropdown);
     ChoiceWidget oopt(app, "$(P)$(C).OOPT", ChoiceStyle::Dropdown);

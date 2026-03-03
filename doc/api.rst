@@ -33,7 +33,7 @@ UI Widgets
    :project: pvtui
    :members:
 
-.. doxygenclass:: pvtui::VarWidget
+.. doxygenclass:: pvtui::Monitor
    :project: pvtui
    :members:
 

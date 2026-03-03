@@ -302,35 +302,35 @@ class ButtonWidget : public WidgetBase {
  * @tparam T The C++ type used to store the PV value.
  */
 template <typename T>
-class VarWidget : public WidgetBase {
+class Monitor : public WidgetBase {
   public:
     /**
-     * @brief Constructs a VarWidget with macro expansion.
+     * @brief Constructs a Monitor with macro expansion.
      * @param pvgroup The PVGroup managing the PVs used in this widget.
      * @param args ArgParser for macro replacement.
      * @param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
      */
-    VarWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name)
+    Monitor(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name)
         : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<T>()) {
         pvgroup.set_monitor(pv_name_, *value_ptr_);
     }
 
     /**
-     * @brief Constructs a VarWidget with a fully expanded PV name.
+     * @brief Constructs a Monitor with a fully expanded PV name.
      * @param pvgroup The PVGroup managing the PVs used in this widget.
      * @param pv_name The PV name.
      */
-    VarWidget(PVGroup& pvgroup, const std::string& pv_name)
+    Monitor(PVGroup& pvgroup, const std::string& pv_name)
         : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
         pvgroup.set_monitor(pv_name_, *value_ptr_);
     }
 
     /**
-     * @brief Constructs a VarWidget from an App class
+     * @brief Constructs a Monitor from an App class
      * @param app A reference to the App.
      * @param pv_name The PV name.
      */
-    VarWidget(App& app, const std::string& pv_name)
+    Monitor(App& app, const std::string& pv_name)
         : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<T>()) {
         app.pvgroup.set_monitor(pv_name_, *value_ptr_);
     }
