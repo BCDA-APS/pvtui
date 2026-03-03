@@ -1,4 +1,17 @@
 #include <pvtui/pvgroup.hpp>
+#include <type_traits>
+
+namespace pvd = epics::pvData;
+
+template <typename T>
+struct is_vector : std::false_type {};
+
+template <typename T, typename Alloc>
+struct is_vector<std::vector<T, Alloc>> : std::true_type {};
+
+// Helper to check if a type is a vector type
+template <typename T>
+inline constexpr bool is_vector_v = is_vector<T>::value;
 
 namespace pvtui {
 
@@ -50,8 +63,24 @@ size_t get_precision(const epics::pvData::PVStructure* pstruct) {
     return prec;
 }
 
-void PVHandler::update_monitored_variable(const epics::pvData::PVStructure* pstruct) {
-    namespace pvd = epics::pvData;
+// type map for convenience in vector<T> branch
+// of visitor in update_monitored_variable
+template <typename T>
+struct pvd_type_map;
+template <>
+struct pvd_type_map<int> {
+    using array_type = pvd::PVIntArray;
+};
+template <>
+struct pvd_type_map<double> {
+    using array_type = pvd::PVDoubleArray;
+};
+template <>
+struct pvd_type_map<std::string> {
+    using array_type = pvd::PVStringArray;
+};
+
+void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
 
     MonitorVar incoming;
     {
@@ -101,33 +130,14 @@ void PVHandler::update_monitored_variable(const epics::pvData::PVStructure* pstr
                 }
             }
 
-            else if constexpr (std::is_same_v<VarType, std::vector<double>>) {
-                pvd::shared_vector<const double> vals =
-                    pstruct->getSubFieldT<pvd::PVDoubleArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
+            else if constexpr (is_vector_v<VarType>) {
+                using ElementType = typename VarType::value_type;
+                using PVDArray = typename pvd_type_map<ElementType>::array_type;
+                if (auto parr = pstruct->getSubField<PVDArray>("value")) {
+                    auto vec = parr->view();
+                    var.assign(vec.begin(), vec.end());
+                    success = true;
                 }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
-            }
-
-            else if constexpr (std::is_same_v<VarType, std::vector<int>>) {
-                pvd::shared_vector<const int> vals = pstruct->getSubFieldT<pvd::PVIntArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
-                }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
-            }
-
-            else if constexpr (std::is_same_v<VarType, std::vector<std::string>>) {
-                pvd::shared_vector<const std::string> vals =
-                    pstruct->getSubFieldT<pvd::PVStringArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
-                }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
             }
 
             else {
