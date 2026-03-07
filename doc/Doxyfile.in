@@ -11,7 +11,7 @@ CREATE_SUBDIRS         = YES
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/pvtui
 FILE_PATTERNS          = *.h *.hpp *.cpp
 RECURSIVE              = YES
-EXCLUDE       	       = @CMAKE_CURRENT_SOURCE_DIR@/pvtui/argh.h
+EXCLUDE       	       = @CMAKE_CURRENT_SOURCE_DIR@/pvtui/detail/argh.h
 
 # Build settings
 GENERATE_HTML          = NO
