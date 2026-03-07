@@ -204,7 +204,6 @@ class WidgetBase {
     PVGroup& pvgroup_;                                      ///< The PVGroup
     std::string pv_name_;                                   ///< The PV name.
     ftxui::Component component_;                            ///< Underlying FTXUI component.
-    bool connected_;                                        ///< Boolean for PV connection status
     std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors PV connection status.
 };
 
