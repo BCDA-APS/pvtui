@@ -1,5 +1,17 @@
 #include <pvtui/pvgroup.hpp>
-#include <regex>
+#include <type_traits>
+
+namespace pvd = epics::pvData;
+
+template <typename T>
+struct is_vector : std::false_type {};
+
+template <typename T, typename Alloc>
+struct is_vector<std::vector<T, Alloc>> : std::true_type {};
+
+// Helper to check if a type is a vector type
+template <typename T>
+inline constexpr bool is_vector_v = is_vector<T>::value;
 
 namespace pvtui {
 
@@ -19,7 +31,7 @@ void PVHandler::monitorEvent(const pvac::MonitorEvent& evt) {
     switch (evt.event) {
     case pvac::MonitorEvent::Data:
         while (monitor_.poll()) {
-            this->get_monitored_variable(monitor_.root.get());
+            this->update_monitored_variable(monitor_.root.get());
         }
         break;
     case pvac::MonitorEvent::Disconnect:
@@ -33,8 +45,42 @@ void PVHandler::monitorEvent(const pvac::MonitorEvent& evt) {
 
 bool PVHandler::connected() const { return connection_monitor_->connected(); }
 
-void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pfield) {
-    namespace pvd = epics::pvData;
+size_t get_precision(const epics::pvData::PVStructure* pstruct) {
+    size_t prec = 4;
+    if (auto display_struct = pstruct->getSubField<epics::pvData::PVStructure>("display")) {
+        if (auto format_field = display_struct->getSubField<epics::pvData::PVString>("format")) {
+            std::string fstr = format_field->get();
+            size_t iF = fstr.find('F');
+            size_t idot = fstr.find('.');
+            if (iF != std::string::npos && idot != std::string::npos) {
+                try {
+                    prec = std::stoi(fstr.substr(idot + 1));
+                } catch (...) {
+                }
+            }
+        }
+    }
+    return prec;
+}
+
+// type map for convenience in vector<T> branch
+// of visitor in update_monitored_variable
+template <typename T>
+struct pvd_type_map;
+template <>
+struct pvd_type_map<int> {
+    using array_type = pvd::PVIntArray;
+};
+template <>
+struct pvd_type_map<double> {
+    using array_type = pvd::PVDoubleArray;
+};
+template <>
+struct pvd_type_map<std::string> {
+    using array_type = pvd::PVStringArray;
+};
+
+void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
 
     MonitorVar incoming;
     {
@@ -44,102 +90,54 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pfield)
         incoming = monitor_var_internal_;
     }
 
-    // get the display precision
-    constexpr int DEFAULT_PRECISION = 4;
-    static std::regex fmt_regex(R"(F\d+\.(\d+))");
-    int precision = DEFAULT_PRECISION;
-    auto display_struct = pfield->getSubField<pvd::PVStructure>("display");
-    if (display_struct) {
-        auto format_field = display_struct->getSubField<pvd::PVString>("format");
-        if (format_field) {
-            std::string prec_str = format_field->get();
-            std::smatch match;
-            if (std::regex_match(prec_str, match, fmt_regex) && match.size() == 2) {
-                precision = std::stoi(match[1]);
-            }
-        }
-    }
-
     bool success = false;
     std::visit(
         [&](auto& var) {
             using VarType = std::decay_t<decltype(var)>;
 
             if constexpr (std::is_arithmetic_v<VarType>) {
-                if (auto val_field = pfield->getSubFieldT<pvd::PVScalar>("value")) {
+                if (auto val_field = pstruct->getSubField<pvd::PVScalar>("value")) {
                     var = val_field->getAs<VarType>();
                     success = true;
-                };
+                }
             }
 
             else if constexpr (std::is_same_v<VarType, std::string>) {
-                std::string type_str = pfield->getStructure()->getField("value")->getID();
-                if (type_str == "string") {
-                    if (auto val_field = pfield->getSubField<pvd::PVString>("value")) {
-                        var = val_field->getAs<std::string>();
-                        success = true;
-                    }
-                } else if (type_str == "byte[]") {
-                    pvd::shared_vector<const signed char> vals =
-                        pfield->getSubFieldT<pvd::PVByteArray>("value")->view();
-                    auto last_ind = std::find_if(vals.rbegin(), vals.rend(), [](const signed char c) {
-                        return std::isalnum(static_cast<unsigned char>(c));
-                    });
-                    var = std::string(vals.begin(), last_ind.base());
+                if (auto val_field = pstruct->getSubField<pvd::PVString>("value")) {
+                    var = val_field->getAs<std::string>();
                     success = true;
-                } else {
+                } else if (auto val_field = pstruct->getSubField("value")) {
                     std::ostringstream oss;
-                    oss << std::fixed << std::setprecision(precision);
-                    if (auto val_field = pfield->getSubField("value")) {
-                        val_field->dumpValue(oss);
-                        var = oss.str();
-                        success = true;
-                    }
+                    oss << std::fixed << std::setprecision(get_precision(pstruct));
+                    val_field->dumpValue(oss);
+                    var = oss.str();
+                    success = true;
                 }
             }
 
             else if constexpr (std::is_same_v<VarType, PVEnum>) {
-                pvd::shared_vector<const std::string> choices =
-                    pfield->getSubFieldT<pvd::PVStringArray>("value.choices")->view();
-                size_t index = pfield->getSubFieldT<pvd::PVInt>("value.index")->getAs<int>();
-                if (choices.size() > index) {
-                    var.index = index;
-                    var.choice = choices.at(index);
-                    if (var.choices.size() != choices.size()) {
-                        var.choices.resize(choices.size());
+                auto pchoices = pstruct->getSubField<pvd::PVStringArray>("value.choices");
+                auto pindex = pstruct->getSubField<pvd::PVInt>("value.index");
+                if (pchoices && pindex) {
+                    pvd::shared_vector<const std::string> choices = pchoices->view();
+                    size_t index = pindex->getAs<size_t>();
+                    if (choices.size() > index) {
+                        var.index = index;
+                        var.choice = choices.at(index);
+                        var.choices.assign(choices.begin(), choices.end());
+                        success = true;
                     }
-                    std::copy(choices.begin(), choices.end(), var.choices.begin());
+                }
+            }
+
+            else if constexpr (is_vector_v<VarType>) {
+                using ElementType = typename VarType::value_type;
+                using PVDArray = typename pvd_type_map<ElementType>::array_type;
+                if (auto parr = pstruct->getSubField<PVDArray>("value")) {
+                    auto vec = parr->view();
+                    var.assign(vec.begin(), vec.end());
                     success = true;
                 }
-            }
-
-            else if constexpr (std::is_same_v<VarType, std::vector<double>>) {
-                pvd::shared_vector<const double> vals =
-                    pfield->getSubFieldT<pvd::PVDoubleArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
-                }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
-            }
-
-            else if constexpr (std::is_same_v<VarType, std::vector<int>>) {
-                pvd::shared_vector<const int> vals = pfield->getSubFieldT<pvd::PVIntArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
-                }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
-            }
-
-            else if constexpr (std::is_same_v<VarType, std::vector<std::string>>) {
-                pvd::shared_vector<const std::string> vals =
-                    pfield->getSubFieldT<pvd::PVStringArray>("value")->view();
-                if (var.size() != vals.size()) {
-                    var.resize(vals.size());
-                }
-                std::copy(vals.begin(), vals.end(), var.begin());
-                success = true;
             }
 
             else {
@@ -155,6 +153,9 @@ void PVHandler::get_monitored_variable(const epics::pvData::PVStructure* pfield)
             monitor_var_internal_ = std::move(incoming);
         }
         new_data_.store(true, std::memory_order_release);
+    } else {
+        std::cerr << "Incompatible types for monitor: " << this->channel.name() << "\n";
+        std::abort();
     }
 }
 

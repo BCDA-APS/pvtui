@@ -96,7 +96,8 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
      * @tparam T The type of the variable to monitor.
      * @param var A reference to the variable that will be updated.
      */
-    template <typename T> void set_monitor(T& var) {
+    template <typename T>
+    void set_monitor(T& var) {
         if (std::holds_alternative<std::monostate>(monitor_var_internal_)) {
             monitor_var_internal_ = T{};
         }
@@ -132,7 +133,6 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
     std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors connection status.
     std::vector<std::function<void(const MonitorVar&)>>
         sync_tasks_; ///< Functions to copy internal value to user value
-    // bool new_data_ = false;
     std::atomic<bool> new_data_ = false;
 
     /**
@@ -142,10 +142,11 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
     void monitorEvent(const pvac::MonitorEvent& evt) override final;
 
     /**
-     * @brief Extracts the PV value from the event and updates the monitored variable.
-     * @param pfield A pointer to the PVStructure containing the new data.
+     * @brief Extracts the PV value from the event and copies it to
+     * monitored variable via the sync callback
+     * @param pstruct A pointer to the PVStructure containing the new data.
      */
-    void get_monitored_variable(const epics::pvData::PVStructure* pfield);
+    void update_monitored_variable(const epics::pvData::PVStructure* pstruct);
 };
 
 /**
@@ -183,7 +184,8 @@ struct PVGroup {
      * @param var A reference to the variable that will be updated.
      * @throws std::runtime_error if the PV is not found in the group.
      */
-    template <typename T> void set_monitor(const std::string& pv_name, T& var) {
+    template <typename T>
+    void set_monitor(const std::string& pv_name, T& var) {
         PVHandler& pv = this->get_pv(pv_name);
         pv.set_monitor(var);
     }

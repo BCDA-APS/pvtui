@@ -85,17 +85,17 @@ int main(int argc, char *argv[]) {
     // PVGroup to manage all PVs for displays
     PVGroup pvgroup(provider);
 
-    // Create input widgets for the set PVs and VarWidget<std::string> for the readback PVs
+    // Create input widgets for the set PVs and Monitor<std::string> for the readback PVs
     // We use strings for everything here because it should work for most (all?) PV types
     std::vector<std::unique_ptr<InputWidget>> val_widgets;
-    std::vector<std::unique_ptr<VarWidget<std::string>>> rbv_widgets;
+    std::vector<std::unique_ptr<Monitor<std::string>>> rbv_widgets;
     for (size_t i = 0; i < val_pvs.size(); i++) {
 	val_widgets.emplace_back(std::make_unique<InputWidget>(pvgroup, val_pvs.at(i), PVPutType::String));
-	rbv_widgets.emplace_back(std::make_unique<VarWidget<std::string>>(pvgroup, rbv_pvs.at(i)));
+	rbv_widgets.emplace_back(std::make_unique<Monitor<std::string>>(pvgroup, rbv_pvs.at(i)));
     }
 
     // Add components to a main container.
-    // Remember VarWidget doesn't define a component
+    // Remember Monitor doesn't define a component
     auto main_container = Container::Vertical({});
     for (size_t i = 0; i < val_pvs.size(); i++) {
 	auto hcont = Container::Horizontal({

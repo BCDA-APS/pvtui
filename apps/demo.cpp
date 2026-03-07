@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     InputWidget inp1(app, P+"string.VAL", PVPutType::String, Color::Black, Color::White);
     ButtonWidget plus_button(app, P+"add1.PROC", " + ");
     ButtonWidget minus_button(app, P+"subtract1.PROC", " - ");
-    VarWidget<int> int_val(app, P+"long.VAL");
+    Monitor<int> int_val(app, P+"long.VAL");
     ChoiceWidget enum_h(app, P+"enum.VAL", ChoiceStyle::Horizontal);
     ChoiceWidget enum_v(app, P+"enum.VAL", ChoiceStyle::Vertical);
     ChoiceWidget enum_d(app, P+"enum.VAL", ChoiceStyle::Dropdown);

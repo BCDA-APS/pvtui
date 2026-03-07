@@ -74,27 +74,27 @@ int main(int argc, char *argv[]) {
 
     // Widgets for each PV we want on the display
     // This particular display has no interactive elements
-    VarWidget<std::string> time_and_date(app, "S:IOC:timeOfDayForm1SI");
-    VarWidget<std::string> current(app, "S-DCCT:CurrentM");
-    VarWidget<int> lifetime(app, "S-DCCT:LifetimeM");
-    VarWidget<PVEnum> injection_status(app, "S-INJ:InjectionOperationM");
-    VarWidget<std::string> injection_period(app, "S-INJ:InjectionPeriodCounterM");
-    VarWidget<PVEnum> desired_mode(app, "S:DesiredMode");
-    VarWidget<PVEnum> actual_mode(app, "S:ActualMode");
-    VarWidget<PVEnum> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM");
-    VarWidget<int> num_shutters_open(app, "NoOfShuttersOpenA");
-    VarWidget<std::string> operators(app, "OPS:message1");
-    VarWidget<std::string> floor_coord(app, "OPS:message2");
-    VarWidget<std::string> fill_patt(app, "OPS:message3");
-    VarWidget<std::string> dump_reason(app, "OPS:message5");
-    VarWidget<std::string> dump_reason_cont(app, "OPS:message16");
-    VarWidget<std::string> prob_info(app, "OPS:message4");
-    VarWidget<std::string> prob_info_cont(app, "OPS:message14");
-    VarWidget<std::string> next_fill(app, "OPS:message6");
-    VarWidget<std::string> next_fill_cont(app, "OPS:message17");
-    VarWidget<std::string> next_update(app, "OPS:message18");
+    Monitor<std::string> time_and_date(app, "S:IOC:timeOfDayForm1SI");
+    Monitor<std::string> current(app, "S-DCCT:CurrentM");
+    Monitor<int> lifetime(app, "S-DCCT:LifetimeM");
+    Monitor<PVEnum> injection_status(app, "S-INJ:InjectionOperationM");
+    Monitor<std::string> injection_period(app, "S-INJ:InjectionPeriodCounterM");
+    Monitor<PVEnum> desired_mode(app, "S:DesiredMode");
+    Monitor<PVEnum> actual_mode(app, "S:ActualMode");
+    Monitor<PVEnum> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM");
+    Monitor<int> num_shutters_open(app, "NoOfShuttersOpenA");
+    Monitor<std::string> operators(app, "OPS:message1");
+    Monitor<std::string> floor_coord(app, "OPS:message2");
+    Monitor<std::string> fill_patt(app, "OPS:message3");
+    Monitor<std::string> dump_reason(app, "OPS:message5");
+    Monitor<std::string> dump_reason_cont(app, "OPS:message16");
+    Monitor<std::string> prob_info(app, "OPS:message4");
+    Monitor<std::string> prob_info_cont(app, "OPS:message14");
+    Monitor<std::string> next_fill(app, "OPS:message6");
+    Monitor<std::string> next_fill_cont(app, "OPS:message17");
+    Monitor<std::string> next_update(app, "OPS:message18");
 
-    // VarWidget does not work right here since there isn't a way to preallocate 1440
+    // Monitor does not work right here since there isn't a way to preallocate 1440
     std::vector<double> user_ops_current(1440, 0.0);
     app.pvgroup.add("S:UserOpsCurrent");
     app.pvgroup.set_monitor("S:UserOpsCurrent", user_ops_current);

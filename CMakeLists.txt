@@ -129,7 +129,7 @@ if (BUILD_LIB)
     # ------------------------------------------------------------------------------
 
     # --- PVTUI static library -----------------------------------------------------
-    add_library(pvtui STATIC pvtui/pvtui.cpp pvtui/pvgroup.cpp)
+    add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
     target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(pvtui PUBLIC -std=c++17)
     target_include_directories(pvtui
