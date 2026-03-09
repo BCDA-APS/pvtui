@@ -16,6 +16,18 @@ void signal_handler(int signal) {
     }
 }
 
+template<typename T>
+void print_vec(const std::vector<T>& vec) {
+    std::cout << "[";
+    for (auto it = vec.begin(); it != vec.end(); it++) {
+        std::cout << *it;
+        if (std::next(it) != vec.end()) {
+            std::cout << ",";
+        }
+    }
+    std::cout << "]\n";
+}
+
 int main(int argc, char *argv[]) {
 
     std::string prefix;
@@ -34,14 +46,17 @@ int main(int argc, char *argv[]) {
 
     // Create the group and add our PVs
     pvtui::PVGroup pvgroup(provider, {
-	prefix+"m1.DESC",
-	prefix+"m1.RBV",
-	prefix+"double_array.VAL",
-	prefix+"string_array.VAL",
+        prefix+"m1.DESC",
+        prefix+"m1.RBV",
+        prefix+"double_array.VAL",
+        prefix+"string_array.VAL",
     });
 
-    double rbv;
-    pvgroup.set_monitor<double>(prefix+"m1.RBV", rbv);
+    double rbv_double;
+    pvgroup.set_monitor<double>(prefix+"m1.RBV", rbv_double);
+
+    std::string rbv_string;
+    pvgroup.set_monitor<std::string>(prefix+"m1.RBV", rbv_string);
 
     std::string desc;
     pvgroup.set_monitor<std::string>(prefix+"m1.DESC", desc);
@@ -54,21 +69,17 @@ int main(int argc, char *argv[]) {
 
     while (g_signal_caught == 0) {
         if (pvgroup.sync()) {
-	    std::cout << "DESC = " << desc << std::endl;
+            std::cout << "DESC = " << desc << std::endl;
 
-            std::cout << "RBV = " << rbv << std::endl;
+            std::cout << "RBV[double] = " << rbv_double << std::endl;
 
-	    std::cout << "double_array = ";
-	    for (auto v : double_arr) {
-		std::cout << v << " ";
-	    }
-	    std::cout << "\n";
+            std::cout << "RBV[string] = " << rbv_string << std::endl;
 
-	    std::cout << "string_array = ";
-	    for (auto v : string_arr) {
-		std::cout << v << " ";
-	    }
-	    std::cout << "\n";
+            std::cout << "double_array = ";
+            print_vec(double_arr);
+
+            std::cout << "string_array = ";
+            print_vec(string_arr);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

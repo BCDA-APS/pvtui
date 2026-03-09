@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <typeindex>
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -98,16 +99,12 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
      */
     template <typename T>
     void set_monitor(T& var) {
-        if (std::holds_alternative<std::monostate>(monitor_var_internal_)) {
-            monitor_var_internal_ = T{};
+        auto key = std::type_index(typeid(T));
+        auto& slot = monitor_slots_[key];
+        if (std::holds_alternative<std::monostate>(slot.data)) {
+            slot.data = T{};
         }
-
-        if (!std::holds_alternative<T>(monitor_var_internal_)) {
-            throw std::runtime_error("Cannot set multiple monitors of different types for a single PV: " +
-                                     name);
-        }
-
-        sync_tasks_.push_back([&var](const MonitorVar& latest_data) {
+        slot.tasks.push_back([&var](const MonitorVar& latest_data) {
             if (auto* val = std::get_if<T>(&latest_data)) {
                 var = *val;
             }
@@ -127,12 +124,16 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
     std::shared_ptr<ConnectionMonitor> get_connection_monitor() const { return connection_monitor_; }
 
   private:
+    /// @brief A monitor slot holding one typed MonitorVar and its sync callbacks.
+    struct MonitorSlot {
+        MonitorVar data;                                           ///< The latest value for this type.
+        std::vector<std::function<void(const MonitorVar&)>> tasks; ///< Callbacks to copy data to user variables.
+    };
+
     std::mutex mutex_;
     pvac::Monitor monitor_;                                 ///< PVA data monitor.
-    MonitorVar monitor_var_internal_;                       ///< Internal variable updated by monitor
     std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors connection status.
-    std::vector<std::function<void(const MonitorVar&)>>
-        sync_tasks_; ///< Functions to copy internal value to user value
+    std::unordered_map<std::type_index, MonitorSlot> monitor_slots_; ///< One slot per monitored type.
     std::atomic<bool> new_data_ = false;
 
     /**
