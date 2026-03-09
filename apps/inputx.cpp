@@ -44,34 +44,34 @@ int main(int argc, char *argv[]) {
     if (args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
     if (args.macros.empty()) {
-	printf("Missing required macros\n");
-	return EXIT_FAILURE;
+        printf("Missing required macros\n");
+        return EXIT_FAILURE;
     }
 
     // Prefix is optional
     std::string ioc_prefix = "";
     if (args.macros.count("P") > 0) {
-	ioc_prefix = args.macros.at("P");
+        ioc_prefix = args.macros.at("P");
     }
 
     // Get PV names for set and readback PVs
     std::vector<std::string> val_pvs;
     std::vector<std::string> rbv_pvs;
     for (const auto &[k, v] : args.macros) {
-	if (k == "P") {
-	    continue;
-	}
-	std::string val_pv_name = "";
-	std::string rbv_pv_name = "";
-	if (auto ind = v.find("/"); ind != std::string::npos) {
-	    val_pv_name = ioc_prefix + v.substr(0, ind);
-	    rbv_pv_name = ioc_prefix + v.substr(ind+1, v.size());
-	} else {
-	    val_pv_name = ioc_prefix + v;
-	    rbv_pv_name = ioc_prefix + v;
-	}
-	val_pvs.push_back(val_pv_name);
-	rbv_pvs.push_back(rbv_pv_name);
+        if (k == "P") {
+            continue;
+        }
+        std::string val_pv_name = "";
+        std::string rbv_pv_name = "";
+        if (auto ind = v.find("/"); ind != std::string::npos) {
+            val_pv_name = ioc_prefix + v.substr(0, ind);
+            rbv_pv_name = ioc_prefix + v.substr(ind+1, v.size());
+        } else {
+            val_pv_name = ioc_prefix + v;
+            rbv_pv_name = ioc_prefix + v;
+        }
+        val_pvs.push_back(val_pv_name);
+        rbv_pvs.push_back(rbv_pv_name);
     }
 
     // Create the FTXUI screen. Interactive and uses the full terminal screen
@@ -90,60 +90,59 @@ int main(int argc, char *argv[]) {
     std::vector<std::unique_ptr<InputWidget>> val_widgets;
     std::vector<std::unique_ptr<Monitor<std::string>>> rbv_widgets;
     for (size_t i = 0; i < val_pvs.size(); i++) {
-	val_widgets.emplace_back(std::make_unique<InputWidget>(pvgroup, val_pvs.at(i), PVPutType::String));
-	rbv_widgets.emplace_back(std::make_unique<Monitor<std::string>>(pvgroup, rbv_pvs.at(i)));
+        val_widgets.emplace_back(std::make_unique<InputWidget>(pvgroup, val_pvs.at(i), PVPutType::String));
+        rbv_widgets.emplace_back(std::make_unique<Monitor<std::string>>(pvgroup, rbv_pvs.at(i)));
     }
 
     // Add components to a main container.
     // Remember Monitor doesn't define a component
     auto main_container = Container::Vertical({});
     for (size_t i = 0; i < val_pvs.size(); i++) {
-	auto hcont = Container::Horizontal({
-	    val_widgets.at(i)->component(),
-	});
-	main_container->Add(hcont);
+        auto hcont = Container::Horizontal({
+            val_widgets.at(i)->component(),
+        });
+        main_container->Add(hcont);
     }
 
     // Define the visual layout of components in the main renderer
     auto main_renderer = Renderer(main_container, [&] {
-	Elements elements;
-	for (size_t i = 0; i < val_pvs.size(); i++) {
-	    auto &val = val_widgets.at(i);
-	    auto &rbv = rbv_widgets.at(i);
-	    auto h = vbox({
-		hbox({
-		    text(rbv->pv_name()) | color(Color::Black),
-		    separatorEmpty(),
-		    text(rbv->value())
-			| EPICSColor::readback(*rbv)
-			| size(WIDTH, EQUAL, 20),
-		}),
-		hbox({
-		    text(val->pv_name()) | color(Color::Black),
-		    separatorEmpty(),
-		    val->component()->Render()
-			| EPICSColor::edit(*val)
-			| size(WIDTH, EQUAL, 20),
-		})
-	    });
-	    elements.push_back(h);
-	    elements.push_back(separatorEmpty());
-	}
+        Elements elements;
+        for (size_t i = 0; i < val_pvs.size(); i++) {
+            auto &val = val_widgets.at(i);
+            auto &rbv = rbv_widgets.at(i);
+            auto h = vbox({
+            hbox({
+                text(rbv->pv_name()) | color(Color::Black),
+                separatorEmpty(),
+                text(rbv->value())
+                | EPICSColor::readback(*rbv)
+                | size(WIDTH, EQUAL, 20),
+            }),
+            hbox({
+                text(val->pv_name()) | color(Color::Black),
+                separatorEmpty(),
+                val->component()->Render()
+                | EPICSColor::edit(*val)
+                | size(WIDTH, EQUAL, 20),
+            })
+            });
+            elements.push_back(h);
+            elements.push_back(separatorEmpty());
+        }
 
-	return vbox({
-	    elements,
-	}) | center | EPICSColor::background();
+        return vbox({
+            elements,
+        }) | center | EPICSColor::background();
     });
 
     // main program loop
     constexpr int POLL_PERIOD_MS = 100;
     Loop loop(&screen, main_renderer);
     while (!loop.HasQuitted()) {
-	if (pvgroup.sync()) {
-	    screen.PostEvent(Event::Custom);
-	}
-	loop.RunOnce();
-	std::this_thread::sleep_for(std::chrono::milliseconds(POLL_PERIOD_MS));
+        if (pvgroup.sync()) {
+            screen.PostEvent(Event::Custom);
+        }
+        loop.RunOnce();
+        std::this_thread::sleep_for(std::chrono::milliseconds(POLL_PERIOD_MS));
     }
-
 }

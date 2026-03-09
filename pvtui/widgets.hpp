@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <ftxui/component/component.hpp>
 #include <ftxui/component/component_options.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/color.hpp>
@@ -234,9 +235,23 @@ class Monitor : public WidgetBase {
     const T& value() const { return *value_ptr_; };
 
     /**
-     * @brief This widget does not have a UI element, so the component method is deleted.
+     * @brief Renders
+     * @return An valid FTXUI component which renders the monitored value as ftxui::text,
+     * proving it can be converted to std::string with std::to_string.
      */
-    ftxui::Component component() const = delete;
+    ftxui::Component component() const {
+        return ftxui::Renderer([this] {
+            if constexpr (std::is_same_v<T, std::string>) {
+                return ftxui::text(*value_ptr_);
+            } else if constexpr (std::is_arithmetic_v<T>) {
+                return ftxui::text(std::to_string(*value_ptr_));
+            } else if constexpr (std::is_same_v<T, PVEnum>) {
+                return ftxui::text(value_ptr_->choice);
+            } else {
+                return ftxui::text("<" + this->pv_name() + ">");
+            }
+        });
+    }
 
   private:
     std::shared_ptr<T> value_ptr_;

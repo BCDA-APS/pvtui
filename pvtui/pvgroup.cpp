@@ -106,6 +106,10 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
                 if (auto val_field = pstruct->getSubField<pvd::PVString>("value")) {
                     var = val_field->getAs<std::string>();
                     success = true;
+                } else if (auto val_field = pstruct->getSubField<pvd::PVByteArray>("value")) {
+                    auto pbytearr = val_field->view();
+                    var.assign(pbytearr.begin(), pbytearr.end());
+                    success = true;
                 } else if (auto val_field = pstruct->getSubField("value")) {
                     std::ostringstream oss;
                     oss << std::fixed << std::setprecision(get_precision(pstruct));

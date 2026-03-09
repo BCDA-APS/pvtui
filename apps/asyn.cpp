@@ -75,12 +75,11 @@ int main(int argc, char *argv[]) {
 
     // ftxui container to define interactivity of components
     auto main_container = ftxui::Container::Vertical({
-        ftxui::Container::Vertical({
 	    tmot.component(),
 	    tmod.component(),
 	    aout.component(),
 	    oeos.component(),
-            ieos.component(),
+        ieos.component(),
 	    cnct.component(),
 	    enbl.component(),
 	    auct.component(),
@@ -97,8 +96,7 @@ int main(int argc, char *argv[]) {
 	    tinb1.component(),
 	    tinb2.component(),
 	    tinb3.component(),
-            tfil.component(),
-        })
+        tfil.component(),
     });
 
     auto sevr_color = [&]() -> Decorator{
