@@ -11,7 +11,7 @@ PVTUI
     * Includes a set of ready-to-use applications (see :ref:`applications`)
 
 
-Repository: https://github.com/nmarks99/pvtui
+Repository: https://github.com/BCDA-APS/pvtui
 
 
 Contents
