@@ -16,7 +16,7 @@ ArgParser::ArgParser(int argc, char* argv[]) {
     cmdl_.parse(argc, argv);
     this->macros = get_macro_dict(cmdl_({"-m", "--macro", "--macros"}).str());
     this->provider = cmdl_("--provider").str().empty() ? "ca" : cmdl_("--provider").str();
-};
+}
 
 bool ArgParser::macros_present(const std::vector<std::string>& macro_list) const {
     for (const auto& m : macro_list) {
@@ -25,7 +25,7 @@ bool ArgParser::macros_present(const std::vector<std::string>& macro_list) const
         }
     }
     return true;
-};
+}
 
 std::string ArgParser::replace(const std::string& str) const {
     std::string out = str;

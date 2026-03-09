@@ -26,7 +26,7 @@ Usage:
 Options:
   -h, --help        Show this help message and exit.
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 std::vector<double> downsample_and_clip(const std::vector<double>& input, int target_size, double curr_min, double curr_max, double height) {
@@ -50,7 +50,6 @@ std::vector<double> downsample_and_clip(const std::vector<double>& input, int ta
     return result;
 }
 
-std::string debug_string = "";
 
 static const std::unordered_map<int, Element> inj_status_text = {
     {0, text("Waiting for Injection") | color(Color::Red)},
@@ -162,10 +161,14 @@ int main(int argc, char *argv[]) {
             }),
 
             separatorEmpty(),
-            inj_status_text.at(injection_status.value().index),
+            inj_status_text.count(injection_status.value().index)
+                ? inj_status_text.at(injection_status.value().index)
+                : text(""),
             text("Swapout In: " + injection_period.value() + " sec."),
             separatorEmpty(),
-            shutter_status_text.at(shutter_status.value().index),
+            shutter_status_text.count(shutter_status.value().index)
+                ? shutter_status_text.at(shutter_status.value().index)
+                : text(""),
             text("Machine Status: " + desired_mode.value().choice),
             text("Operating Mode: " + actual_mode.value().choice),
             text("Shutters Open: " + std::to_string(num_shutters_open.value())),

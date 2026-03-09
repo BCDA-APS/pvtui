@@ -28,7 +28,7 @@ Options:
 Examples:
     pvtui_asyn --macro "P=xxx:,R=asyn1"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 int main(int argc, char *argv[]) {

@@ -24,7 +24,7 @@ Options:
 Examples:
     pvtui_calcout --macro "P=xxx:,C=calcout1"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 

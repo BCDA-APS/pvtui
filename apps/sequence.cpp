@@ -26,9 +26,9 @@ Options:
   -m, --macro       Macros to pass to the UI (required: P, S)
 
 Examples:
-    pvtui_seq --macro "P=xxx:,C=userSeq1"
+    pvtui_seq --macro "P=xxx:,S=userSeq1"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     InputWidget prec(app, "$(P)$(S).PREC", PVPutType::Integer);
     InputWidget flnk(app, "$(P)$(S).FLNK", PVPutType::String);
 
-    // add a row for transform record fields A through P (e.g. INPA, CLCA...INPA, CLCP)
+    // add a row for sequence record fields 0 through 9 (e.g. DOL0, DLY0, DO0, LNK0)
     std::vector<std::unique_ptr<DisplayBase>> rows;
     for (int i = 0; i < 10; i++) {
         rows.emplace_back(std::make_unique<SequenceRow>(app, std::to_string(i)));

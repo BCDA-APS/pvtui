@@ -31,15 +31,8 @@ Examples:
     # start motor3x.adl style screen for motors xxx:m1-m3
     pvtui_motor --macro "P=xxx:,M1=m1,M2=m2,M3=m3"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
-
-enum class MotorDisplayType {
-    Small,
-    Medium,
-    All,
-    Multi,
-};
 
 int main(int argc, char* argv[]) {
 

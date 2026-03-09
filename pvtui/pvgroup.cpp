@@ -1,7 +1,14 @@
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
 #include <pvtui/pvgroup.hpp>
 #include <type_traits>
 
 namespace pvd = epics::pvData;
+
+namespace {
 
 template <typename T>
 struct is_vector : std::false_type {};
@@ -9,9 +16,10 @@ struct is_vector : std::false_type {};
 template <typename T, typename Alloc>
 struct is_vector<std::vector<T, Alloc>> : std::true_type {};
 
-// Helper to check if a type is a vector type
 template <typename T>
 inline constexpr bool is_vector_v = is_vector<T>::value;
+
+} // namespace
 
 namespace pvtui {
 
@@ -44,6 +52,8 @@ void PVHandler::monitorEvent(const pvac::MonitorEvent& evt) {
 }
 
 bool PVHandler::connected() const { return connection_monitor_->connected(); }
+
+namespace {
 
 size_t get_precision(const epics::pvData::PVStructure* pstruct) {
     size_t prec = 4;
@@ -79,6 +89,8 @@ template <>
 struct pvd_type_map<std::string> {
     using array_type = pvd::PVStringArray;
 };
+
+} // namespace
 
 void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
 

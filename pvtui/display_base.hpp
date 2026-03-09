@@ -1,7 +1,7 @@
 #pragma once
 #include <ftxui/component/component_base.hpp>
+#include <pvtui/app.hpp>
 #include <pvtui/pvgroup.hpp>
-#include <pvtui/pvtui.hpp>
 
 namespace pvtui {
 

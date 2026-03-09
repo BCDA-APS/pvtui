@@ -172,9 +172,8 @@ struct PVGroup {
     PVGroup(pvac::ClientProvider& provider);
 
     /**
-     * @brief Adds a new PV to the group.
+     * @brief Adds a new PV to the group. If the PV already exists, this is a no-op.
      * @param pv_name The name of the PV to add.
-     * @throws std::runtime_error if a PV with the same name already exists.
      */
     void add(const std::string& pv_name);
 

@@ -27,9 +27,9 @@ Options:
   -m, --macro       Macros to pass to the UI (required: P, T)
 
 Examples:
-    pvtui_transform --macro "P=xxx:,C=userTran1"
+    pvtui_transform --macro "P=xxx:,T=userTran1"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 
@@ -67,19 +67,19 @@ class TransformRow : public DisplayBase {
             separator() | color(Color::Black),
             inpx.component()->Render()
                 | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(cmtx),
+                | EPICSColor::link(inpx),
             separator() | color(Color::Black),
             clcx.component()->Render()
                 | size(WIDTH, EQUAL, 25)
-                | EPICSColor::edit(cmtx),
+                | EPICSColor::edit(clcx),
             separator() | color(Color::Black),
             valx.component()->Render()
                 | size(WIDTH, EQUAL, 15)
-                | EPICSColor::edit(cmtx),
+                | EPICSColor::edit(valx),
             separator() | color(Color::Black),
             outx.component()->Render()
                 | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(cmtx),
+                | EPICSColor::link(outx),
         });
     }
 

@@ -86,7 +86,7 @@ if (BUILD_LIB)
     message(STATUS "Found EPICS_BASE: ${EPICS_BASE}")
 
     # Get EPICS host architecture
-    set(EPICS_HOST_ARCH "$ENV{EPICS_HOST_ARCH}" CACHE STRING "Host architecture (e.g. linux-x86_64")
+    set(EPICS_HOST_ARCH "$ENV{EPICS_HOST_ARCH}" CACHE STRING "Host architecture (e.g. linux-x86_64)")
     if (NOT EPICS_HOST_ARCH)
 	message(FATAL_ERROR "'EPICS_HOST_ARCH' not defined")
     endif()
@@ -131,7 +131,6 @@ if (BUILD_LIB)
     # --- PVTUI static library -----------------------------------------------------
     add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
     target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
-    target_compile_options(pvtui PUBLIC -std=c++17)
     target_include_directories(pvtui
 	PUBLIC
 	    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

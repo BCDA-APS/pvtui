@@ -26,14 +26,14 @@ Options:
 
 Examples:
     # Make a screen with a input and readack component for each given PV
-    pvtui_inputx --macro "P=xxx:,R1=m1.DESC,R2=m2.DESC,R2=m3.DESC"
+    pvtui_inputx --macro "P=xxx:,R1=m1.DESC,R2=m2.DESC,R3=m3.DESC"
 
     # Pass desired input/readback PV pairs separated by "/"
     # The below will make a screen with an input field for xxx:m1.VAL
     # and readback widget for xxx:m1.RBV, and the same for m2.VAL and m2.RBV
     pvtui_inputx --macro "P=xxx:,R1=m1.VAL/m1.RBV,R2=m2.VAL/m2.RBV"
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 int main(int argc, char *argv[]) {

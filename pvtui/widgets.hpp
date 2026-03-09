@@ -380,7 +380,7 @@ inline ftxui::Decorator custom(const WidgetBase& w, ftxui::Decorator style) {
     return w.connected() ? style : WHITE_ON_WHITE;
 }
 
-/// @ Default gray background color
+/// @brief Default gray background color
 inline ftxui::Decorator background() { return ftxui::bgcolor(ftxui::Color::RGB(196, 196, 196)); }
 } // namespace EPICSColor
 

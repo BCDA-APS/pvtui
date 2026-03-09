@@ -27,34 +27,15 @@ def git_date():
         print(f'Unable to find Git revision date: {e}')
         return time.strftime('%Y-%m-%d')
 
-#  def git_describe():
-    #  from subprocess import check_output
-    #  try:
-        #  return check_output(['git','describe','--tags']).decode('ascii')
-    #  except Exception as e:
-        #  print(f'Unable to find Git revision: {e}')
-        #  return None # fallback
-#
-#  def read_version(fmt):
-    #  import os, re
-#
-    #  parts = {}
-    #  with open(os.path.join('..','configure','CONFIG_PVXS_VERSION'), 'r') as F:
-        #  for line in F:
-            #  M = re.match(r'^\s*([A-Z_]+)\s*=\s*(\d+)\s*$', line)
-            #  if M:
-                #  parts[M.group(1)] = M.group(2)
-    #  return fmt.format(**parts)
 
 # -- Project information -----------------------------------------------------
 
 project = 'PVTUI'
-copyright = time.strftime('%Y Nick Marks')
+copyright = time.strftime('%Y') + ', UChicago Argonne, LLC'
 author = 'Nick Marks'
 
 # The short X.Y version
-#  version = git_describe() or read_version('{PVXS_MAJOR_VERSION}.{PVXS_MINOR_VERSION}.{PVXS_MAINTENANCE_VERSION}')
-version = '0.1.0'
+version = '1.0.0'
 print("VERSION", version)
 # The full version, including alpha/beta/rc tags
 release = version

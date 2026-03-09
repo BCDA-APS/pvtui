@@ -64,8 +64,10 @@ int main(int argc, char *argv[]) {
     std::vector<double> double_arr;
     pvgroup.set_monitor<std::vector<double>>(prefix+"double_array.VAL", double_arr);
 
-    std::vector<std::string> string_arr;
-    pvgroup.set_monitor<std::vector<std::string>>(prefix+"string_array.VAL", string_arr);
+    // std::vector<std::string> string_arr;
+    // pvgroup.set_monitor<std::vector<std::string>>(prefix+"string_array.VAL", string_arr);
+    std::string string_arr;
+    pvgroup.set_monitor<std::string>(prefix+"string_array.VAL", string_arr);
 
     while (g_signal_caught == 0) {
         if (pvgroup.sync()) {
@@ -79,7 +81,7 @@ int main(int argc, char *argv[]) {
             print_vec(double_arr);
 
             std::cout << "string_array = ";
-            print_vec(string_arr);
+            // print_vec(string_arr);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

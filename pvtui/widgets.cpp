@@ -21,6 +21,8 @@ std::string rectangle(int len) {
 
 } // namespace unicode
 
+namespace {
+
 ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value) {
     auto op = ftxui::ButtonOption::Ascii();
     op.label = label;
@@ -30,7 +32,7 @@ ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int
         }
     };
     return ftxui::Button(op);
-};
+}
 
 template <typename T>
 bool put_string_as(std::string_view str, PVHandler& pv) {
@@ -159,7 +161,7 @@ ftxui::Component make_bits_widget(int& value, size_t nbits) {
     return Renderer([&value, nbits] {
         Elements rows;
         for (size_t i = 0; i < nbits; i++) {
-            int v = value & (1 << i);
+            int v = value & (1u << i);
             auto clr = v ? color(Color::Green) : color(Color::GrayDark);
             rows.push_back(text(unicode::rectangle(2)) | clr);
         }
@@ -167,16 +169,18 @@ ftxui::Component make_bits_widget(int& value, size_t nbits) {
     });
 }
 
+} // namespace
+
 WidgetBase::WidgetBase(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name)
     : pvgroup_(pvgroup), pv_name_(args.replace(pv_name)) {
     pvgroup.add(pv_name_);
     connection_monitor_ = pvgroup[pv_name_].get_connection_monitor();
-};
+}
 
 WidgetBase::WidgetBase(PVGroup& pvgroup, const std::string& pv_name) : pvgroup_(pvgroup), pv_name_(pv_name) {
     pvgroup.add(pv_name_);
     connection_monitor_ = pvgroup[pv_name_].get_connection_monitor();
-};
+}
 
 std::string WidgetBase::pv_name() const { return pv_name_; }
 
