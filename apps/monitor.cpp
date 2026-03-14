@@ -8,6 +8,7 @@
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/color.hpp>
+#include <chrono>
 
 #include <pvtui/pvtui.hpp>
 
@@ -52,13 +53,31 @@ int main(int argc, char *argv[]) {
     }
 
     // std::vector<std::unique_ptr<WidgetBase>> widgets;
-    std::vector<std::unique_ptr<Monitor<std::string>>> widgets;
+    std::vector<std::unique_ptr<WidgetBase>> widgets;
     if (app.args.flag("edit")) {
         std::cout << "edit mode not implemented\n";
         return 0;
     } else {
         for (auto& name : pv_names) {
-            widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
+            auto chan = app.provider.connect(name);
+            if (auto type_str = chan.get()->getStructure()->getField("value")->getID(); type_str == "enum_t") {
+                widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
+            } else {
+                widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
+            }
+            chan.reset();
+            // // FIX: this should be doable with PVGroup!
+            // // Doing a get() before constructing the Widgets makes the widget values
+            // // empty until the monitors fire again for some reason?
+            // app.pvgroup.add(name);
+            // // Monitor everything as a string, unless its an enum then we use PVEnum.
+            // if (auto pstruct = app.pvgroup[name].channel.get()->getStructure()) {
+                // if (pstruct->getField("value")->getID() == "enum_t") {
+                    // widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
+                // } else {
+                    // widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
+                // }
+            // }
         }
     }
 
