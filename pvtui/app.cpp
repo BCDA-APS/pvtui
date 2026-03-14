@@ -39,6 +39,8 @@ std::string ArgParser::replace(const std::string& str) const {
     return out;
 }
 
+std::vector<std::string> ArgParser::positional_args() const { return cmdl_.pos_args(); }
+
 bool ArgParser::flag(const std::string& f) const { return cmdl_[f]; }
 
 std::vector<std::string> ArgParser::split_string(const std::string& input, char delimiter) {

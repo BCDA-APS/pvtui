@@ -17,8 +17,8 @@ target_link_libraries(pvtui_sequence PRIVATE pvtui)
 add_executable(pvtui_sr sr.cpp)
 target_link_libraries(pvtui_sr PRIVATE pvtui)
 
-add_executable(pvtui_inputx inputx.cpp)
-target_link_libraries(pvtui_inputx PRIVATE pvtui)
+add_executable(pvtui_monitor monitor.cpp)
+target_link_libraries(pvtui_monitor PRIVATE pvtui)
 
 add_executable(pvtui_demo demo.cpp)
 target_link_libraries(pvtui_demo PRIVATE pvtui)
