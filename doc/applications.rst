@@ -64,7 +64,7 @@ monitor
 
 Creates a nice table to monitor any number of PVs
 
-    .. image:: img/pvtui_monitor.gif
+    .. image:: img/pvtui_monitor.png
        :alt: pvtui_monitor
        :width: 400px
        :align: center

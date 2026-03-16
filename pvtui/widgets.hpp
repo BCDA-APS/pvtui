@@ -188,10 +188,8 @@ class ButtonWidget : public WidgetBase {
 };
 
 /**
- * @brief A read-only widget that monitors a PV but has no visible UI component.
- *
- * This is useful for tracking a PV's value (e.g., a readback) and making it
- * available to other parts of the application without rendering it directly.
+ * @brief A read-only widget that monitors a PV. The underlying FTXUI component
+ * renders the PV value as an ftxui::text() component.
  * @tparam T The C++ type used to store the PV value.
  */
 template <typename T>
