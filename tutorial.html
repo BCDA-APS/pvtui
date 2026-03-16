@@ -92,7 +92,7 @@ the Value.VAL and Value.DESC. Lets start by instantiating the widgets we will ne
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">    </span><span class="c1">// Instantiate an App to manage everything</span>
-<span class="w">    </span><span class="n">App</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pvtui</span><span class="o">::</span><span class="n">App</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// Check for required macros if desired</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">macros_present</span><span class="p">({</span><span class="s">&quot;P&quot;</span><span class="p">}))</span><span class="w"> </span><span class="p">{</span>

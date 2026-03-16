@@ -13,11 +13,11 @@ Core Classes
    :project: pvtui
    :members:
 
-.. doxygenstruct:: pvtui::PVGroup
+.. doxygenclass:: pvtui::PVGroup
    :project: pvtui
    :members:
 
-.. doxygenstruct:: pvtui::PVHandler
+.. doxygenclass:: pvtui::PVHandler
    :project: pvtui
    :members:
 
