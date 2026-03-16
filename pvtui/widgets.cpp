@@ -217,6 +217,8 @@ InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType
 
 const std::string& InputWidget::value() const { return *value_ptr_; }
 
+std::string InputWidget::value_as_string() const { return *value_ptr_; }
+
 BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits)
     : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
@@ -236,6 +238,8 @@ BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits)
 }
 
 const int& BitsWidget::value() const { return *value_ptr_; }
+
+std::string BitsWidget::value_as_string() const { return std::to_string(*value_ptr_); }
 
 ChoiceWidget::ChoiceWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
                            ChoiceStyle style)
@@ -290,6 +294,8 @@ ChoiceWidget::ChoiceWidget(PVGroup& pvgroup, const std::string& pv_name, ChoiceS
 }
 
 const PVEnum& ChoiceWidget::value() const { return *value_ptr_; }
+
+std::string ChoiceWidget::value_as_string() const { return value_ptr_->choice; }
 
 ButtonWidget::ButtonWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
                            const std::string& label, int press_val)

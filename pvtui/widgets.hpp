@@ -61,6 +61,10 @@ class WidgetBase {
     /// \return True if the PV is connected, false otherwise.
     bool connected() const;
 
+    /// \brief Returns the widget's current PV value as a string.
+    /// \return A string representation of the underlying PV value.
+    virtual std::string value_as_string() const { return ""; }
+
   protected:
     /// \brief Constructs a WidgetBase and registers the PV with a PVGroup.
     ///
@@ -117,6 +121,8 @@ class InputWidget : public WidgetBase {
     /// \brief Gets the current value of the string displayed in the UI.
     /// \return The current string value from the UI.
     const std::string& value() const;
+
+    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<std::string> value_ptr_; ///< Value displayed on the UI
@@ -187,19 +193,23 @@ class Monitor : public WidgetBase {
     /// \return The current value stored in the widget.
     const T& value() const { return *value_ptr_; };
 
+    std::string value_as_string() const override {
+        if constexpr (std::is_same_v<T, std::string>) {
+            return *value_ptr_;
+        } else if constexpr (std::is_arithmetic_v<T>) {
+            return std::to_string(*value_ptr_);
+        } else if constexpr (std::is_same_v<T, PVEnum>) {
+            return value_ptr_->choice;
+        } else {
+            return "<" + pv_name() + ">";
+        }
+    }
+
   private:
     std::shared_ptr<T> value_ptr_;
 
     ftxui::Component monitor_component_ = ftxui::Renderer([this] {
-        if constexpr (std::is_same_v<T, std::string>) {
-            return ftxui::text(*value_ptr_);
-        } else if constexpr (std::is_arithmetic_v<T>) {
-            return ftxui::text(std::to_string(*value_ptr_));
-        } else if constexpr (std::is_same_v<T, PVEnum>) {
-            return ftxui::text(value_ptr_->choice);
-        } else {
-            return ftxui::text("<" + this->pv_name() + ">");
-        }
+        return ftxui::text(value_as_string());
     });
 };
 
@@ -228,6 +238,8 @@ class BitsWidget : public WidgetBase {
     /// \brief Gets the current integer value displayed in the UI.
     /// \return The current integer value from the UI.
     const int& value() const;
+
+    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<int> value_ptr_;
@@ -260,6 +272,8 @@ class ChoiceWidget : public WidgetBase {
     /// \brief Gets the current enum value displayed in the UI.
     /// \return The current PVEnum value from the UI.
     const PVEnum& value() const;
+
+    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<PVEnum> value_ptr_;
