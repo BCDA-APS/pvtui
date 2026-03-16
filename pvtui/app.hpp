@@ -64,6 +64,12 @@ class ArgParser {
      */
     std::string replace(const std::string& str) const;
 
+    /**
+     * @brief Get all positional arguments passed to the program
+     * @return A vector of strings of all the positional arguments
+     */
+    std::vector<std::string> positional_args() const;
+
     std::unordered_map<std::string, std::string> macros; ///< Parsed macros (e.g., "P=VAL").
     std::string provider = "ca";                         ///< The EPICS provider type (e.g., "ca", "pva").
 
