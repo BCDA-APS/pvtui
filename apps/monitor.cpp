@@ -32,7 +32,7 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 int main(int argc, char *argv[]) {
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
     auto pos_args = app.args.positional_args();

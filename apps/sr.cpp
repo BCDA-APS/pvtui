@@ -68,7 +68,7 @@ static const std::unordered_map<int, Element> shutter_status_text = {
 
 int main(int argc, char *argv[]) {
 
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
     // Widgets for each PV we want on the display

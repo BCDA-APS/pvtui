@@ -87,7 +87,7 @@ class SequenceRow : public DisplayBase {
 
 int main(int argc, char *argv[]) {
 
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
     if (not app.args.macros_present({"P", "S"})) {
         printf("Missing required macros\nRequired macros: P, S\n");

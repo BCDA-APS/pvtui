@@ -34,7 +34,7 @@ using namespace pvtui;
 int main(int argc, char* argv[]) {
 
     // Create an App which manages PVs and macros
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
 
     // Show help message and return if requested
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
