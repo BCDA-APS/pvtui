@@ -68,7 +68,7 @@ class ConnectionMonitor : public pvac::ClientChannel::ConnectCallback {
  *
  * Handles connection, monitoring, and value updates for a PV.
  */
-struct PVHandler : public pvac::ClientChannel::MonitorCallback {
+class PVHandler : public pvac::ClientChannel::MonitorCallback {
   public:
     pvac::ClientChannel channel; ///< PVA client channel.
     std::string name;            ///< Name of the process variable.
@@ -156,7 +156,7 @@ struct PVHandler : public pvac::ClientChannel::MonitorCallback {
  * This class provides a centralized way to add, access, and monitor a group of
  * PVs, handling the underlying connections and data updates.
  */
-struct PVGroup {
+class PVGroup {
   public:
     /**
      * @brief Constructs a PVGroup and initializes it with a list of PVs.
