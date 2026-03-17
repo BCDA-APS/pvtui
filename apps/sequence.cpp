@@ -36,7 +36,7 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 // except for the PV names
 class SequenceRow : public DisplayBase {
   public:
-    SequenceRow(App &app, const std::string &row_name) : DisplayBase(app),
+    SequenceRow(pvtui::App &app, const std::string &row_name) : DisplayBase(app),
 	dolx(app, std::string("$(P)$(S).DOL")+row_name, pvtui::PVPutType::String),
 	dlyx(app, std::string("$(P)$(S).DLY")+row_name, pvtui::PVPutType::Double),
 	dox(app, std::string("$(P)$(S).DO")+row_name, pvtui::PVPutType::Double),

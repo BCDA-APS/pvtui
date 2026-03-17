@@ -37,7 +37,7 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 // except for the PV names
 class TransformRow : public DisplayBase {
   public:
-    TransformRow(App &app, const std::string &row_name) : DisplayBase(app),
+    TransformRow(pvtui::App &app, const std::string &row_name) : DisplayBase(app),
 	cmtx(app, std::string("$(P)$(T).CMT")+row_name, pvtui::PVPutType::String),
 	inpx(app, std::string("$(P)$(T).INP")+row_name, pvtui::PVPutType::String),
 	clcx(app, std::string("$(P)$(T).CLC")+row_name, pvtui::PVPutType::String),

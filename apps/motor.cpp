@@ -8,6 +8,7 @@
 #include <ftxui/screen/color.hpp>
 
 #include "motor_display.hpp"
+#include <thread>
 #include <pvtui/pvtui.hpp>
 
 using namespace ftxui;
