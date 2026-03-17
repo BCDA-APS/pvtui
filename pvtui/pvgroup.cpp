@@ -186,6 +186,11 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
     new_data_.store(true, std::memory_order_release);
 }
 
+void PVHandler::force_update() {
+    auto result = channel.get();
+    update_monitored_variable(result.get());
+}
+
 bool PVHandler::sync() {
     if (!new_data_.load(std::memory_order_acquire))
         return false;
@@ -234,6 +239,13 @@ std::shared_ptr<PVHandler> PVGroup::get_pv_shared(const std::string& pv_name) {
 }
 
 PVHandler& PVGroup::operator[](const std::string& pv_name) { return this->get_pv(pv_name); }
+
+void PVGroup::force_update() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (auto& [name, pv] : pv_map) {
+        pv->force_update();
+    }
+}
 
 bool PVGroup::sync() {
     std::lock_guard<std::mutex> lock(mutex_);

@@ -88,6 +88,14 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
         });
     }
 
+    /// \brief Forces an update of all monitored variables by performing a synchronous channel get.
+    ///
+    /// This is useful when a prior channel.get() call has consumed the initial monitor event,
+    /// leaving widgets with empty values until the next PV change. Calling force_update()
+    /// re-fetches the current value and queues it for the next sync() call.
+    /// \throws std::runtime_error if the get operation fails (e.g., channel not connected).
+    void force_update();
+
     /// \brief Gets the underlying PVA monitor instance.
     /// \return A reference to the pvac::Monitor object.
     pvac::Monitor& get_monitor() { return monitor_; }
@@ -167,6 +175,13 @@ class PVGroup {
     /// \return A reference to the corresponding PVHandler object.
     /// \throws std::runtime_error if the PV is not found.
     PVHandler& operator[](const std::string& pv_name);
+
+    /// \brief Forces an update of all monitored variables by performing a synchronous get on each PV.
+    ///
+    /// Calls force_update() on every PVHandler in the group. After calling this,
+    /// the next sync() will push the fetched values to all registered user variables.
+    /// \throws std::runtime_error if any get operation fails.
+    void force_update();
 
     /// \brief Checks if any PV in the group has received new data.
     /// \return True if new data is available in any monitor, false otherwise.

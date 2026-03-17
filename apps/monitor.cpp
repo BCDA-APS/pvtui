@@ -57,15 +57,20 @@ int main(int argc, char *argv[]) {
         return 0;
     } else {
         for (auto& name : pv_names) {
-            auto chan = app.provider.connect(name);
-            if (auto type_str = chan.get()->getStructure()->getField("value")->getID(); type_str == "enum_t") {
+            app.pvgroup.add(name);
+            auto chan = app.pvgroup[name].channel.get();
+            if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
                 widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
             } else {
                 widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
             }
-            chan.reset();
         }
     }
+
+    // TODO: should force_update() set new_data=true so sync will get called
+    // automatically in PVTUI apps?
+    app.pvgroup.force_update();
+    app.pvgroup.sync();
 
     auto main_contianer = Container::Vertical({});
     for (auto& widget : widgets) {
