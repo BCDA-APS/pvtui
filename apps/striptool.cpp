@@ -1,6 +1,8 @@
 #include <ftxui/component/component.hpp>
+#include <ftxui/component/loop.hpp>
 #include <ftxui-plot/plot.hpp>
 #include <pvtui/pvtui.hpp>
+#include <thread>
 #include <chrono>
 
 static constexpr std::string_view CLI_HELP_MSG = R"(
@@ -43,7 +45,7 @@ std::array<Color, MAX_CHANNELS> colors = {
 
 // Waits for the PV to connect, or times out
 constexpr std::chrono::seconds PV_CONNECT_TIMEOUT = 3s;
-bool wait_connect(const VarWidget<double> &var) {
+bool wait_connect(const Monitor<double> &var) {
     auto start = std::chrono::steady_clock::now();
     while (true) {
 	const auto now = std::chrono::steady_clock::now();
@@ -61,7 +63,7 @@ bool wait_connect(const VarWidget<double> &var) {
 
 // Manages the data for a single PV channel
 struct Channel {
-    Channel(VarWidget<double> var, Color color, double y0)
+    Channel(Monitor<double> var, Color color, double y0)
 	: x(arange<std::deque<double>>(0, TIME_SPAN_SEC, SAMPLE_RATE_SEC)),
 	y(std::deque<double>(x.size(), y0)), color(color), var(var)
     {}
@@ -88,51 +90,55 @@ struct Channel {
     std::deque<double> x;
     std::deque<double> y;
     Color color;
-    VarWidget<double> var;
+    Monitor<double> var;
 };
 
 
 int main(int argc, char *argv[]) {
 
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
     // PV names to monitor are pass as positional arguments
     auto all_pos_args = app.args.positional_args();
+    if (all_pos_args.size() < 2) {
+        std::cout << CLI_HELP_MSG;
+        return EXIT_SUCCESS;
+    }
     assert(all_pos_args.size() <= MAX_CHANNELS+1);
     std::vector<std::string> pv_names(all_pos_args.begin()+1, all_pos_args.end());
 
     // add prefix to PV names if P macro given
     if (app.args.macros_present({"P"})) {
-	const std::string prefix = app.args.macros.at("P");
-	std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
-	    return prefix + s;
-	});
+        const std::string prefix = app.args.macros.at("P");
+        std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
+            return prefix + s;
+        });
     }
 
-    // Create VarWidget for each requested PV
+    // Create Monitor for each requested PV
     // For now, just throw if any fail to connect
     std::vector<Channel> channels;
     auto color_it = colors.begin();
     for (const auto& pv_name : pv_names) {
-	std::cout << "Connecting to " << pv_name << "..." << std::flush;
+        std::cout << "Connecting to " << pv_name << "..." << std::flush;
 
-	VarWidget<double> var(app.pvgroup, pv_name);
-	if (!wait_connect(var)) {
-	    throw std::runtime_error("Timed out trying to connect to " + pv_name);
-	}
+        Monitor<double> var(app.pvgroup, pv_name);
+        if (!wait_connect(var)) {
+            throw std::runtime_error("Timed out trying to connect to " + pv_name);
+        }
 
-	app.pvgroup.sync();
-	Channel chan(var, *color_it, var.value());
-	channels.push_back(std::move(chan));
-	color_it = std::next(color_it);
-	std::cout << "Connected!" << std::endl;
+        app.pvgroup.sync();
+        Channel chan(var, *color_it, var.value());
+        channels.push_back(std::move(chan));
+        color_it = std::next(color_it);
+        std::cout << "Connected!" << std::endl;
     }
 
     // Add the data for plotting
     PlotData data;
     for (auto& chan : channels) {
-	data.push_back({&chan.x, &chan.y, &chan.color});
+        data.push_back({&chan.x, &chan.y, &chan.color});
     }
 
     // Axis limits
@@ -142,10 +148,10 @@ int main(int argc, char *argv[]) {
     std::string xmin = "0.0";
     std::string xmax = "5.0";
     auto make_input = [&](std::string &str){
-	auto op = InputOption{};
-	op.multiline = false;
-	op.content = &str;
-	return Input(op);
+        auto op = InputOption{};
+        op.multiline = false;
+        op.content = &str;
+        return Input(op);
     };
     auto ymin_inp = make_input(ymin);
     auto ymax_inp = make_input(ymax);
@@ -156,12 +162,12 @@ int main(int argc, char *argv[]) {
     xmax_op.multiline = false;
     xmax_op.content = &xmax;
     xmax_op.on_enter = [&]{
-	try {
-	    double new_span = std::stod(xmax);
-	    for (auto& chan : channels) {
-		chan.resize(new_span, SAMPLE_RATE_SEC);
-	    }
-	} catch (...) {};
+        try {
+            double new_span = std::stod(xmax);
+            for (auto& chan : channels) {
+                chan.resize(new_span, SAMPLE_RATE_SEC);
+            }
+        } catch (...) {};
     };
     auto xmax_inp = Input(xmax_op);
 
@@ -176,71 +182,71 @@ int main(int argc, char *argv[]) {
 
     // Main container to define interactivity of components
     auto main_container = Container::Vertical({
-	plot,
-	ymin_inp,
-	ymax_inp,
-	xmin_inp,
-	xmax_inp,
+        plot,
+        ymin_inp,
+        ymax_inp,
+        xmin_inp,
+        xmax_inp,
     });
 
     // Main renderer to define visual layout of components and elements
     auto main_renderer = Renderer(main_container, [&] {
-	return hbox({
-	    plot->Render() | (border | (plot->Active() ? color(Color::LightSkyBlue1) : color(Color::White))),
+        return hbox({
+            plot->Render() | (border | (plot->Active() ? color(Color::LightSkyBlue1) : color(Color::White))),
 
-	    // sidebar
-	    vbox({
-		text("Axis limits") | underlined | bold,
-		hbox({
-		    text("X Range: "),
-		    xmin_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
-		    separatorEmpty(),
-		    xmax_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
-		}),
-		hbox({
-		    text("Y Range: "),
-		    ymin_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
-		    separatorEmpty(),
-		    ymax_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
-		}),
+            // sidebar
+            vbox({
+            text("Axis limits") | underlined | bold,
+            hbox({
+                text("X Range: "),
+                xmin_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
+                separatorEmpty(),
+                xmax_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
+            }),
+            hbox({
+                text("Y Range: "),
+                ymin_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
+                separatorEmpty(),
+                ymax_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
+            }),
 
-		separatorEmpty(),
+            separatorEmpty(),
 
-		// plot legend showing connected PVs and their values
-		text("Channels") | underlined | bold,
-		[&]{
-		    Elements legend_elems;
-		    for (const auto& chan : channels) {
-			legend_elems.push_back(hbox({
-			    text(unicode::rectangle(1)) | color(chan.color),
-			    text(chan.var.pv_name() + " = " + std::to_string(chan.var.value()))
-			}));
-			legend_elems.push_back(separatorEmpty());
-		    }
-		    return vbox(legend_elems);
-		}()
+            // plot legend showing connected PVs and their values
+            text("Channels") | underlined | bold,
+            [&]{
+                Elements legend_elems;
+                for (const auto& chan : channels) {
+                    legend_elems.push_back(hbox({
+                        text(unicode::rectangle(1)) | color(chan.color),
+                        text(chan.var.pv_name() + " = " + std::to_string(chan.var.value()))
+                    }));
+                    legend_elems.push_back(separatorEmpty());
+                }
+                return vbox(legend_elems);
+            }()
 
-	    }) | border | flex | size(WIDTH, GREATER_THAN, 30)
-	});
+            }) | border | flex | size(WIDTH, GREATER_THAN, 30)
+        });
     });
 
 
-    app.main_loop = [&channels](App& app, const Component& renderer, int poll_ms) {
-	Loop loop(&app.screen, renderer);
-	while (!loop.HasQuitted()) {
-	    app.pvgroup.sync();
+    app.main_loop = [&channels](pvtui::App& app, const Component& renderer, int poll_ms) {
+        Loop loop(&app.screen, renderer);
+        while (!loop.HasQuitted()) {
+            app.pvgroup.sync();
 
-	    // deques are always full. push_back(latest value) and pop_front(oldest value)
-	    for (auto& chan : channels) {
-		chan.y.push_back(chan.var.value());
-		chan.y.pop_front();
-	    }
+            // deques are always full. push_back(latest value) and pop_front(oldest value)
+            for (auto& chan : channels) {
+            chan.y.push_back(chan.var.value());
+            chan.y.pop_front();
+            }
 
-	    app.screen.PostEvent(Event::Custom);
+            app.screen.PostEvent(Event::Custom);
 
-	    loop.RunOnce();
-	    std::this_thread::sleep_for(std::chrono::milliseconds(poll_ms));
-	}
+            loop.RunOnce();
+            std::this_thread::sleep_for(std::chrono::milliseconds(poll_ms));
+        }
     };
 
     app.run(main_renderer, SAMPLE_RATE_SEC*1000);
