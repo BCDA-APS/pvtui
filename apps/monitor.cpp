@@ -3,8 +3,8 @@
 #include <pva/client.h>
 
 #include <ftxui/component/component.hpp>
-#include <ftxui/component/loop.hpp>
 #include <ftxui/component/event.hpp>
+#include <ftxui/component/loop.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/color.hpp>
@@ -31,9 +31,10 @@ Examples:
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     pvtui::App app(argc, argv);
-    if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
+    if (app.args.help(CLI_HELP_MSG))
+        return EXIT_SUCCESS;
 
     auto pos_args = app.args.positional_args();
     if (pos_args.size() < 2) {
@@ -41,14 +42,13 @@ int main(int argc, char *argv[]) {
         std::cout << CLI_HELP_MSG;
         return 0;
     }
-    std::vector<std::string> pv_names(pos_args.begin()+1, pos_args.end());
+    std::vector<std::string> pv_names(pos_args.begin() + 1, pos_args.end());
 
     // add prefix to PV names if P macro given
     if (app.args.macros_present({"P"})) {
         const std::string prefix = app.args.macros.at("P");
-        std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
-            return prefix + s;
-        });
+        std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(),
+                       [&](auto& s) { return prefix + s; });
     }
 
     std::vector<std::unique_ptr<WidgetBase>> widgets;
@@ -57,7 +57,6 @@ int main(int argc, char *argv[]) {
         return 0;
     } else {
         for (auto& name : pv_names) {
-            app.pvgroup.add(name);
             auto chan = app.pvgroup[name].channel.get();
             if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
                 widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
@@ -67,46 +66,38 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // TODO: should force_update() set new_data=true so sync will get called
-    // automatically in PVTUI apps?
+    // Force update since the above channel.get() calls prevent the monitors
+    // from firing at construction of the widgets
     app.pvgroup.force_update();
-    app.pvgroup.sync();
 
     auto main_contianer = Container::Vertical({});
     for (auto& widget : widgets) {
         main_contianer->Add(widget->component());
     }
 
-    const auto longest = std::max_element(pv_names.begin(),
-            pv_names.end(), [](const std::string& a, const std::string& b){
-        return a.length() < b.length();
-    });
-
     auto main_renderer = Renderer(main_contianer, [&] {
-        Elements rows {
-            hbox({
-                text("PV")  | size(WIDTH, EQUAL, longest->size()) | bold | italic,
-                separator(),
-                text("Value") | bold | italic,
-            }),
-            separator()
-        };
+        Elements name_col = {text("PV") | bold | italic};
+        Elements val_col = {text("Value") | bold | italic};
+
         for (auto& widget : widgets) {
-            rows.push_back(hbox({
-                text(widget->pv_name()) | size(WIDTH, EQUAL, longest->size()),
-                separator(),
-                widget->component()->Render() | color(Color::RGB(125, 174, 227))
-            }));
-            rows.push_back(separator());
+            name_col.push_back(separator());
+            name_col.push_back(text(widget->pv_name()));
+            val_col.push_back(separator());
+            val_col.push_back(widget->component()->Render() | color(Color::RGB(125, 174, 227)));
         }
-        return vbox({
-            separator(),
+
+        return hbox({
             vbox({
-                rows
-            }),
-        }) | size(WIDTH, EQUAL, 50);
+                separator(),
+                hbox({
+                    vbox(name_col),
+                    separator(),
+                    vbox(val_col) | size(WIDTH, GREATER_THAN, 20),
+                }),
+                separator(),
+            })
+        });
     });
 
     app.run(main_renderer);
-
 }

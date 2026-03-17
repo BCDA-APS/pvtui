@@ -76,6 +76,7 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
     ///
     template <typename T>
     void set_monitor(T& var) {
+        std::lock_guard<std::mutex> lock(mutex_);
         auto key = std::type_index(typeid(T));
         auto& slot = monitor_slots_[key];
         if (std::holds_alternative<std::monostate>(slot.data)) {
