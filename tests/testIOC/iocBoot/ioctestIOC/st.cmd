@@ -1,8 +1,8 @@
-# ../../bin/${EPICS_HOST_ARCH}/xxx st.cmd
+# ../../bin/${EPICS_HOST_ARCH}/testIOC st.cmd
 < envPaths
 
-dbLoadDatabase("../../dbd/iocxxxLinux.dbd")
-iocxxxLinux_registerRecordDeviceDriver(pdbbase)
+dbLoadDatabase("../../dbd/ioctestIOCLinux.dbd")
+ioctestIOCLinux_registerRecordDeviceDriver(pdbbase)
 
 epicsEnvSet("PREFIX", "$(USER):")
 
