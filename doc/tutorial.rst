@@ -69,7 +69,7 @@ We will start with the below code, which is a good starting point for most appli
     int main(int argc, char *argv[]) {
 
         // Instantiate an App to manage everything
-        App app(argc, argv);
+        pvtui::App app(argc, argv);
 
         // Check for required macros if desired
         if (not app.args.macros_present({"P"})) {

@@ -59,6 +59,16 @@ sequence record
        :width: 400px
        :align: center
 
+monitor
+=======
+
+Creates a nice table to monitor any number of PVs
+
+    .. image:: img/pvtui_monitor.png
+       :alt: pvtui_monitor
+       :width: 400px
+       :align: center
+
 
 APS storage ring status
 =======================

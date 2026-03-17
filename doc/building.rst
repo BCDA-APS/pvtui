@@ -22,8 +22,10 @@ Clone PVTUI from GitHub and build with cmake ::
     git clone https://github.com/BCDA-APS/pvtui
     cd pvtui
     mkdir build && cd build
-    cmake ..
+    cmake .. -DEPICS_BASE=/path/to/epics/base
     make
+
+If the ``EPICS_BASE`` environment variable is set, the ``-DEPICS_BASE`` flag can be omitted.
 
 PVTUI makes available several optional flags when running cmake
 
