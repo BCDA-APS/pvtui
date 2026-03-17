@@ -10,7 +10,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------------------
 # Create and install (or just install) into <top>/db
 # databases, templates, substitutions like this
-#DB += xxx.db
+#DB += testIOC.db
 
 DB += $(patsubst ../%, %, $(wildcard ../*.template))
 DB += $(patsubst ../%, %, $(wildcard ../*.db))

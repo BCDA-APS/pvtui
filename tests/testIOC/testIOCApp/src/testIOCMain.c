@@ -1,4 +1,4 @@
-/* xxxMain.c */
+/* testIOCMain.c */
 /* Author:  Ron Sluiter */
 
 #include <stddef.h>
