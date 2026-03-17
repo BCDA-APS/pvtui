@@ -328,6 +328,18 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui7PVGroup12force_updateEv">
+<span id="_CPPv3N5pvtui7PVGroup12force_updateEv"></span><span id="_CPPv2N5pvtui7PVGroup12force_updateEv"></span><span id="pvtui::PVGroup::force_update"></span><span class="target" id="da/d13/classpvtui_1_1PVGroup_1a7ac3d9a9afe4e6971785728091f28013"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">force_update</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui7PVGroup12force_updateEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Forces an update of all monitored variables by performing a synchronous get on each PV. </p>
+<p>Calls <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup_1a7ac3d9a9afe4e6971785728091f28013"><span class="std std-ref">force_update()</span></a> on every <a class="reference internal" href="#da/dc2/classpvtui_1_1PVHandler"><span class="std std-ref">PVHandler</span></a> in the group. After calling this, the next <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup_1aeea98f7ed29487bd1ea9b5c05811e059"><span class="std std-ref">sync()</span></a> will push the fetched values to all registered user variables. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if any get operation fails. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui7PVGroup4syncEv">
 <span id="_CPPv3N5pvtui7PVGroup4syncEv"></span><span id="_CPPv2N5pvtui7PVGroup4syncEv"></span><span id="pvtui::PVGroup::sync"></span><span class="target" id="da/d13/classpvtui_1_1PVGroup_1aeea98f7ed29487bd1ea9b5c05811e059"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sync</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui7PVGroup4syncEv" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Checks if any PV in the group has received new data. </p>
@@ -394,6 +406,18 @@
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>var</strong> – A reference to the variable that will be updated. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui9PVHandler12force_updateEv">
+<span id="_CPPv3N5pvtui9PVHandler12force_updateEv"></span><span id="_CPPv2N5pvtui9PVHandler12force_updateEv"></span><span id="pvtui::PVHandler::force_update"></span><span class="target" id="da/dc2/classpvtui_1_1PVHandler_1a8899f4cb8c710fd470c7dcf96d8d4153"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">force_update</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui9PVHandler12force_updateEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Forces an update of all monitored variables by performing a synchronous channel get. </p>
+<p>This is useful when a prior channel.get() call has consumed the initial monitor event, leaving widgets with empty values until the next PV change. Calling <a class="reference internal" href="#da/dc2/classpvtui_1_1PVHandler_1a8899f4cb8c710fd470c7dcf96d8d4153"><span class="std std-ref">force_update()</span></a> re-fetches the current value and queues it for the next <a class="reference internal" href="#da/dc2/classpvtui_1_1PVHandler_1a83f2139cd43ea511b5a99a98323b47b8"><span class="std std-ref">sync()</span></a> call. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – if the get operation fails (e.g., channel not connected). </p>
 </dd>
 </dl>
 </dd></dl>
