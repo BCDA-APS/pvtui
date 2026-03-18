@@ -146,9 +146,9 @@ int main(int argc, char *argv[]) {
     auto main_renderer = Renderer(main_container, [&] {
         return vbox({
             hbox({
-                text("APS Storage Ring Status ")  | bold | italic,
+                text(" APS Storage Ring Status  ")  | bold | italic,
                 text(time_and_date.value()) | dim
-            }) | borderLight | size(WIDTH, EQUAL, 48),
+            }) | borderLight | size(WIDTH, EQUAL, 50),
             separatorEmpty(),
             hbox({
                 vbox({
