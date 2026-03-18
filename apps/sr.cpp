@@ -145,33 +145,49 @@ int main(int argc, char *argv[]) {
     // Main renderer to define visual layout of components and elements
     auto main_renderer = Renderer(main_container, [&] {
         return vbox({
-            text("Storage Ring Status") | borderLight | bold | size(WIDTH, EQUAL, 19),
-            text(time_and_date.value()),
-            separatorEmpty(),
-
             hbox({
-                text("Current:  "),
-                text(current.value()) | size(WIDTH, EQUAL, 7),
-                text(" mA")
+                vbox({
+                    text(time_and_date.value()) | bold | underlined | italic | size(WIDTH, EQUAL, 21),
+                    hbox({
+                        text("Current:  "),
+                        text(current.value()) | size(WIDTH, EQUAL, 7),
+                        text(" mA")
+                    }),
+                    hbox({
+                        text("Lifetime: "),
+                        text(std::to_string(lifetime.value())) | size(WIDTH, EQUAL, 7),
+                        text(" min")
+                    }),
+                    separatorEmpty(),
+                    inj_status_text.count(injection_status.value().index)
+                        ? inj_status_text.at(injection_status.value().index)
+                        : text(""),
+                    text("Swapout In: " + injection_period.value() + " sec."),
+                    separatorEmpty(),
+                    shutter_status_text.count(shutter_status.value().index)
+                        ? shutter_status_text.at(shutter_status.value().index)
+                        : text(""),
+                    text("Machine Status: " + desired_mode.value().choice),
+                    text("Operating Mode: " + actual_mode.value().choice),
+                    text("Shutters Open: " + std::to_string(num_shutters_open.value())),
+                }),
+                separatorEmpty(),
+                separator(),
+                separatorEmpty(),
+                vbox({
+                    text("Messages from Operations: ") | bold | italic | underlined | size(WIDTH, EQUAL, 22),
+                    text("        Operators: " + operators.value()),
+                    text("Floor Coordinator: " + floor_coord.value()),
+                    text("     Fill Pattern: " + fill_patt.value()),
+                    text(" Dump/Trip Reason: " + dump_reason.value()),
+                    text("Trip Reason(cont): " + dump_reason_cont.value()),
+                    text("     Problem Info: " + prob_info.value()),
+                    text(" Prob Info (cont): " + prob_info_cont.value()),
+                    text("        Next Fill: " + next_fill.value()),
+                    text("  Next Fill(cont): " + next_fill_cont.value()),
+                    text("      Next Update: " + next_update.value()),
+                })
             }),
-            hbox({
-                text("Lifetime: "),
-                text(std::to_string(lifetime.value())) | size(WIDTH, EQUAL, 7),
-                text(" min")
-            }),
-
-            separatorEmpty(),
-            inj_status_text.count(injection_status.value().index)
-                ? inj_status_text.at(injection_status.value().index)
-                : text(""),
-            text("Swapout In: " + injection_period.value() + " sec."),
-            separatorEmpty(),
-            shutter_status_text.count(shutter_status.value().index)
-                ? shutter_status_text.at(shutter_status.value().index)
-                : text(""),
-            text("Machine Status: " + desired_mode.value().choice),
-            text("Operating Mode: " + actual_mode.value().choice),
-            text("Shutters Open: " + std::to_string(num_shutters_open.value())),
 
             separatorEmpty(),
             text("Beam History: ") | bold | italic | underlined | size(WIDTH, EQUAL, 11),
@@ -200,18 +216,6 @@ int main(int argc, char *argv[]) {
                 }),
             }) | size(WIDTH, EQUAL, 57),
             separatorEmpty(),
-
-            text("Messages from Operations: ") | bold | italic | underlined | size(WIDTH, EQUAL, 22),
-            text("        Operators: " + operators.value()),
-            text("Floor Coordinator: " + floor_coord.value()),
-            text("     Fill Pattern: " + fill_patt.value()),
-            text(" Dump/Trip Reason: " + dump_reason.value()),
-            text("Trip Reason(cont): " + dump_reason_cont.value()),
-            text("     Problem Info: " + prob_info.value()),
-            text(" Prob Info (cont): " + prob_info_cont.value()),
-            text("        Next Fill: " + next_fill.value()),
-            text("  Next Fill(cont): " + next_fill_cont.value()),
-            text("      Next Update: " + next_update.value()),
         });
     });
 
