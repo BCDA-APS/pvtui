@@ -146,8 +146,12 @@ int main(int argc, char *argv[]) {
     auto main_renderer = Renderer(main_container, [&] {
         return vbox({
             hbox({
+                text(" APS Storage Ring Status  ")  | bold | italic,
+                text(time_and_date.value()) | dim
+            }) | borderLight | size(WIDTH, EQUAL, 50),
+            separatorEmpty(),
+            hbox({
                 vbox({
-                    text(time_and_date.value()) | bold | underlined | italic | size(WIDTH, EQUAL, 21),
                     hbox({
                         text("Current:  "),
                         text(current.value()) | size(WIDTH, EQUAL, 7),
@@ -160,12 +164,12 @@ int main(int argc, char *argv[]) {
                     }),
                     separatorEmpty(),
                     inj_status_text.count(injection_status.value().index)
-                        ? inj_status_text.at(injection_status.value().index)
+                        ? inj_status_text.at(injection_status.value().index) | bold
                         : text(""),
                     text("Swapout In: " + injection_period.value() + " sec."),
                     separatorEmpty(),
                     shutter_status_text.count(shutter_status.value().index)
-                        ? shutter_status_text.at(shutter_status.value().index)
+                        ? shutter_status_text.at(shutter_status.value().index) | bold
                         : text(""),
                     text("Machine Status: " + desired_mode.value().choice),
                     text("Operating Mode: " + actual_mode.value().choice),
@@ -175,7 +179,7 @@ int main(int argc, char *argv[]) {
                 separator(),
                 separatorEmpty(),
                 vbox({
-                    text("Messages from Operations: ") | bold | italic | underlined | size(WIDTH, EQUAL, 22),
+                    text("Messages from Operations: ") | italic | underlined | size(WIDTH, EQUAL, 22),
                     text("        Operators: " + operators.value()),
                     text("Floor Coordinator: " + floor_coord.value()),
                     text("     Fill Pattern: " + fill_patt.value()),
