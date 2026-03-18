@@ -189,13 +189,10 @@ int main(int argc, char *argv[]) {
         xmax_inp,
     });
 
-    // Main renderer to define visual layout of components and elements
-    auto main_renderer = Renderer(main_container, [&] {
-        return hbox({
-            plot->Render() | (border | (plot->Active() ? color(Color::LightSkyBlue1) : color(Color::White))),
+    bool show_menu = true;
 
-            // sidebar
-            vbox({
+    auto menu_renderer = Renderer([&] {
+        return vbox({
             text("Axis limits") | underlined | bold,
             hbox({
                 text("X Range: "),
@@ -217,7 +214,8 @@ int main(int argc, char *argv[]) {
             [&]{
                 Elements legend_elems;
                 for (const auto& chan : channels) {
-                    legend_elems.push_back(hbox({
+                    legend_elems.push_back(
+                    hbox({
                         text(unicode::rectangle(1)) | color(chan.color),
                         text(chan.var.pv_name() + " = " + std::to_string(chan.var.value()))
                     }));
@@ -225,8 +223,24 @@ int main(int argc, char *argv[]) {
                 }
                 return vbox(legend_elems);
             }()
+        }) | border | flex | size(WIDTH, GREATER_THAN, 30);
+    }) | Maybe(&show_menu);
 
-            }) | border | flex | size(WIDTH, GREATER_THAN, 30)
+    // show/hide menu side bar with 'm' key
+    main_container |= CatchEvent([&](Event event){
+        if (event == Event::Character('m')) {
+            show_menu = show_menu ? false : true;
+            return true;
+        }
+        return false;
+    });
+
+
+    // Main renderer to define visual layout of components and elements
+    auto main_renderer = Renderer(main_container, [&] {
+        return hbox({
+            plot->Render() | (border | (plot->Active() ? color(Color::LightSkyBlue1) : color(Color::White))),
+            menu_renderer->Render()
         });
     });
 
@@ -238,8 +252,8 @@ int main(int argc, char *argv[]) {
 
             // deques are always full. push_back(latest value) and pop_front(oldest value)
             for (auto& chan : channels) {
-            chan.y.push_back(chan.var.value());
-            chan.y.pop_front();
+                chan.y.push_back(chan.var.value());
+                chan.y.pop_front();
             }
 
             app.screen.PostEvent(Event::Custom);
