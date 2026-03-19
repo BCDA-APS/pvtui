@@ -26,7 +26,7 @@ target_link_libraries(pvtui_demo PRIVATE pvtui)
 include(FetchContent)
 FetchContent_Declare(
     ftxui-plot
-    SOURCE_DIR /home/beams/NMARKS/devel/ftxui-plot
+    SOURCE_DIR /home/nick/devel/ftxui-plot
     # GIT_REPOSITORY https://github.com/nmarks99/ftxui-plot.git
     # GIT_TAG origin/master
 )

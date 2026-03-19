@@ -48,31 +48,28 @@ constexpr std::chrono::seconds PV_CONNECT_TIMEOUT = 3s;
 bool wait_connect(const Monitor<double> &var) {
     auto start = std::chrono::steady_clock::now();
     while (true) {
-	const auto now = std::chrono::steady_clock::now();
-	const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now-start);
-	if (elapsed >= PV_CONNECT_TIMEOUT) {
-	    return false;
-	}
-	if (var.connected()) {
-	    return true;
-	}
-	std::this_thread::sleep_for(50ms);
+        const auto now = std::chrono::steady_clock::now();
+        const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now-start);
+        if (elapsed >= PV_CONNECT_TIMEOUT) {
+            return false;
+        }
+        if (var.connected()) {
+            return true;
+        }
+        std::this_thread::sleep_for(50ms);
     }
     return true;
 }
 
 // Manages the data for a single PV channel
 struct Channel {
-    Channel(Monitor<double> var, Color color, double y0)
-	: x(arange<std::deque<double>>(0, TIME_SPAN_SEC, SAMPLE_RATE_SEC)),
-	y(std::deque<double>(x.size(), y0)), color(color), var(var)
-    {}
+    Channel(Monitor<double> var, Color color, double y0) :
+        x(arange<std::deque<double>>(0, TIME_SPAN_SEC, SAMPLE_RATE_SEC)),
+        y(std::deque<double>(x.size(), y0)), color(color), var(var) {}
 
     void resize(double new_span, double sample_rate) {
 	    constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
-        // constexpr double X_SPAN_MAX = 1000;
-        // new_span = new_span > X_SPAN_MAX ? X_SPAN_MAX : new_span;
         size_t new_size = static_cast<size_t>(new_span / sample_rate);
 
         // Update X data
