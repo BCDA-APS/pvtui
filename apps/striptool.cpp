@@ -69,10 +69,10 @@ struct Channel {
     {}
 
     void resize(double new_span, double sample_rate) {
-	constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+	    constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 
-	// constexpr double X_SPAN_MAX = 1000;
-	// new_span = new_span > X_SPAN_MAX ? X_SPAN_MAX : new_span;
+        // constexpr double X_SPAN_MAX = 1000;
+        // new_span = new_span > X_SPAN_MAX ? X_SPAN_MAX : new_span;
         size_t new_size = static_cast<size_t>(new_span / sample_rate);
 
         // Update X data
@@ -191,6 +191,7 @@ int main(int argc, char *argv[]) {
 
     bool show_menu = true;
 
+    // Menu/sidebar to set axes limits and show plot legend
     auto menu_renderer = Renderer([&] {
         return vbox({
             text("Axis limits") | underlined | bold,
@@ -222,7 +223,9 @@ int main(int argc, char *argv[]) {
                     legend_elems.push_back(separatorEmpty());
                 }
                 return vbox(legend_elems);
-            }()
+            }(),
+            filler() | yflex,
+            text("Press 'm' to show/hide") | italic | dim
         }) | border | flex | size(WIDTH, GREATER_THAN, 30);
     }) | Maybe(&show_menu);
 
@@ -245,6 +248,7 @@ int main(int argc, char *argv[]) {
     });
 
 
+    // Custom main loop since we need to update Y data deque.
     app.main_loop = [&channels](pvtui::App& app, const Component& renderer, int poll_ms) {
         Loop loop(&app.screen, renderer);
         while (!loop.HasQuitted()) {
