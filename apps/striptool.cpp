@@ -45,7 +45,7 @@ std::array<Color, MAX_CHANNELS> colors = {
 
 // Manages the data for a single PV channel
 struct Channel {
-    Channel(Monitor<double> var, Color color, double y0) :
+    Channel(Monitor<double> var, Color color, double y0 = NaN) :
         x(arange<std::deque<double>>(0, DEFAULT_TIME_SPAN_SEC, DEFAULT_REFRESH_RATE_SEC)),
         y(std::deque<double>(x.size(), y0)), color(color), var(var) {}
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     for (const auto& pv_name : pv_names) {
         Monitor<double> var(app.pvgroup, pv_name);
         app.pvgroup.sync();
-        Channel chan(var, *color_it, var.value());
+        Channel chan(var, *color_it);
         channels.push_back(std::move(chan));
         color_it = std::next(color_it);
     }
@@ -265,16 +265,12 @@ int main(int argc, char *argv[]) {
         while (!loop.HasQuitted()) {
             app.pvgroup.sync();
 
-            // deques are always full. push_back(latest value) and pop_front(oldest value)
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration<double>(now - last_sample).count();
             if (elapsed >= refresh_rate) {
                 for (auto& chan : channels) {
-                    if (chan.var.connected()) {
-                        chan.y.push_back(chan.var.value());
-                    } else {
-                        chan.y.push_back(NaN);
-                    }
+                    // deques are always full. push_back(latest value) and pop_front(oldest value)
+                    chan.y.push_back(chan.var.connected() ? chan.var.value() : NaN);
                     chan.y.pop_front();
                 }
                 app.screen.PostEvent(Event::Custom);
