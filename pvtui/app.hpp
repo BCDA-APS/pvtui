@@ -94,7 +94,7 @@ struct App {
     /// \brief The main loop function to run with App::run. Can be redefined by the user
     std::function<void(App&, const ftxui::Component&)> main_loop;
 
-    int poll_period_ms = 100;
+    int poll_period_ms = 100;        ///< Main loop poll period
     pvtui::ArgParser args;           ///< pvtui::ArgParser to store the cmd line arguments
     pvac::ClientProvider provider;   ///< EPICS client provider
     PVGroup pvgroup;                 ///< pvtui::PVGroup to manage PVs used in the application

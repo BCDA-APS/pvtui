@@ -22,7 +22,7 @@ Examples:
     # Plot several PVs, perhaps with different prefixes
     ./pvtui_striptool MyIOC:m1.RBV IOC2:Temp1.VAL IOC3:Temp2.VAL
 
-For more details, visit: https://github.com/nmarks99/pvtui
+For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 using namespace ftxui;
@@ -255,10 +255,8 @@ int main(int argc, char *argv[]) {
         });
     });
 
-    auto long_pv = app.provider.connect("nmarks:long.VAL");
-
     // Custom main loop since we need to update Y data deque.
-    app.main_loop = [&channels, &refresh_rate, &long_pv](pvtui::App& app, const Component& renderer) {
+    app.main_loop = [&channels, &refresh_rate](pvtui::App& app, const Component& renderer) {
         Loop loop(&app.screen, renderer);
 
         auto last_sample = std::chrono::steady_clock::now();
