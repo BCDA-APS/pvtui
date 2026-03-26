@@ -59,6 +59,7 @@ sequence record
        :width: 400px
        :align: center
 
+
 monitor
 =======
 
@@ -66,6 +67,17 @@ Creates a nice table to monitor any number of PVs
 
     .. image:: img/pvtui_monitor.png
        :alt: pvtui_monitor
+       :width: 400px
+       :align: center
+
+
+striptool
+=======
+
+A live plot to monitor many PVs
+
+    .. image:: img/pvtui_striptool.png
+       :alt: pvtui_striptool
        :width: 400px
        :align: center
 
