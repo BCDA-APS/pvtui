@@ -79,20 +79,21 @@ App::App(int argc, char* argv[])
     : args(argc, argv), provider(init_epics_provider(args.provider)), pvgroup(provider),
       screen(ftxui::ScreenInteractive::Fullscreen()) {
 
-    main_loop = [](App& app, const ftxui::Component& renderer, int ms) {
+    main_loop = [](App& app, const ftxui::Component& renderer) {
         ftxui::Loop loop(&app.screen, renderer);
         while (!loop.HasQuitted()) {
             if (app.pvgroup.sync()) {
                 app.screen.PostEvent(ftxui::Event::Custom);
             }
             loop.RunOnce();
-            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+            std::this_thread::sleep_for(std::chrono::milliseconds(app.poll_period_ms));
         }
     };
 }
 
 void App::run(const ftxui::Component& renderer, int poll_period_ms) {
-    main_loop(*this, renderer, poll_period_ms);
+    this->poll_period_ms = poll_period_ms;
+    main_loop(*this, renderer);
 }
 
 } // namespace pvtui

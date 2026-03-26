@@ -31,9 +31,9 @@ using namespace std::chrono_literals;
 
 using PlotData = std::vector<PlotSeries<std::deque<double>>>;
 
-// Main loop polling time
-constexpr double SAMPLE_RATE_SEC = 0.1;
-constexpr double TIME_SPAN_SEC = 5.0;
+constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+constexpr double DEFAULT_REFRESH_RATE_SEC = 0.1;
+constexpr double DEFAULT_TIME_SPAN_SEC = 5.0;
 
 // We are abitrarily limiting it to 10 PVs on the plot at once
 constexpr int MAX_CHANNELS = 10;
@@ -43,37 +43,16 @@ std::array<Color, MAX_CHANNELS> colors = {
     Color::LightSlateBlue, Color::DarkOrange, Color::Yellow
 };
 
-// Waits for the PV to connect, or times out
-constexpr std::chrono::seconds PV_CONNECT_TIMEOUT = 3s;
-bool wait_connect(const Monitor<double> &var) {
-    auto start = std::chrono::steady_clock::now();
-    while (true) {
-        const auto now = std::chrono::steady_clock::now();
-        const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now-start);
-        if (elapsed >= PV_CONNECT_TIMEOUT) {
-            return false;
-        }
-        if (var.connected()) {
-            return true;
-        }
-        std::this_thread::sleep_for(50ms);
-    }
-    return true;
-}
-
 // Manages the data for a single PV channel
 struct Channel {
     Channel(Monitor<double> var, Color color, double y0) :
-        x(arange<std::deque<double>>(0, TIME_SPAN_SEC, SAMPLE_RATE_SEC)),
+        x(arange<std::deque<double>>(0, DEFAULT_TIME_SPAN_SEC, DEFAULT_REFRESH_RATE_SEC)),
         y(std::deque<double>(x.size(), y0)), color(color), var(var) {}
 
     void resize(double new_span, double sample_rate) {
-	    constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
-
-        size_t new_size = static_cast<size_t>(new_span / sample_rate);
-
         // Update X data
         x = arange<std::deque<double>>(0, new_span, sample_rate);
+        size_t new_size = x.size();
 
         // Update Y data
         if (y.size() > new_size) {
@@ -114,22 +93,14 @@ int main(int argc, char *argv[]) {
     }
 
     // Create Monitor for each requested PV
-    // For now, just throw if any fail to connect
     std::vector<Channel> channels;
     auto color_it = colors.begin();
     for (const auto& pv_name : pv_names) {
-        std::cout << "Connecting to " << pv_name << "..." << std::flush;
-
         Monitor<double> var(app.pvgroup, pv_name);
-        if (!wait_connect(var)) {
-            throw std::runtime_error("Timed out trying to connect to " + pv_name);
-        }
-
         app.pvgroup.sync();
         Channel chan(var, *color_it, var.value());
         channels.push_back(std::move(chan));
         color_it = std::next(color_it);
-        std::cout << "Connected!" << std::endl;
     }
 
     // Add the data for plotting
@@ -137,6 +108,9 @@ int main(int argc, char *argv[]) {
     for (auto& chan : channels) {
         data.push_back({&chan.x, &chan.y, &chan.color});
     }
+
+    // Sample rate
+    double refresh_rate = DEFAULT_REFRESH_RATE_SEC;
 
     // Axis limits
     // +-5 seems like a reasonable default?
@@ -154,7 +128,7 @@ int main(int argc, char *argv[]) {
     auto ymax_inp = make_input(ymax);
     auto xmin_inp = make_input(xmin);
 
-    // xmax is also used as the time span
+    // xmax is special because it is also used as the time span
     auto xmax_op = InputOption{};
     xmax_op.multiline = false;
     xmax_op.content = &xmax;
@@ -162,11 +136,36 @@ int main(int argc, char *argv[]) {
         try {
             double new_span = std::stod(xmax);
             for (auto& chan : channels) {
-                chan.resize(new_span, SAMPLE_RATE_SEC);
+                chan.resize(new_span, refresh_rate);
             }
         } catch (...) {};
     };
     auto xmax_inp = Input(xmax_op);
+
+    auto to_string_fmt2 = [](double v) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.2f", v);
+        return std::string(buf);
+    };
+
+    // Input for sample rate
+    std::string refresh_rate_str = to_string_fmt2(refresh_rate);
+    auto rate_inp_op = InputOption{};
+    rate_inp_op.multiline = false;
+    rate_inp_op.content = &refresh_rate_str;
+    rate_inp_op.on_enter = [&]{
+        try {
+            refresh_rate = std::stod(refresh_rate_str);
+            double new_span = std::stod(xmax);
+            for (auto& chan : channels) {
+                chan.resize(new_span, refresh_rate);
+            }
+        } catch (...) {
+            refresh_rate = DEFAULT_REFRESH_RATE_SEC;
+            refresh_rate_str = to_string_fmt2(refresh_rate);
+        }
+    };
+    auto refresh_rate_inp = Input(rate_inp_op);
 
     // Create the plot component
     PlotOption<std::deque<double>> op;
@@ -184,6 +183,7 @@ int main(int argc, char *argv[]) {
         ymax_inp,
         xmin_inp,
         xmax_inp,
+        refresh_rate_inp,
     });
 
     bool show_menu = true;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
     // Menu/sidebar to set axes limits and show plot legend
     auto menu_renderer = Renderer([&] {
         return vbox({
-            text("Axis limits") | underlined | bold,
+            text("Axis Limits") | underlined | bold,
             hbox({
                 text("X Range: "),
                 xmin_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
@@ -207,6 +207,14 @@ int main(int argc, char *argv[]) {
 
             separatorEmpty(),
 
+            text("Refresh Rate") | underlined | bold,
+            hbox({
+                refresh_rate_inp->Render() | size(WIDTH, EQUAL, 6) | bgcolor(Color::RGB(50,50,50)),
+                text(" sec")
+            }),
+
+            separatorEmpty(),
+
             // plot legend showing connected PVs and their values
             text("Channels") | underlined | bold,
             [&]{
@@ -215,7 +223,10 @@ int main(int argc, char *argv[]) {
                     legend_elems.push_back(
                     hbox({
                         text(unicode::rectangle(1)) | color(chan.color),
-                        text(chan.var.pv_name() + " = " + std::to_string(chan.var.value()))
+                        text(chan.var.pv_name() + " = "),
+                        chan.var.connected()
+                            ? text(std::to_string(chan.var.value()))
+                            : text("Disconnected") | color(Color::Yellow),
                     }));
                     legend_elems.push_back(separatorEmpty());
                 }
@@ -223,7 +234,7 @@ int main(int argc, char *argv[]) {
             }(),
             filler() | yflex,
             text("Press 'm' to show/hide") | italic | dim
-        }) | border | flex | size(WIDTH, GREATER_THAN, 30);
+        }) | border | flex | size(WIDTH, GREATER_THAN, 34);
     }) | Maybe(&show_menu);
 
     // show/hide menu side bar with 'm' key
@@ -244,27 +255,38 @@ int main(int argc, char *argv[]) {
         });
     });
 
+    auto long_pv = app.provider.connect("nmarks:long.VAL");
 
     // Custom main loop since we need to update Y data deque.
-    app.main_loop = [&channels](pvtui::App& app, const Component& renderer, int poll_ms) {
+    app.main_loop = [&channels, &refresh_rate, &long_pv](pvtui::App& app, const Component& renderer) {
         Loop loop(&app.screen, renderer);
+
+        auto last_sample = std::chrono::steady_clock::now();
         while (!loop.HasQuitted()) {
             app.pvgroup.sync();
 
             // deques are always full. push_back(latest value) and pop_front(oldest value)
-            for (auto& chan : channels) {
-                chan.y.push_back(chan.var.value());
-                chan.y.pop_front();
+            auto now = std::chrono::steady_clock::now();
+            auto elapsed = std::chrono::duration<double>(now - last_sample).count();
+            if (elapsed >= refresh_rate) {
+                for (auto& chan : channels) {
+                    if (chan.var.connected()) {
+                        chan.y.push_back(chan.var.value());
+                    } else {
+                        chan.y.push_back(NaN);
+                    }
+                    chan.y.pop_front();
+                }
+                app.screen.PostEvent(Event::Custom);
+                last_sample = now;
             }
 
-            app.screen.PostEvent(Event::Custom);
-
             loop.RunOnce();
-            std::this_thread::sleep_for(std::chrono::milliseconds(poll_ms));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     };
 
-    app.run(main_renderer, SAMPLE_RATE_SEC*1000);
+    app.run(main_renderer);
 
     return 0;
 }
