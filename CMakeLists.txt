@@ -91,7 +91,9 @@ if(BUILD_LIB)
     message(STATUS "EPICS_HOST_ARCH: ${EPICS_HOST_ARCH}")
 
     set(EPICS_LIB_DIR "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}")
-    set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
+    if(NOT DEFINED CMAKE_INSTALL_RPATH)
+        set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
+    endif()
     foreach(LIB pvAccessCA ca pvAccess pvData Com)
         find_library(EPICS_${LIB} ${LIB}
             PATHS ${EPICS_LIB_DIR}
