@@ -7,7 +7,7 @@ using namespace pvtui;
 int main(int argc, char *argv[]) {
 
     // Instantiate an App to manage everything
-    App app(argc, argv);
+    pvtui::App app(argc, argv);
 
     // Check for required macros if desired
     if (not app.args.macros_present({"P"})) {
