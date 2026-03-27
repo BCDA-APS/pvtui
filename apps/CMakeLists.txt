@@ -1,4 +1,3 @@
-
 add_executable(pvtui_motor motor_display.cpp motor.cpp)
 target_link_libraries(pvtui_motor PRIVATE pvtui)
 
@@ -32,3 +31,16 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ftxui-plot)
 add_executable(pvtui_striptool striptool.cpp)
 target_link_libraries(pvtui_striptool PRIVATE pvtui ftxui-plot)
+
+install(TARGETS
+    pvtui_motor
+    pvtui_asyn
+    pvtui_calcout
+    pvtui_transform
+    pvtui_sequence
+    pvtui_sr
+    pvtui_monitor
+    pvtui_demo
+    pvtui_striptool
+    RUNTIME DESTINATION bin
+)

@@ -1,5 +1,5 @@
 .cache/
 build/
-.clang-format
 .loglogin
 *.local
+CMakeUserPresets.json
