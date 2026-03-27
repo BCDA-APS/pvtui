@@ -8,6 +8,8 @@ project(pvtui
 # Generate compile_commands.json for LSP's
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(GNUInstallDirs)
+
 # C++ Standards
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -88,20 +90,22 @@ if(BUILD_LIB)
     endif()
     message(STATUS "EPICS_HOST_ARCH: ${EPICS_HOST_ARCH}")
 
-    if(APPLE)
-        set(EPICS_LIB_EXT ".dylib")
-    elseif(UNIX)
-        set(EPICS_LIB_EXT ".so")
-    else()
-        set(EPICS_LIB_EXT ".a")
-    endif()
-
+    set(EPICS_LIB_DIR "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}")
+    set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
+    foreach(LIB pvAccessCA ca pvAccess pvData Com)
+        find_library(EPICS_${LIB} ${LIB}
+            PATHS ${EPICS_LIB_DIR}
+            NO_DEFAULT_PATH
+            REQUIRED
+        )
+        message(STATUS "Found EPICS ${LIB}: ${EPICS_${LIB}}")
+    endforeach()
     set(EPICS_BASE_LIBRARIES
-        "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libpvAccessCA${EPICS_LIB_EXT}"
-        "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libca${EPICS_LIB_EXT}"
-        "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libpvAccess${EPICS_LIB_EXT}"
-        "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libpvData${EPICS_LIB_EXT}"
-        "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}/libCom${EPICS_LIB_EXT}"
+        ${EPICS_pvAccessCA}
+        ${EPICS_ca}
+        ${EPICS_pvAccess}
+        ${EPICS_pvData}
+        ${EPICS_Com}
     )
 
     set(POTENTIAL_EPICS_INCLUDES
@@ -128,7 +132,7 @@ if(BUILD_LIB)
     target_include_directories(pvtui
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-            $<INSTALL_INTERFACE:include>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     )
     target_include_directories(pvtui
         SYSTEM
@@ -145,35 +149,35 @@ if(BUILD_LIB)
 
     # --- Installation/CMake config ------------------------------------------------
     install(DIRECTORY pvtui
-        DESTINATION include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING
             PATTERN "*.hpp"
             PATTERN "*.h")
 
     install(TARGETS pvtui
         EXPORT pvtuiTargets
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include)
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     install(EXPORT pvtuiTargets
         FILE pvtuiTargets.cmake
         NAMESPACE pvtui::
-        DESTINATION lib/cmake/pvtui)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pvtui)
 
     include(CMakePackageConfigHelpers)
 
     configure_package_config_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/cmake/pvtuiConfig.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/pvtuiConfig.cmake
-        INSTALL_DESTINATION lib/cmake/pvtui
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pvtui
         NO_CHECK_REQUIRED_COMPONENTS_MACRO
     )
 
     install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/pvtuiConfig.cmake
-        DESTINATION lib/cmake/pvtui)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pvtui)
     # ------------------------------------------------------------------------------
 endif() # BUILD_LIB
 

@@ -42,5 +42,5 @@ install(TARGETS
     pvtui_monitor
     pvtui_demo
     pvtui_striptool
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

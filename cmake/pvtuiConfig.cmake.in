@@ -3,7 +3,7 @@
 include(CMakeFindDependencyMacro)
 
 # If the library was built with FETCH_FTXUI=ON,
-# the starter app needs to find or fetch it too.
+# apps that find_packge(pvtui) needs to find or fetch it too.
 if(@FETCH_FTXUI@)
     include(FetchContent)
     FetchContent_Declare(ftxui
