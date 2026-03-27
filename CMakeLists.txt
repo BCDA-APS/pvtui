@@ -26,6 +26,7 @@ option(BUILD_LIB "Build PVTUI library" ON)
 option(BUILD_APPS "Build applications in apps/" ON)
 option(BUILD_TESTS "Build tests" OFF)
 option(BUILD_DOCS "Build documentation" OFF)
+option(EPICS_STATIC "Link EPICS libraries statically" OFF)
 
 # Add EPICS_BASE as a cached string option
 if(NOT DEFINED EPICS_BASE OR EPICS_BASE STREQUAL "")
@@ -91,8 +92,11 @@ if(BUILD_LIB)
     message(STATUS "EPICS_HOST_ARCH: ${EPICS_HOST_ARCH}")
 
     set(EPICS_LIB_DIR "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}")
-    if(NOT DEFINED CMAKE_INSTALL_RPATH)
+    if(NOT DEFINED CMAKE_INSTALL_RPATH AND NOT EPICS_STATIC)
         set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
+    endif()
+    if(EPICS_STATIC)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
     endif()
     foreach(LIB pvAccessCA ca pvAccess pvData Com)
         find_library(EPICS_${LIB} ${LIB}
@@ -109,6 +113,9 @@ if(BUILD_LIB)
         ${EPICS_pvData}
         ${EPICS_Com}
     )
+    if(EPICS_STATIC)
+        list(APPEND EPICS_BASE_LIBRARIES readline dl rt pthread)
+    endif()
 
     set(POTENTIAL_EPICS_INCLUDES
         ${EPICS_BASE}/include
@@ -238,6 +245,7 @@ message(STATUS "   BUILD_LIB:   ${BUILD_LIB}")
 message(STATUS "   BUILD_APPS:  ${BUILD_APPS}")
 message(STATUS "   BUILD_TESTS: ${BUILD_TESTS}")
 message(STATUS "   BUILD_DOCS:  ${BUILD_DOCS}")
-message(STATUS "   FETCH_FTXUI: ${FETCH_FTXUI}")
-message(STATUS "   EPICS_BASE:  ${EPICS_BASE}")
+message(STATUS "   FETCH_FTXUI:  ${FETCH_FTXUI}")
+message(STATUS "   EPICS_STATIC: ${EPICS_STATIC}")
+message(STATUS "   EPICS_BASE:   ${EPICS_BASE}")
 message(STATUS "------------------------------------------------")
