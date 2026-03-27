@@ -19,18 +19,13 @@ and [pvAccessCPP](https://github.com/epics-base/pvAccessCPP).
 ```bash
 git clone https://github.com/BCDA-APS/pvtui
 cd pvtui
-mkdir build && cd build
-cmake .. -DEPICS_BASE=/path/to/epics/base
-make
+cmake --preset release
+cmake --build build/release
+# optionally install (default prefix: `~/.local`, or specify --prefix)
+# cmake --install build/release
 ```
 
-Included applications are built by default. For example, to launch the motor record UI:
-
-```bash
-./bin/pvtui_motor --macro "P=xxx:,M=m1"
-```
-
-See the [tutorial](https://bcda-aps.github.io/pvtui/tutorial.html) for creating your own application.
+See the [tutorial](https://bcda-aps.github.io/pvtui/tutorial.html) for creating your own applications.
 
 ## Documentation
 
