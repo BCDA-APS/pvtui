@@ -37,13 +37,13 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 
 int main(int argc, char* argv[]) {
 
-    // Parse command line arguments and macros
-    pvtui::ArgParser args(argc, argv);
+    pvtui::App app(argc, argv);
 
-    if (args.help(CLI_HELP_MSG))
+    if (app.args.help(CLI_HELP_MSG)) {
         return EXIT_SUCCESS;
+    }
 
-    if (not args.macros_present({"P"})) {
+    if (not app.args.macros_present({"P"})) {
         printf("Missing required macro P\n");
         return EXIT_FAILURE;
     }
@@ -52,33 +52,22 @@ int main(int argc, char* argv[]) {
 
     // If M1 macro present, assume Mutli display type
     // otherwise assume single and M macro must be present
-    if (args.macros_present({"M1"})) {
-        // display_type = MotorDisplayType::Multi;
+    if (app.args.macros_present({"M1"})) {
         display_multi = true;
-    } else if (not args.macros_present({"M"})) {
+    } else if (not app.args.macros_present({"M"})) {
         printf("Missing required macro M or (M1,M2,...)\n");
         return EXIT_FAILURE;
     }
 
-    // Create the FTXUI screen. Interactive and uses the full terminal screen
-    auto screen = ScreenInteractive::Fullscreen();
-
-    // Instantiate EPICS PVA client and CAClientFactory to see CA only PVs
-    epics::pvAccess::ca::CAClientFactory::start();
-    pvac::ClientProvider provider(args.provider);
-
     // unique_ptr's to DisplayBase for each screen
     std::vector<std::unique_ptr<DisplayBase>> displays;
-
-    // PVGroup to manage all PVs for displays
-    PVGroup pvgroup(provider);
 
     // multi display creates a SmallMotorDisplay for each Mn macro where n is an integer.
     // The resulting screen is similar to motorNx.adl
     std::vector<int> motor_num_vec;
     std::vector<ArgParser> args_vec;
     if (display_multi) {
-        for (const auto& [k, v] : args.macros) {
+        for (const auto& [k, v] : app.args.macros) {
             const size_t ind = k.find("M");
             if (ind != std::string::npos) {
                 const std::string num_str = std::string(k.begin() + ind + 1, k.end());
@@ -91,15 +80,15 @@ int main(int argc, char* argv[]) {
         }
         std::sort(motor_num_vec.begin(), motor_num_vec.end());
         for (const auto& v : motor_num_vec) {
-            auto args_n = args;
+            auto args_n = app.args;
             args_n.macros["M"] = args_n.macros.at("M" + std::to_string(v));
             args_vec.push_back(args_n);
-            displays.emplace_back(std::make_unique<SmallMotorDisplay>(pvgroup, args_n));
+            displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, args_n));
         }
     } else {
-        displays.emplace_back(std::make_unique<SmallMotorDisplay>(pvgroup, args));
-        displays.emplace_back(std::make_unique<MediumMotorDisplay>(pvgroup, args));
-        displays.emplace_back(std::make_unique<AllMotorDisplay>(pvgroup, args));
+        displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, app.args));
+        displays.emplace_back(std::make_unique<MediumMotorDisplay>(app.pvgroup, app.args));
+        displays.emplace_back(std::make_unique<AllMotorDisplay>(app.pvgroup, app.args));
     }
 
     int selected = 0;
@@ -156,13 +145,5 @@ int main(int argc, char* argv[]) {
         });
     }
 
-    constexpr int POLL_PERIOD_MS = 100;
-    Loop loop(&screen, main_renderer);
-    while (!loop.HasQuitted()) {
-        if (pvgroup.sync()) {
-            screen.PostEvent(Event::Custom);
-        }
-        loop.RunOnce();
-        std::this_thread::sleep_for(std::chrono::milliseconds(POLL_PERIOD_MS));
-    }
+    app.run(main_renderer);
 }
