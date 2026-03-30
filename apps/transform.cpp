@@ -36,12 +36,12 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 // except for the PV names
 class TransformRow : public DisplayBase {
   public:
-    TransformRow(pvtui::App &app, const std::string &row_name) : DisplayBase(app),
-	cmtx(app, std::string("$(R).CMT")+row_name, pvtui::PVPutType::String),
-	inpx(app, std::string("$(R).INP")+row_name, pvtui::PVPutType::String),
-	clcx(app, std::string("$(R).CLC")+row_name, pvtui::PVPutType::String),
-	valx(app, std::string("$(R).")+row_name, pvtui::PVPutType::Double),
-	outx(app, std::string("$(R).OUT")+row_name, pvtui::PVPutType::String),
+    TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) : DisplayBase(app),
+	cmtx(app, record + ".CMT" + row_name, pvtui::PVPutType::String),
+	inpx(app, record + ".INP" + row_name, pvtui::PVPutType::String),
+	clcx(app, record + ".CLC" + row_name, pvtui::PVPutType::String),
+	valx(app, record + "." + row_name, pvtui::PVPutType::Double),
+	outx(app, record + ".OUT" + row_name, pvtui::PVPutType::String),
 	row_name_(row_name) {}
 
     ~TransformRow() override = default;
@@ -102,20 +102,19 @@ int main(int argc, char *argv[]) {
         std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
-    app.args.macros["R"] = pos_args[1];
+    const std::string record_name = pos_args[1];
 
-    ChoiceWidget scan(app, "$(R).SCAN", ChoiceStyle::Dropdown);
-    ButtonWidget proc(app, "$(R).PROC", " PROC ");
-    InputWidget desc(app, "$(R).DESC", PVPutType::String);
-    InputWidget prec(app, "$(R).PREC", PVPutType::Integer);
-    InputWidget flnk(app, "$(R).FLNK", PVPutType::String);
-    ChoiceWidget copt(app, "$(R).COPT", ChoiceStyle::Dropdown);
+    ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
+    ButtonWidget proc(app, record_name + ".PROC", " PROC ");
+    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
+    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
+    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
+    ChoiceWidget copt(app, record_name + ".COPT", ChoiceStyle::Dropdown);
 
-    // add a row for transform record fields A through P (e.g. INPA, CLCA...INPA, CLCP)
     std::vector<std::unique_ptr<DisplayBase>> rows;
     for (char c = 'A'; c <= 'P'; c++) {
         std::string s {c};
-        rows.emplace_back(std::make_unique<TransformRow>(app, s));
+        rows.emplace_back(std::make_unique<TransformRow>(app, record_name, s));
     }
 
     // Main container to define interactivity of components

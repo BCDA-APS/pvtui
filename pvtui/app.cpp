@@ -1,6 +1,4 @@
-#include <algorithm>
 #include <chrono>
-#include <sstream>
 #include <thread>
 
 #include <ftxui/component/event.hpp>
@@ -11,34 +9,11 @@
 namespace pvtui {
 
 ArgParser::ArgParser(int argc, char* argv[], std::initializer_list<char const* const> extra_params) {
-    cmdl_.add_params({"-m", "--macro", "--macros"});
     cmdl_.add_params({"--provider"});
     if (extra_params.size() > 0)
         cmdl_.add_params(extra_params);
     cmdl_.parse(argc, argv);
-    this->macros = get_macro_dict(cmdl_({"-m", "--macro", "--macros"}).str());
     this->provider = cmdl_("--provider").str().empty() ? "ca" : cmdl_("--provider").str();
-}
-
-bool ArgParser::macros_present(const std::vector<std::string>& macro_list) const {
-    for (const auto& m : macro_list) {
-        if (!this->macros.count(m)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-std::string ArgParser::replace(const std::string& str) const {
-    std::string out = str;
-    size_t ind = 0;
-    for (auto& [k, v] : this->macros) {
-        std::string pholder = "$(" + k + ")";
-        while ((ind = out.find(pholder)) != std::string::npos) {
-            out.replace(ind, k.size() + 3, v);
-        }
-    }
-    return out;
 }
 
 std::vector<std::string> ArgParser::positional_args() const { return cmdl_.pos_args(); }
@@ -46,32 +21,6 @@ std::vector<std::string> ArgParser::positional_args() const { return cmdl_.pos_a
 bool ArgParser::flag(const std::string& f) const { return cmdl_[f]; }
 
 std::string ArgParser::param(const std::string& name) const { return cmdl_(name).str(); }
-
-std::vector<std::string> ArgParser::split_string(const std::string& input, char delimiter) {
-    std::vector<std::string> result;
-    std::stringstream ss(input);
-    std::string item;
-    while (std::getline(ss, item, delimiter)) {
-        result.push_back(std::move(item));
-    }
-    return result;
-}
-
-std::unordered_map<std::string, std::string> ArgParser::get_macro_dict(std::string all_macros) {
-    all_macros.erase(
-        std::remove_if(all_macros.begin(), all_macros.end(), [](unsigned char s) { return std::isspace(s); }),
-        all_macros.end());
-
-    std::unordered_map<std::string, std::string> map_out;
-    for (const auto& m : split_string(all_macros, ',')) {
-        auto pair = split_string(m, '=');
-        if (pair.size() != 2) {
-            return std::unordered_map<std::string, std::string>{};
-        }
-        map_out.emplace(std::move(pair.at(0)), std::move(pair.at(1)));
-    }
-    return map_out;
-}
 
 static pvac::ClientProvider init_epics_provider(const std::string& p) {
     epics::pvAccess::ca::CAClientFactory::start();

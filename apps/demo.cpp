@@ -46,20 +46,17 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         }
     }
-    app.args.macros["P"] = prefix;
 
-    // Create all the widgets we want for this display
-    InputWidget inp1(app, "$(P)string.VAL", PVPutType::String, Color::Black, Color::White);
-    ButtonWidget plus_button(app, "$(P)add1.PROC", " + ");
-    ButtonWidget minus_button(app, "$(P)subtract1.PROC", " - ");
-    Monitor<int> int_val(app, "$(P)long.VAL");
-    ChoiceWidget enum_h(app, "$(P)enum.VAL", ChoiceStyle::Horizontal);
-    ChoiceWidget enum_v(app, "$(P)enum.VAL", ChoiceStyle::Vertical);
-    ChoiceWidget enum_d(app, "$(P)enum.VAL", ChoiceStyle::Dropdown);
+    InputWidget inp1(app, prefix + "string.VAL", PVPutType::String, Color::Black, Color::White);
+    ButtonWidget plus_button(app, prefix + "add1.PROC", " + ");
+    ButtonWidget minus_button(app, prefix + "subtract1.PROC", " - ");
+    Monitor<int> int_val(app, prefix + "long.VAL");
+    ChoiceWidget enum_h(app, prefix + "enum.VAL", ChoiceStyle::Horizontal);
+    ChoiceWidget enum_v(app, prefix + "enum.VAL", ChoiceStyle::Vertical);
+    ChoiceWidget enum_d(app, prefix + "enum.VAL", ChoiceStyle::Dropdown);
 
-    // BitsWidget displays an integer's individual bits
     size_t nbits = 8;
-    BitsWidget bits(app, "$(P)int8.VAL", nbits);
+    BitsWidget bits(app, prefix + "int8.VAL", nbits);
     Elements labs;
     for (size_t i = 0; i < nbits; i++) {
         labs.push_back(text(std::to_string(i) + ":") | color(Color::White));

@@ -39,32 +39,31 @@ int main(int argc, char *argv[]) {
         std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
-    const std::string record_name = app.args.positional_args()[1];
-    app.args.macros["R"] = record_name;
+    const std::string record_name = pos_args[1];
 
-    ChoiceWidget scan(app, "$(R).SCAN", ChoiceStyle::Dropdown);
-    InputWidget desc(app, "$(R).DESC", PVPutType::String);
-    InputWidget prec(app, "$(R).PREC", PVPutType::Integer);
-    InputWidget inpa(app, "$(R).INPA", PVPutType::String);
-    InputWidget a_val(app, "$(R).A", PVPutType::Double);
-    InputWidget inpb(app, "$(R).INPB", PVPutType::String);
-    InputWidget b_val(app, "$(R).B", PVPutType::Double);
-    InputWidget inpc(app, "$(R).INPC", PVPutType::String);
-    InputWidget c_val(app, "$(R).C", PVPutType::Double);
-    InputWidget inpd(app, "$(R).INPD", PVPutType::String);
-    InputWidget d_val(app, "$(R).D", PVPutType::Double);
-    InputWidget calc(app, "$(R).CALC", PVPutType::String);
-    InputWidget ocal(app, "$(R).OCAL", PVPutType::String);
-    InputWidget out(app, "$(R).OUT", PVPutType::String);
-    InputWidget flnk(app, "$(R).FLNK", PVPutType::String);
-    Monitor<std::string> val(app, "$(R).VAL");
-    Monitor<std::string> oval(app, "$(R).OVAL");
-    ChoiceWidget dopt(app, "$(R).DOPT", ChoiceStyle::Dropdown);
-    ChoiceWidget ivoa(app, "$(R).IVOA", ChoiceStyle::Dropdown);
-    ChoiceWidget oopt(app, "$(R).OOPT", ChoiceStyle::Dropdown);
-    InputWidget odly(app, "$(R).ODLY", PVPutType::Double);
-    InputWidget ivov(app, "$(R).IVOV", PVPutType::Double);
-    ButtonWidget proc(app, "$(R).PROC", " PROC ");
+    ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
+    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
+    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
+    InputWidget inpa(app, record_name + ".INPA", PVPutType::String);
+    InputWidget a_val(app, record_name + ".A", PVPutType::Double);
+    InputWidget inpb(app, record_name + ".INPB", PVPutType::String);
+    InputWidget b_val(app, record_name + ".B", PVPutType::Double);
+    InputWidget inpc(app, record_name + ".INPC", PVPutType::String);
+    InputWidget c_val(app, record_name + ".C", PVPutType::Double);
+    InputWidget inpd(app, record_name + ".INPD", PVPutType::String);
+    InputWidget d_val(app, record_name + ".D", PVPutType::Double);
+    InputWidget calc(app, record_name + ".CALC", PVPutType::String);
+    InputWidget ocal(app, record_name + ".OCAL", PVPutType::String);
+    InputWidget out(app, record_name + ".OUT", PVPutType::String);
+    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
+    Monitor<std::string> val(app, record_name + ".VAL");
+    Monitor<std::string> oval(app, record_name + ".OVAL");
+    ChoiceWidget dopt(app, record_name + ".DOPT", ChoiceStyle::Dropdown);
+    ChoiceWidget ivoa(app, record_name + ".IVOA", ChoiceStyle::Dropdown);
+    ChoiceWidget oopt(app, record_name + ".OOPT", ChoiceStyle::Dropdown);
+    InputWidget odly(app, record_name + ".ODLY", PVPutType::Double);
+    InputWidget ivov(app, record_name + ".IVOV", PVPutType::Double);
+    ButtonWidget proc(app, record_name + ".PROC", " PROC ");
 
     // Main container to define interactivity of components
     auto main_container = Container::Vertical({

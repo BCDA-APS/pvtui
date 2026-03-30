@@ -42,39 +42,37 @@ int main(int argc, char *argv[]) {
         std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
-    const std::string record_name = app.args.positional_args()[1];
-    app.args.macros["R"] = record_name;
+    const std::string record_name = pos_args[1];
 
-    // Create all the widgets
-    InputWidget aout(app, "$(R).AOUT", PVPutType::String);
-    InputWidget oeos(app, "$(R).OEOS", PVPutType::String);
-    InputWidget ieos(app, "$(R).IEOS", PVPutType::String);
-    InputWidget tmot(app, "$(R).TMOT", PVPutType::Double);
-    InputWidget tfil(app, "$(R).TFIL", PVPutType::String);
-    InputWidget nowt(app, "$(R).NOWT", PVPutType::Integer);
-    Monitor<PVEnum> stat(app, "$(R).STAT");
-    Monitor<PVEnum> sevr(app, "$(R).SEVR");
-    Monitor<std::string> tinp(app, "$(R).TINP");
-    Monitor<std::string> nawt(app, "$(R).NAWT");
-    Monitor<std::string> nord(app, "$(R).NORD");
-    Monitor<std::string> errs(app, "$(R).ERRS");
-    ChoiceWidget tmod(app, "$(R).TMOD", ChoiceStyle::Dropdown);
-    ChoiceWidget tb0(app, "$(R).TB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tb1(app, "$(R).TB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tb2(app, "$(R).TB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tb3(app, "$(R).TB3", ChoiceStyle::Horizontal);
-    ChoiceWidget tb4(app, "$(R).TB4", ChoiceStyle::Horizontal);
-    ChoiceWidget tb5(app, "$(R).TB5", ChoiceStyle::Horizontal);
-    ChoiceWidget tib0(app, "$(R).TIB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tib1(app, "$(R).TIB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tib2(app, "$(R).TIB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb0(app, "$(R).TINB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb1(app, "$(R).TINB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb2(app, "$(R).TINB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb3(app, "$(R).TINB3", ChoiceStyle::Horizontal);
-    ChoiceWidget cnct(app, "$(R).CNCT", ChoiceStyle::Dropdown);
-    ChoiceWidget enbl(app, "$(R).ENBL", ChoiceStyle::Dropdown);
-    ChoiceWidget auct(app, "$(R).AUCT", ChoiceStyle::Dropdown);
+    InputWidget aout(app, record_name + ".AOUT", PVPutType::String);
+    InputWidget oeos(app, record_name + ".OEOS", PVPutType::String);
+    InputWidget ieos(app, record_name + ".IEOS", PVPutType::String);
+    InputWidget tmot(app, record_name + ".TMOT", PVPutType::Double);
+    InputWidget tfil(app, record_name + ".TFIL", PVPutType::String);
+    InputWidget nowt(app, record_name + ".NOWT", PVPutType::Integer);
+    Monitor<PVEnum> stat(app, record_name + ".STAT");
+    Monitor<PVEnum> sevr(app, record_name + ".SEVR");
+    Monitor<std::string> tinp(app, record_name + ".TINP");
+    Monitor<std::string> nawt(app, record_name + ".NAWT");
+    Monitor<std::string> nord(app, record_name + ".NORD");
+    Monitor<std::string> errs(app, record_name + ".ERRS");
+    ChoiceWidget tmod(app, record_name + ".TMOD", ChoiceStyle::Dropdown);
+    ChoiceWidget tb0(app, record_name + ".TB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tb1(app, record_name + ".TB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tb2(app, record_name + ".TB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tb3(app, record_name + ".TB3", ChoiceStyle::Horizontal);
+    ChoiceWidget tb4(app, record_name + ".TB4", ChoiceStyle::Horizontal);
+    ChoiceWidget tb5(app, record_name + ".TB5", ChoiceStyle::Horizontal);
+    ChoiceWidget tib0(app, record_name + ".TIB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tib1(app, record_name + ".TIB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tib2(app, record_name + ".TIB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb0(app, record_name + ".TINB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb1(app, record_name + ".TINB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb2(app, record_name + ".TINB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb3(app, record_name + ".TINB3", ChoiceStyle::Horizontal);
+    ChoiceWidget cnct(app, record_name + ".CNCT", ChoiceStyle::Dropdown);
+    ChoiceWidget enbl(app, record_name + ".ENBL", ChoiceStyle::Dropdown);
+    ChoiceWidget auct(app, record_name + ".AUCT", ChoiceStyle::Dropdown);
 
     // ftxui container to define interactivity of components
     auto main_container = ftxui::Container::Vertical({

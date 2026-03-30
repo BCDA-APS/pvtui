@@ -65,8 +65,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    return 1;
-
     // Force update since the above channel.get() calls prevent the monitors
     // from firing at construction of the widgets
     app.pvgroup.force_update();

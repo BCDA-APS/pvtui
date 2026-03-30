@@ -171,12 +171,6 @@ ftxui::Component make_bits_widget(int& value, size_t nbits) {
 
 } // namespace
 
-WidgetBase::WidgetBase(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name)
-    : pvgroup_(pvgroup), pv_name_(args.replace(pv_name)) {
-    pvgroup.add(pv_name_);
-    connection_monitor_ = pvgroup[pv_name_].get_connection_monitor();
-}
-
 WidgetBase::WidgetBase(PVGroup& pvgroup, const std::string& pv_name) : pvgroup_(pvgroup), pv_name_(pv_name) {
     pvgroup.add(pv_name_);
     connection_monitor_ = pvgroup[pv_name_].get_connection_monitor();
@@ -194,16 +188,9 @@ ftxui::Component WidgetBase::component() const {
     }
 }
 
-InputWidget::InputWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
-                         PVPutType put_type, ftxui::Color fg, ftxui::Color hover)
-    : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<std::string>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
-}
-
 InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
                          ftxui::Color hover)
-    : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<std::string>()) {
+    : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
     component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
@@ -219,12 +206,6 @@ const std::string& InputWidget::value() const { return *value_ptr_; }
 
 std::string InputWidget::value_as_string() const { return *value_ptr_; }
 
-BitsWidget::BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits)
-    : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<int>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, nbits);
-}
-
 BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
@@ -232,7 +213,7 @@ BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbit
 }
 
 BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits)
-    : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<int>()) {
+    : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
     component_ = make_bits_widget(*value_ptr_, nbits);
 }
@@ -241,25 +222,8 @@ const int& BitsWidget::value() const { return *value_ptr_; }
 
 std::string BitsWidget::value_as_string() const { return std::to_string(*value_ptr_); }
 
-ChoiceWidget::ChoiceWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
-                           ChoiceStyle style)
-    : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<PVEnum>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
-    switch (style) {
-    case pvtui::ChoiceStyle::Vertical:
-        component_ = make_choice_v_widget(pvgroup.get_pv(pv_name_), value_ptr_->choices, value_ptr_->index);
-        break;
-    case pvtui::ChoiceStyle::Horizontal:
-        component_ = make_choice_h_widget(pvgroup.get_pv(pv_name_), value_ptr_->choices, value_ptr_->index);
-        break;
-    case pvtui::ChoiceStyle::Dropdown:
-        component_ = make_dropdown_widget(pvgroup.get_pv(pv_name_), value_ptr_->choices, value_ptr_->index);
-        break;
-    }
-}
-
 ChoiceWidget::ChoiceWidget(App& app, const std::string& pv_name, ChoiceStyle style)
-    : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<PVEnum>()) {
+    : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<PVEnum>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
     switch (style) {
     case pvtui::ChoiceStyle::Vertical:
@@ -297,14 +261,8 @@ const PVEnum& ChoiceWidget::value() const { return *value_ptr_; }
 
 std::string ChoiceWidget::value_as_string() const { return value_ptr_->choice; }
 
-ButtonWidget::ButtonWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
-                           const std::string& label, int press_val)
-    : WidgetBase(pvgroup, args, pv_name) {
-    component_ = make_button_widget(pvgroup.get_pv(pv_name_), label, press_val);
-}
-
 ButtonWidget::ButtonWidget(App& app, const std::string& pv_name, const std::string& label, int press_val)
-    : WidgetBase(app.pvgroup, app.args, pv_name) {
+    : WidgetBase(app.pvgroup, pv_name) {
     component_ = make_button_widget(app.pvgroup.get_pv(pv_name_), label, press_val);
 }
 

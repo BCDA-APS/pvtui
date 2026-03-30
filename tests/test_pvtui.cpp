@@ -6,21 +6,20 @@ using namespace pvtui;
 
 int main(int argc, char *argv[]) {
 
-    // Instantiate an App to manage everything
     pvtui::App app(argc, argv);
 
-    // Check for required macros if desired
-    if (not app.args.macros_present({"P"})) {
-	printf("Missing required macro P\n");
+    auto pos_args = app.args.positional_args();
+    if (pos_args.size() < 2) {
+	printf("Usage: test_pvtui <prefix>\n");
 	return EXIT_FAILURE;
     }
+    const std::string prefix = pos_args[1];
 
-    // Create all the widgets
-    InputWidget desc(app, "$(P)Value.DESC", PVPutType::String);
-    InputWidget val(app, "$(P)Value.VAL", PVPutType::Double);
-    InputWidget twv(app, "$(P)TweakVal.VAL", PVPutType::Double);
-    ButtonWidget twf(app, "$(P)TweakFwd.PROC", " + ");
-    ButtonWidget twr(app, "$(P)TweakRev.PROC", " - ");
+    InputWidget desc(app, prefix + "Value.DESC", PVPutType::String);
+    InputWidget val(app, prefix + "Value.VAL", PVPutType::Double);
+    InputWidget twv(app, prefix + "TweakVal.VAL", PVPutType::Double);
+    ButtonWidget twf(app, prefix + "TweakFwd.PROC", " + ");
+    ButtonWidget twr(app, prefix + "TweakRev.PROC", " - ");
 
     // ftxui container to define interactivity of components
     auto main_container = Container::Vertical({

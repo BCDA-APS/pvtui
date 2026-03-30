@@ -67,16 +67,8 @@ class WidgetBase {
 
   protected:
     /// \brief Constructs a WidgetBase and registers the PV with a PVGroup.
-    ///
-    /// This constructor uses an ArgParser to expand any macros in the PV name.
     /// \param pvgroup The PVGroup used to manage PVs for this widget.
-    /// \param args The ArgParser for macro expansion.
-    /// \param pv_name The macro-style PV name (e.g., "$(P)$(R)VAL").
-    WidgetBase(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name);
-
-    /// \brief Constructs a WidgetBase with a fully-expanded PV name.
-    /// \param pvgroup The PVGroup used to manage PVs for this widget.
-    /// \param pv_name The fully-expanded PV name.
+    /// \param pv_name The PV name.
     WidgetBase(PVGroup& pvgroup, const std::string& pv_name);
 
     PVGroup& pvgroup_;                                      ///< The PVGroup
@@ -90,17 +82,7 @@ class WidgetBase {
 /// Supports typed PV put operations (int, double, string).
 class InputWidget : public WidgetBase {
   public:
-    /// \brief Constructs an InputWidget with macro expansion.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    /// \param args ArgParser for macro replacement.
-    /// \param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-    /// \param put_type Specifies how the input value is written to the PV.
-    /// \param fg Optional ftxui color for the input foreground (cursor and text).
-    /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, PVPutType put_type,
-                ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
-
-    /// \brief Constructs an InputWidget with an already expanded PV name.
+    /// \brief Constructs an InputWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param put_type Specifies how the input value is written to the PV.
@@ -131,16 +113,7 @@ class InputWidget : public WidgetBase {
 /// \brief A simple button widget that writes a fixed value when pressed.
 class ButtonWidget : public WidgetBase {
   public:
-    /// \brief Constructs a ButtonWidget with macro expansion.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    /// \param args ArgParser for macro replacement.
-    /// \param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-    /// \param label The text displayed on the button.
-    /// \param press_val The value written to the PV on press.
-    ButtonWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name,
-                 const std::string& label, int press_val = 1);
-
-    /// \brief Constructs a ButtonWidget with an expanded PV name.
+    /// \brief Constructs a ButtonWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param label The text displayed on the button.
@@ -161,17 +134,7 @@ class ButtonWidget : public WidgetBase {
 template <typename T>
 class Monitor : public WidgetBase {
   public:
-    /// \brief Constructs a Monitor with macro expansion.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    /// \param args ArgParser for macro replacement.
-    /// \param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-    Monitor(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name)
-        : WidgetBase(pvgroup, args, pv_name), value_ptr_(std::make_shared<T>()) {
-        pvgroup.set_monitor(pv_name_, *value_ptr_);
-        component_ = monitor_component_;
-    }
-
-    /// \brief Constructs a Monitor with a fully expanded PV name.
+    /// \brief Constructs a Monitor.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     Monitor(PVGroup& pvgroup, const std::string& pv_name)
@@ -184,7 +147,7 @@ class Monitor : public WidgetBase {
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     Monitor(App& app, const std::string& pv_name)
-        : WidgetBase(app.pvgroup, app.args, pv_name), value_ptr_(std::make_shared<T>()) {
+        : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
         app.pvgroup.set_monitor(pv_name_, *value_ptr_);
         component_ = monitor_component_;
     }
@@ -216,14 +179,7 @@ class Monitor : public WidgetBase {
 /// \brief A widget to display an integer in binary
 class BitsWidget : public WidgetBase {
   public:
-    /// \brief Constructs a BitsWidget with macro expansion.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    /// \param args ArgParser for macro replacement.
-    /// \param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-    /// \param nbits Number of bits to display
-    BitsWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, size_t nbits);
-
-    /// \brief Constructs a BitsWidget with an expanded PV name.
+    /// \brief Constructs a BitsWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
@@ -250,14 +206,7 @@ class BitsWidget : public WidgetBase {
 /// Supports vertical, horizontal, or dropdown layout styles.
 class ChoiceWidget : public WidgetBase {
   public:
-    /// \brief Constructs a ChoiceWidget with macro expansion.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    /// \param args ArgParser for macro replacement.
-    /// \param pv_name The PV name with macros, e.g. "$(P)$(M).VAL".
-    /// \param style Layout style (vertical, horizontal, dropdown).
-    ChoiceWidget(PVGroup& pvgroup, const ArgParser& args, const std::string& pv_name, ChoiceStyle style);
-
-    /// \brief Constructs a ChoiceWidget with a PV name without macros.
+    /// \brief Constructs a ChoiceWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param style Layout style (vertical, horizontal, dropdown).

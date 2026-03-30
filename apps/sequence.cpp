@@ -35,11 +35,11 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 // except for the PV names
 class SequenceRow : public DisplayBase {
   public:
-    SequenceRow(pvtui::App &app, const std::string &row_name) : DisplayBase(app),
-	dolx(app, std::string("$(R).DOL")+row_name, pvtui::PVPutType::String),
-	dlyx(app, std::string("$(R).DLY")+row_name, pvtui::PVPutType::Double),
-	dox(app, std::string("$(R).DO")+row_name, pvtui::PVPutType::Double),
-	lnkx(app, std::string("$(R).LNK")+row_name, pvtui::PVPutType::String),
+    SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) : DisplayBase(app),
+	dolx(app, record + ".DOL" + row_name, pvtui::PVPutType::String),
+	dlyx(app, record + ".DLY" + row_name, pvtui::PVPutType::Double),
+	dox(app, record + ".DO" + row_name, pvtui::PVPutType::Double),
+	lnkx(app, record + ".LNK" + row_name, pvtui::PVPutType::String),
 	row_name_(row_name) {}
 
     ~SequenceRow() override = default;
@@ -94,18 +94,17 @@ int main(int argc, char *argv[]) {
         std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
-    app.args.macros["R"] = pos_args[1];
+    const std::string record_name = pos_args[1];
 
-    ChoiceWidget scan(app, "$(R).SCAN", ChoiceStyle::Dropdown);
-    ButtonWidget proc(app, "$(R).PROC", " PROC ");
-    InputWidget desc(app, "$(R).DESC", PVPutType::String);
-    InputWidget prec(app, "$(R).PREC", PVPutType::Integer);
-    InputWidget flnk(app, "$(R).FLNK", PVPutType::String);
+    ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
+    ButtonWidget proc(app, record_name + ".PROC", " PROC ");
+    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
+    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
+    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
 
-    // add a row for sequence record fields 0 through 9 (e.g. DOL0, DLY0, DO0, LNK0)
     std::vector<std::unique_ptr<DisplayBase>> rows;
     for (int i = 0; i < 10; i++) {
-        rows.emplace_back(std::make_unique<SequenceRow>(app, std::to_string(i)));
+        rows.emplace_back(std::make_unique<SequenceRow>(app, record_name, std::to_string(i)));
     }
 
     // Main container to define interactivity of components
