@@ -18,21 +18,21 @@ static constexpr std::string_view CLI_HELP_MSG = R"(
 pvtui_monitor - Terminal UI for monitoring several PVs.
 
 Usage:
-  pvtui_monitor [options]
+    pvtui_monitor [options]
 
 Options:
-  -h, --help        Show this help message and exit.
-  -m, --macro       Macros to pass to the UI
+    -h, --help    Show this help message and exit.
+    --prefix      Prefix to prepend to each PV name.
 
 Examples:
-    #  Optional prefix followed by list of PVs to monitor
-    pvtui_monitor --macro "P=xxx:" m1.DESC m1.RBV m2.DESC m2.RBV
+    pvtui_monitor --prefix "xxx:" m1.DESC m1.RBV m2.DESC m2.RBV
+    pvtui_monitor MyIOC:m1.RBV IOC2:m1.RBV IOC2:m2.RBV IOC3:m1.RBV
 
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 int main(int argc, char* argv[]) {
-    pvtui::App app(argc, argv);
+    pvtui::App app(argc, argv, {"--prefix"});
     if (app.args.help(CLI_HELP_MSG))
         return EXIT_SUCCESS;
 
@@ -44,12 +44,10 @@ int main(int argc, char* argv[]) {
     }
     std::vector<std::string> pv_names(pos_args.begin() + 1, pos_args.end());
 
-    // add prefix to PV names if P macro given
-    if (app.args.macros_present({"P"})) {
-        const std::string prefix = app.args.macros.at("P");
-        std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(),
-                       [&](auto& s) { return prefix + s; });
-    }
+    std::string prefix = app.args.param("--prefix");
+    std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
+        return prefix + s;
+    });
 
     std::vector<std::unique_ptr<WidgetBase>> widgets;
     if (app.args.flag("edit")) {
@@ -57,6 +55,7 @@ int main(int argc, char* argv[]) {
         return 0;
     } else {
         for (auto& name : pv_names) {
+            std::cout << name << std::endl;
             auto chan = app.pvgroup[name].channel.get();
             if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
                 widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
@@ -65,6 +64,8 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+
+    return 1;
 
     // Force update since the above channel.get() calls prevent the monitors
     // from firing at construction of the widgets

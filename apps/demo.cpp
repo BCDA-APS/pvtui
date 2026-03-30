@@ -20,10 +20,9 @@ Usage:
 
 Options:
   -h, --help        Show this help message and exit.
-  -m, --macro       Macros to pass to the UI (required: P)
 
 Examples:
-    pvtui_demo --macro "P=${USER}:"
+    pvtui_demo
 
 For more details, visit https://github.com/BCDA-APS/pvtui
 )";
@@ -39,11 +38,15 @@ int main(int argc, char* argv[]) {
     // Show help message and return if requested
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
-    // Return if not all required macros are given.
-    if (not app.args.macros_present({"P"})) {
-        printf("Missing required macros\nRequired macros: P\n");
-        return EXIT_FAILURE;
+    std::string prefix;
+    if (auto p = std::getenv("USER")) {
+        prefix = std::string(p) + ":";
+        if (prefix == ":") {
+            std::cout << "$USER variable empty. Check your environment\n";
+            return EXIT_FAILURE;
+        }
     }
+    app.args.macros["P"] = prefix;
 
     // Create all the widgets we want for this display
     InputWidget inp1(app, "$(P)string.VAL", PVPutType::String, Color::Black, Color::White);

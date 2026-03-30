@@ -7,20 +7,18 @@
 
 static constexpr std::string_view CLI_HELP_MSG = R"(
 pvtui_striptool - EPICS live strip chart plotting tool.
+A maximum of 10 PVs are supported.
 
 Usage:
     pvtui_striptool [options] <pv_names...>
 
 Options:
     -h, --help     Show this help message and exit.
-    -m, --macro    Macros for PV name substitution (e.g., "P=Prefix:")
+    --prefix       Prefix to prepend to each PV name.
 
 Examples:
-    # Plot motor readbacks with a given IOC prefix
-    ./pvtui_striptool --macro "P=MyIOC:" m1.RBV m2.RBV m3.RBV
-
-    # Plot several PVs, perhaps with different prefixes
-    ./pvtui_striptool MyIOC:m1.RBV IOC2:Temp1.VAL IOC3:Temp2.VAL
+    pvtui_striptool --prefix "MyIOC:" m1.RBV m2.RBV m3.RBV
+    pvtui_striptool MyIOC:m1.RBV IOC2:Temp1.VAL IOC3:Temp2.VAL
 
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
@@ -72,25 +70,21 @@ struct Channel {
 
 int main(int argc, char *argv[]) {
 
-    pvtui::App app(argc, argv);
+    pvtui::App app(argc, argv, {"--prefix"});
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
-    // PV names to monitor are pass as positional arguments
-    auto all_pos_args = app.args.positional_args();
-    if (all_pos_args.size() < 2) {
+    // PV names to monitor are passed as positional arguments
+    auto pos_args = app.args.positional_args();
+    if (pos_args.size() < 2 || pos_args.size() >= MAX_CHANNELS+1) {
         std::cout << CLI_HELP_MSG;
         return EXIT_SUCCESS;
     }
-    assert(all_pos_args.size() <= MAX_CHANNELS+1);
-    std::vector<std::string> pv_names(all_pos_args.begin()+1, all_pos_args.end());
+    std::vector<std::string> pv_names(pos_args.begin()+1, pos_args.end());
 
-    // add prefix to PV names if P macro given
-    if (app.args.macros_present({"P"})) {
-        const std::string prefix = app.args.macros.at("P");
-        std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
-            return prefix + s;
-        });
-    }
+    std::string prefix = app.args.param("--prefix");
+    std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
+        return prefix + s;
+    });
 
     // Create Monitor for each requested PV
     std::vector<Channel> channels;

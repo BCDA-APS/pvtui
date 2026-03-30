@@ -4,22 +4,22 @@
 
 ftxui::Decorator ColorDisabled = bgcolor(ftxui::Color::DarkRed) | color(ftxui::Color::Black);
 
-SmallMotorDisplay::SmallMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args)
-    : pvtui::DisplayBase(pvgroup), args(args),
-    desc(pvgroup, args, "$(P)$(M).DESC", pvtui::PVPutType::String),
-    val(pvgroup, args, "$(P)$(M).VAL", pvtui::PVPutType::Double),
-    twr(pvgroup, args, "$(P)$(M).TWR", " < "),
-    twv(pvgroup, args, "$(P)$(M).TWV", pvtui::PVPutType::Double),
-    twf(pvgroup, args, "$(P)$(M).TWF", " > "),
-    rbv(pvgroup, args, "$(P)$(M).RBV"),
-    dmov(pvgroup, args, "$(P)$(M).DMOV"),
-    lls(pvgroup, args, "$(P)$(M).LLS"),
-    hls(pvgroup, args, "$(P)$(M).HLS"),
-    lvio(pvgroup, args, "$(P)$(M).LVIO"),
-    egu(pvgroup, args, "$(P)$(M).EGU"),
-    able(pvgroup, args, "$(P)$(M)_able", pvtui::ChoiceStyle::Horizontal),
-    use_set(pvgroup, args, "$(P)$(M).SET", pvtui::ChoiceStyle::Horizontal),
-    stop(pvgroup, args, "$(P)$(M).STOP", " STOP ")
+SmallMotorDisplay::SmallMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
+    : pvtui::DisplayBase(pvgroup), record_name(record),
+    desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
+    val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
+    twr(pvgroup, record + ".TWR", " < "),
+    twv(pvgroup, record + ".TWV", pvtui::PVPutType::Double),
+    twf(pvgroup, record + ".TWF", " > "),
+    rbv(pvgroup, record + ".RBV"),
+    dmov(pvgroup, record + ".DMOV"),
+    lls(pvgroup, record + ".LLS"),
+    hls(pvgroup, record + ".HLS"),
+    lvio(pvgroup, record + ".LVIO"),
+    egu(pvgroup, record + ".EGU"),
+    able(pvgroup, record + "_able", pvtui::ChoiceStyle::Horizontal),
+    use_set(pvgroup, record + ".SET", pvtui::ChoiceStyle::Horizontal),
+    stop(pvgroup, record + ".STOP", " STOP ")
 {}
 
 ftxui::Component SmallMotorDisplay::get_container() {
@@ -93,28 +93,28 @@ ftxui::Element SmallMotorDisplay::get_renderer() {
     | center;
 }
 
-MediumMotorDisplay::MediumMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args)
-    : pvtui::DisplayBase(pvgroup), args(args),
-    desc(pvgroup, args, "$(P)$(M).DESC", pvtui::PVPutType::String),
-    val(pvgroup, args, "$(P)$(M).VAL", pvtui::PVPutType::Double),
-    twr(pvgroup, args, "$(P)$(M).TWR", " < "),
-    twv(pvgroup, args, "$(P)$(M).TWV", pvtui::PVPutType::Double),
-    twf(pvgroup, args, "$(P)$(M).TWF", " > "),
-    rbv(pvgroup, args, "$(P)$(M).RBV"),
-    dmov(pvgroup, args, "$(P)$(M).DMOV"),
-    lls(pvgroup, args, "$(P)$(M).LLS"),
-    hls(pvgroup, args, "$(P)$(M).HLS"),
-    lvio(pvgroup, args, "$(P)$(M).LVIO"),
-    egu(pvgroup, args, "$(P)$(M).EGU"),
-    use_set(pvgroup, args, "$(P)$(M).SET", pvtui::ChoiceStyle::Horizontal),
-    drbv(pvgroup, args, "$(P)$(M).DRBV"),
-    dval(pvgroup, args, "$(P)$(M).DVAL", pvtui::PVPutType::Double),
-    hlm(pvgroup, args, "$(P)$(M).HLM", pvtui::PVPutType::Double),
-    dhlm(pvgroup, args, "$(P)$(M).DHLM", pvtui::PVPutType::Double),
-    llm(pvgroup, args, "$(P)$(M).LLM", pvtui::PVPutType::Double),
-    dllm(pvgroup, args, "$(P)$(M).DLLM", pvtui::PVPutType::Double),
-    spmg(pvgroup, args, "$(P)$(M).SPMG", pvtui::ChoiceStyle::Vertical),
-    able(pvgroup, args, "$(P)$(M)_able", pvtui::ChoiceStyle::Horizontal)
+MediumMotorDisplay::MediumMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
+    : pvtui::DisplayBase(pvgroup), record_name(record),
+    desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
+    val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
+    twr(pvgroup, record + ".TWR", " < "),
+    twv(pvgroup, record + ".TWV", pvtui::PVPutType::Double),
+    twf(pvgroup, record + ".TWF", " > "),
+    rbv(pvgroup, record + ".RBV"),
+    dmov(pvgroup, record + ".DMOV"),
+    lls(pvgroup, record + ".LLS"),
+    hls(pvgroup, record + ".HLS"),
+    lvio(pvgroup, record + ".LVIO"),
+    egu(pvgroup, record + ".EGU"),
+    use_set(pvgroup, record + ".SET", pvtui::ChoiceStyle::Horizontal),
+    drbv(pvgroup, record + ".DRBV"),
+    dval(pvgroup, record + ".DVAL", pvtui::PVPutType::Double),
+    hlm(pvgroup, record + ".HLM", pvtui::PVPutType::Double),
+    dhlm(pvgroup, record + ".DHLM", pvtui::PVPutType::Double),
+    llm(pvgroup, record + ".LLM", pvtui::PVPutType::Double),
+    dllm(pvgroup, record + ".DLLM", pvtui::PVPutType::Double),
+    spmg(pvgroup, record + ".SPMG", pvtui::ChoiceStyle::Vertical),
+    able(pvgroup, record + "_able", pvtui::ChoiceStyle::Horizontal)
 {}
 
 ftxui::Component MediumMotorDisplay::get_container() {
@@ -217,46 +217,46 @@ ftxui::Element MediumMotorDisplay::get_renderer() {
     }) | center | EPICSColor::background();
 }
 
-AllMotorDisplay::AllMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args)
-    : pvtui::DisplayBase(pvgroup), args(args),
-    desc(pvgroup, args, "$(P)$(M).DESC", pvtui::PVPutType::String),
-    val(pvgroup, args, "$(P)$(M).VAL", pvtui::PVPutType::Double),
-    twr(pvgroup, args, "$(P)$(M).TWR", " < "),
-    twv(pvgroup, args, "$(P)$(M).TWV", pvtui::PVPutType::Double),
-    twf(pvgroup, args, "$(P)$(M).TWF", " > "),
-    rbv(pvgroup, args, "$(P)$(M).RBV"),
-    dmov(pvgroup, args, "$(P)$(M).DMOV"),
-    lls(pvgroup, args, "$(P)$(M).LLS"),
-    hls(pvgroup, args, "$(P)$(M).HLS"),
-    lvio(pvgroup, args, "$(P)$(M).LVIO"),
-    egu(pvgroup, args, "$(P)$(M).EGU", pvtui::PVPutType::String),
-    use_set(pvgroup, args, "$(P)$(M).SET", pvtui::ChoiceStyle::Horizontal),
-    drbv(pvgroup, args, "$(P)$(M).DRBV"),
-    dval(pvgroup, args, "$(P)$(M).DVAL", pvtui::PVPutType::Double),
-    hlm(pvgroup, args, "$(P)$(M).HLM", pvtui::PVPutType::Double),
-    dhlm(pvgroup, args, "$(P)$(M).DHLM", pvtui::PVPutType::Double),
-    llm(pvgroup, args, "$(P)$(M).LLM", pvtui::PVPutType::Double),
-    dllm(pvgroup, args, "$(P)$(M).DLLM", pvtui::PVPutType::Double),
-    spmg(pvgroup, args, "$(P)$(M).SPMG", pvtui::ChoiceStyle::Vertical),
-    able(pvgroup, args, "$(P)$(M)_able", pvtui::ChoiceStyle::Vertical),
-    vmax(pvgroup, args, "$(P)$(M).VMAX", pvtui::PVPutType::Double),
-    velo(pvgroup, args, "$(P)$(M).VELO", pvtui::PVPutType::Double),
-    vbas(pvgroup, args, "$(P)$(M).VBAS", pvtui::PVPutType::Double),
-    accl(pvgroup, args, "$(P)$(M).ACCL", pvtui::PVPutType::Double),
-    mres(pvgroup, args, "$(P)$(M).MRES", pvtui::PVPutType::Double),
-    eres(pvgroup, args, "$(P)$(M).ERES", pvtui::PVPutType::Double),
-    rres(pvgroup, args, "$(P)$(M).RRES", pvtui::PVPutType::Double),
-    rtry(pvgroup, args, "$(P)$(M).RTRY", pvtui::PVPutType::Integer),
-    off(pvgroup, args, "$(P)$(M).OFF", pvtui::PVPutType::Double),
-    prec(pvgroup, args, "$(P)$(M).PREC", pvtui::PVPutType::Integer),
-    rlv(pvgroup, args, "$(P)$(M).RLV", pvtui::PVPutType::Double),
-    rval(pvgroup, args, "$(P)$(M).RVAL", pvtui::PVPutType::Double),
-    ueip(pvgroup, args, "$(P)$(M).UEIP", pvtui::ChoiceStyle::Horizontal),
-    urip(pvgroup, args, "$(P)$(M).URIP", pvtui::ChoiceStyle::Horizontal),
-    dir(pvgroup, args, "$(P)$(M).DIR", pvtui::ChoiceStyle::Horizontal),
-    cnen(pvgroup, args, "$(P)$(M).CNEN", pvtui::ChoiceStyle::Horizontal),
-    foff(pvgroup, args, "$(P)$(M).FOFF", pvtui::ChoiceStyle::Dropdown),
-    rrbv(pvgroup, args, "$(P)$(M).RRBV")
+AllMotorDisplay::AllMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
+    : pvtui::DisplayBase(pvgroup), record_name(record),
+    desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
+    val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
+    twr(pvgroup, record + ".TWR", " < "),
+    twv(pvgroup, record + ".TWV", pvtui::PVPutType::Double),
+    twf(pvgroup, record + ".TWF", " > "),
+    rbv(pvgroup, record + ".RBV"),
+    dmov(pvgroup, record + ".DMOV"),
+    lls(pvgroup, record + ".LLS"),
+    hls(pvgroup, record + ".HLS"),
+    lvio(pvgroup, record + ".LVIO"),
+    egu(pvgroup, record + ".EGU", pvtui::PVPutType::String),
+    use_set(pvgroup, record + ".SET", pvtui::ChoiceStyle::Horizontal),
+    drbv(pvgroup, record + ".DRBV"),
+    dval(pvgroup, record + ".DVAL", pvtui::PVPutType::Double),
+    hlm(pvgroup, record + ".HLM", pvtui::PVPutType::Double),
+    dhlm(pvgroup, record + ".DHLM", pvtui::PVPutType::Double),
+    llm(pvgroup, record + ".LLM", pvtui::PVPutType::Double),
+    dllm(pvgroup, record + ".DLLM", pvtui::PVPutType::Double),
+    spmg(pvgroup, record + ".SPMG", pvtui::ChoiceStyle::Vertical),
+    able(pvgroup, record + "_able", pvtui::ChoiceStyle::Vertical),
+    vmax(pvgroup, record + ".VMAX", pvtui::PVPutType::Double),
+    velo(pvgroup, record + ".VELO", pvtui::PVPutType::Double),
+    vbas(pvgroup, record + ".VBAS", pvtui::PVPutType::Double),
+    accl(pvgroup, record + ".ACCL", pvtui::PVPutType::Double),
+    mres(pvgroup, record + ".MRES", pvtui::PVPutType::Double),
+    eres(pvgroup, record + ".ERES", pvtui::PVPutType::Double),
+    rres(pvgroup, record + ".RRES", pvtui::PVPutType::Double),
+    rtry(pvgroup, record + ".RTRY", pvtui::PVPutType::Integer),
+    off(pvgroup, record + ".OFF", pvtui::PVPutType::Double),
+    prec(pvgroup, record + ".PREC", pvtui::PVPutType::Integer),
+    rlv(pvgroup, record + ".RLV", pvtui::PVPutType::Double),
+    rval(pvgroup, record + ".RVAL", pvtui::PVPutType::Double),
+    ueip(pvgroup, record + ".UEIP", pvtui::ChoiceStyle::Horizontal),
+    urip(pvgroup, record + ".URIP", pvtui::ChoiceStyle::Horizontal),
+    dir(pvgroup, record + ".DIR", pvtui::ChoiceStyle::Horizontal),
+    cnen(pvgroup, record + ".CNEN", pvtui::ChoiceStyle::Horizontal),
+    foff(pvgroup, record + ".FOFF", pvtui::ChoiceStyle::Dropdown),
+    rrbv(pvgroup, record + ".RRBV")
 {}
 
 ftxui::Component AllMotorDisplay::get_container() {
@@ -463,7 +463,7 @@ ftxui::Element AllMotorDisplay::get_renderer() {
             | EPICSColor::custom(desc, color(Color::Black) | bgcolor(Color::RGB(210,210,210)))
             | size(WIDTH, EQUAL, 26),
         filler(),
-        text("(" + args.macros.at("P") + args.macros.at("M") + ")")
+        text("(" + record_name + ")")
             | color(Color::Black)
             | bold
             | xflex,

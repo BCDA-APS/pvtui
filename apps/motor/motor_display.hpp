@@ -7,13 +7,13 @@
 
 class SmallMotorDisplay : public pvtui::DisplayBase {
   public:
-    SmallMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args);
+    SmallMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
     ~SmallMotorDisplay() override = default;
     ftxui::Element get_renderer() override;
     ftxui::Component get_container() override;
 
   private:
-    const pvtui::ArgParser &args;
+    std::string record_name;
     pvtui::InputWidget desc;
     pvtui::InputWidget val;
     pvtui::ButtonWidget twr;
@@ -33,13 +33,13 @@ class SmallMotorDisplay : public pvtui::DisplayBase {
 
 class MediumMotorDisplay : public pvtui::DisplayBase {
   public:
-    MediumMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args);
+    MediumMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
     ~MediumMotorDisplay() override = default;
     ftxui::Element get_renderer() override;
     ftxui::Component get_container() override;
 
   private:
-    const pvtui::ArgParser &args;
+    std::string record_name;
     pvtui::InputWidget desc;
     pvtui::InputWidget val;
     pvtui::ButtonWidget twr;
@@ -64,13 +64,13 @@ class MediumMotorDisplay : public pvtui::DisplayBase {
 
 class AllMotorDisplay : public pvtui::DisplayBase {
   public:
-    AllMotorDisplay(pvtui::PVGroup &pvgroup, const pvtui::ArgParser &args);
+    AllMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
     ~AllMotorDisplay() override = default;
     ftxui::Element get_renderer() override;
     ftxui::Component get_container() override;
 
   private:
-    const pvtui::ArgParser &args;
+    std::string record_name;
     pvtui::InputWidget desc;
     pvtui::InputWidget val;
     pvtui::ButtonWidget twr;

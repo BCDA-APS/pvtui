@@ -19,14 +19,13 @@ pvtui_asyn - Terminal UI for EPICS asyn record.
 Inspired by MEDM asyn record screens.
 
 Usage:
-  pvtui_asyn [options]
+  pvtui_asyn <record>
 
 Options:
   -h, --help        Show this help message and exit.
-  -m, --macro       Macros to pass to the UI (required: P, R)
 
 Examples:
-    pvtui_asyn --macro "P=xxx:,R=asyn1"
+    pvtui_asyn xxx:asyn1
 
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
@@ -37,41 +36,45 @@ int main(int argc, char *argv[]) {
 
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
-    if (not app.args.macros_present({"P", "R"})) {
-        printf("Missing required macro P, R\n");
+    auto pos_args = app.args.positional_args();
+    if (pos_args.size() != 2) {
+        std::cout << "Invalid arguments" << std::endl;
+        std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
+    const std::string record_name = app.args.positional_args()[1];
+    app.args.macros["R"] = record_name;
 
     // Create all the widgets
-    InputWidget aout(app, "$(P)$(R).AOUT", PVPutType::String);
-    InputWidget oeos(app, "$(P)$(R).OEOS", PVPutType::String);
-    InputWidget ieos(app, "$(P)$(R).IEOS", PVPutType::String);
-    InputWidget tmot(app, "$(P)$(R).TMOT", PVPutType::Double);
-    InputWidget tfil(app, "$(P)$(R).TFIL", PVPutType::String);
-    InputWidget nowt(app, "$(P)$(R).NOWT", PVPutType::Integer);
-    Monitor<PVEnum> stat(app, "$(P)$(R).STAT");
-    Monitor<PVEnum> sevr(app, "$(P)$(R).SEVR");
-    Monitor<std::string> tinp(app, "$(P)$(R).TINP");
-    Monitor<std::string> nawt(app, "$(P)$(R).NAWT");
-    Monitor<std::string> nord(app, "$(P)$(R).NORD");
-    Monitor<std::string> errs(app, "$(P)$(R).ERRS");
-    ChoiceWidget tmod(app, "$(P)$(R).TMOD", ChoiceStyle::Dropdown);
-    ChoiceWidget tb0(app, "$(P)$(R).TB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tb1(app, "$(P)$(R).TB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tb2(app, "$(P)$(R).TB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tb3(app, "$(P)$(R).TB3", ChoiceStyle::Horizontal);
-    ChoiceWidget tb4(app, "$(P)$(R).TB4", ChoiceStyle::Horizontal);
-    ChoiceWidget tb5(app, "$(P)$(R).TB5", ChoiceStyle::Horizontal);
-    ChoiceWidget tib0(app, "$(P)$(R).TIB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tib1(app, "$(P)$(R).TIB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tib2(app, "$(P)$(R).TIB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb0(app, "$(P)$(R).TINB0", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb1(app, "$(P)$(R).TINB1", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb2(app, "$(P)$(R).TINB2", ChoiceStyle::Horizontal);
-    ChoiceWidget tinb3(app, "$(P)$(R).TINB3", ChoiceStyle::Horizontal);
-    ChoiceWidget cnct(app, "$(P)$(R).CNCT", ChoiceStyle::Dropdown);
-    ChoiceWidget enbl(app, "$(P)$(R).ENBL", ChoiceStyle::Dropdown);
-    ChoiceWidget auct(app, "$(P)$(R).AUCT", ChoiceStyle::Dropdown);
+    InputWidget aout(app, "$(R).AOUT", PVPutType::String);
+    InputWidget oeos(app, "$(R).OEOS", PVPutType::String);
+    InputWidget ieos(app, "$(R).IEOS", PVPutType::String);
+    InputWidget tmot(app, "$(R).TMOT", PVPutType::Double);
+    InputWidget tfil(app, "$(R).TFIL", PVPutType::String);
+    InputWidget nowt(app, "$(R).NOWT", PVPutType::Integer);
+    Monitor<PVEnum> stat(app, "$(R).STAT");
+    Monitor<PVEnum> sevr(app, "$(R).SEVR");
+    Monitor<std::string> tinp(app, "$(R).TINP");
+    Monitor<std::string> nawt(app, "$(R).NAWT");
+    Monitor<std::string> nord(app, "$(R).NORD");
+    Monitor<std::string> errs(app, "$(R).ERRS");
+    ChoiceWidget tmod(app, "$(R).TMOD", ChoiceStyle::Dropdown);
+    ChoiceWidget tb0(app, "$(R).TB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tb1(app, "$(R).TB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tb2(app, "$(R).TB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tb3(app, "$(R).TB3", ChoiceStyle::Horizontal);
+    ChoiceWidget tb4(app, "$(R).TB4", ChoiceStyle::Horizontal);
+    ChoiceWidget tb5(app, "$(R).TB5", ChoiceStyle::Horizontal);
+    ChoiceWidget tib0(app, "$(R).TIB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tib1(app, "$(R).TIB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tib2(app, "$(R).TIB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb0(app, "$(R).TINB0", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb1(app, "$(R).TINB1", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb2(app, "$(R).TINB2", ChoiceStyle::Horizontal);
+    ChoiceWidget tinb3(app, "$(R).TINB3", ChoiceStyle::Horizontal);
+    ChoiceWidget cnct(app, "$(R).CNCT", ChoiceStyle::Dropdown);
+    ChoiceWidget enbl(app, "$(R).ENBL", ChoiceStyle::Dropdown);
+    ChoiceWidget auct(app, "$(R).AUCT", ChoiceStyle::Dropdown);
 
     // ftxui container to define interactivity of components
     auto main_container = ftxui::Container::Vertical({
@@ -112,7 +115,7 @@ int main(int argc, char *argv[]) {
     // ftxui renderer defines the visual layout
     auto main_renderer = Renderer(main_container, [&] {
         return vbox({
-            text(app.args.macros.at("P") + app.args.macros.at("R"))
+            text(record_name)
                 | bold | italic
                 | bgcolor(Color::NavyBlue) | color(Color::White),
             separatorEmpty(),

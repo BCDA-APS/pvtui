@@ -22,7 +22,9 @@ class ArgParser {
     /// \brief Constructs an ArgParser from command-line arguments.
     /// \param argc Argument count.
     /// \param argv Argument values.
-    ArgParser(int argc, char* argv[]);
+    /// \param extra_params Additional named parameters to register before parsing.
+    ArgParser(int argc, char* argv[],
+              std::initializer_list<char const* const> extra_params = {});
 
     /// \brief Checks if all specified macros are present in the parsed arguments.
     /// \param macro_list A list of macro names to check.
@@ -51,6 +53,11 @@ class ArgParser {
     /// \param str A string with macros like $(P), $(R), etc.
     /// \return A new string with all macros replaced by their values.
     std::string replace(const std::string& str) const;
+
+    /// \brief Gets the value of a named command-line parameter.
+    /// \param name The parameter name (e.g., "--prefix").
+    /// \return The parameter value, or an empty string if not provided.
+    std::string param(const std::string& name) const;
 
     /// \brief Get all positional arguments passed to the program
     /// \return A vector of strings of all the positional arguments
@@ -84,7 +91,9 @@ struct App {
     /// pvtui::PVGroup, pvtui::ArgParser, and ftxui::ScreenInteractive
     /// \param argc Command line argument count
     /// \param argv Command line arguments
-    App(int argc, char* argv[]);
+    /// \param extra_params Additional named parameters to register with the ArgParser.
+    App(int argc, char* argv[],
+        std::initializer_list<char const* const> extra_params = {});
 
     /// \brief Runs the main FTXUI loop
     /// \param renderer The ftxui::Component which defines the application layout

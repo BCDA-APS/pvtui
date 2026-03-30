@@ -15,14 +15,13 @@ pvtui_calcout - Terminal UI for EPICS calcout record
 Inspired by MEDM calcout record screens.
 
 Usage:
-  pvtui_calcout [options]
+    pvtui_calcout <record>
 
 Options:
-  -h, --help        Show this help message and exit.
-  -m, --macro       Macros to pass to the UI (required: P, C)
+    -h, --help        Show this help message and exit.
 
 Examples:
-    pvtui_calcout --macro "P=xxx:,C=calcout1"
+    pvtui_calcout xxx:calcout1
 
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
@@ -34,34 +33,38 @@ int main(int argc, char *argv[]) {
 
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
 
-    if (not app.args.macros_present({"P", "C"})) {
-        printf("Missing required macros\nRequired macros: P, C\n");
+    auto pos_args = app.args.positional_args();
+    if (pos_args.size() != 2) {
+        std::cout << "Invalid arguments" << std::endl;
+        std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
+    const std::string record_name = app.args.positional_args()[1];
+    app.args.macros["R"] = record_name;
 
-    ChoiceWidget scan(app, "$(P)$(C).SCAN", ChoiceStyle::Dropdown);
-    InputWidget desc(app, "$(P)$(C).DESC", PVPutType::String);
-    InputWidget prec(app, "$(P)$(C).PREC", PVPutType::Integer);
-    InputWidget inpa(app, "$(P)$(C).INPA", PVPutType::String);
-    InputWidget a_val(app, "$(P)$(C).A", PVPutType::Double);
-    InputWidget inpb(app, "$(P)$(C).INPB", PVPutType::String);
-    InputWidget b_val(app, "$(P)$(C).B", PVPutType::Double);
-    InputWidget inpc(app, "$(P)$(C).INPC", PVPutType::String);
-    InputWidget c_val(app, "$(P)$(C).C", PVPutType::Double);
-    InputWidget inpd(app, "$(P)$(C).INPD", PVPutType::String);
-    InputWidget d_val(app, "$(P)$(C).D", PVPutType::Double);
-    InputWidget calc(app, "$(P)$(C).CALC", PVPutType::String);
-    InputWidget ocal(app, "$(P)$(C).OCAL", PVPutType::String);
-    InputWidget out(app, "$(P)$(C).OUT", PVPutType::String);
-    InputWidget flnk(app, "$(P)$(C).FLNK", PVPutType::String);
-    Monitor<std::string> val(app, "$(P)$(C).VAL");
-    Monitor<std::string> oval(app, "$(P)$(C).OVAL");
-    ChoiceWidget dopt(app, "$(P)$(C).DOPT", ChoiceStyle::Dropdown);
-    ChoiceWidget ivoa(app, "$(P)$(C).IVOA", ChoiceStyle::Dropdown);
-    ChoiceWidget oopt(app, "$(P)$(C).OOPT", ChoiceStyle::Dropdown);
-    InputWidget odly(app, "$(P)$(C).ODLY", PVPutType::Double);
-    InputWidget ivov(app, "$(P)$(C).IVOV", PVPutType::Double);
-    ButtonWidget proc(app, "$(P)$(C).PROC", " PROC ");
+    ChoiceWidget scan(app, "$(R).SCAN", ChoiceStyle::Dropdown);
+    InputWidget desc(app, "$(R).DESC", PVPutType::String);
+    InputWidget prec(app, "$(R).PREC", PVPutType::Integer);
+    InputWidget inpa(app, "$(R).INPA", PVPutType::String);
+    InputWidget a_val(app, "$(R).A", PVPutType::Double);
+    InputWidget inpb(app, "$(R).INPB", PVPutType::String);
+    InputWidget b_val(app, "$(R).B", PVPutType::Double);
+    InputWidget inpc(app, "$(R).INPC", PVPutType::String);
+    InputWidget c_val(app, "$(R).C", PVPutType::Double);
+    InputWidget inpd(app, "$(R).INPD", PVPutType::String);
+    InputWidget d_val(app, "$(R).D", PVPutType::Double);
+    InputWidget calc(app, "$(R).CALC", PVPutType::String);
+    InputWidget ocal(app, "$(R).OCAL", PVPutType::String);
+    InputWidget out(app, "$(R).OUT", PVPutType::String);
+    InputWidget flnk(app, "$(R).FLNK", PVPutType::String);
+    Monitor<std::string> val(app, "$(R).VAL");
+    Monitor<std::string> oval(app, "$(R).OVAL");
+    ChoiceWidget dopt(app, "$(R).DOPT", ChoiceStyle::Dropdown);
+    ChoiceWidget ivoa(app, "$(R).IVOA", ChoiceStyle::Dropdown);
+    ChoiceWidget oopt(app, "$(R).OOPT", ChoiceStyle::Dropdown);
+    InputWidget odly(app, "$(R).ODLY", PVPutType::Double);
+    InputWidget ivov(app, "$(R).IVOV", PVPutType::Double);
+    ButtonWidget proc(app, "$(R).PROC", " PROC ");
 
     // Main container to define interactivity of components
     auto main_container = Container::Vertical({
@@ -85,7 +88,7 @@ int main(int argc, char *argv[]) {
             hbox({
                 desc.component()->Render() | color(Color::Black) |  bgcolor(Color::RGB(210,210,210)) | size(WIDTH, LESS_THAN, 32) | xflex,
                 separatorEmpty(),
-                text("(" + app.args.macros.at("P")+app.args.macros.at("C") + ")") | color(Color::Black)
+                text("(" + record_name + ")") | color(Color::Black)
             }),
             separatorEmpty(),
             hbox({

@@ -20,14 +20,13 @@ pvtui_transform - Terminal UI for EPICS transform record
 Inspired by MEDM transform record screens.
 
 Usage:
-  pvtui_transform [options]
+    pvtui_transform <record>
 
 Options:
-  -h, --help        Show this help message and exit.
-  -m, --macro       Macros to pass to the UI (required: P, T)
+    -h, --help        Show this help message and exit.
 
 Examples:
-    pvtui_transform --macro "P=xxx:,T=userTran1"
+    pvtui_transform xxx:userTran1
 
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
@@ -38,11 +37,11 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 class TransformRow : public DisplayBase {
   public:
     TransformRow(pvtui::App &app, const std::string &row_name) : DisplayBase(app),
-	cmtx(app, std::string("$(P)$(T).CMT")+row_name, pvtui::PVPutType::String),
-	inpx(app, std::string("$(P)$(T).INP")+row_name, pvtui::PVPutType::String),
-	clcx(app, std::string("$(P)$(T).CLC")+row_name, pvtui::PVPutType::String),
-	valx(app, std::string("$(P)$(T).")+row_name, pvtui::PVPutType::Double),
-	outx(app, std::string("$(P)$(T).OUT")+row_name, pvtui::PVPutType::String),
+	cmtx(app, std::string("$(R).CMT")+row_name, pvtui::PVPutType::String),
+	inpx(app, std::string("$(R).INP")+row_name, pvtui::PVPutType::String),
+	clcx(app, std::string("$(R).CLC")+row_name, pvtui::PVPutType::String),
+	valx(app, std::string("$(R).")+row_name, pvtui::PVPutType::Double),
+	outx(app, std::string("$(R).OUT")+row_name, pvtui::PVPutType::String),
 	row_name_(row_name) {}
 
     ~TransformRow() override = default;
@@ -97,17 +96,20 @@ int main(int argc, char *argv[]) {
 
     pvtui::App app(argc, argv);
     if (app.args.help(CLI_HELP_MSG)) return EXIT_SUCCESS;
-    if (not app.args.macros_present({"P", "T"})) {
-        printf("Missing required macros\nRequired macros: P, T\n");
+
+    auto pos_args = app.args.positional_args();
+    if (pos_args.size() != 2) {
+        std::cout << CLI_HELP_MSG << std::endl;
         return EXIT_FAILURE;
     }
+    app.args.macros["R"] = pos_args[1];
 
-    ChoiceWidget scan(app, "$(P)$(T).SCAN", ChoiceStyle::Dropdown);
-    ButtonWidget proc(app, "$(P)$(T).PROC", " PROC ");
-    InputWidget desc(app, "$(P)$(T).DESC", PVPutType::String);
-    InputWidget prec(app, "$(P)$(T).PREC", PVPutType::Integer);
-    InputWidget flnk(app, "$(P)$(T).FLNK", PVPutType::String);
-    ChoiceWidget copt(app, "$(P)$(T).COPT", ChoiceStyle::Dropdown);
+    ChoiceWidget scan(app, "$(R).SCAN", ChoiceStyle::Dropdown);
+    ButtonWidget proc(app, "$(R).PROC", " PROC ");
+    InputWidget desc(app, "$(R).DESC", PVPutType::String);
+    InputWidget prec(app, "$(R).PREC", PVPutType::Integer);
+    InputWidget flnk(app, "$(R).FLNK", PVPutType::String);
+    ChoiceWidget copt(app, "$(R).COPT", ChoiceStyle::Dropdown);
 
     // add a row for transform record fields A through P (e.g. INPA, CLCA...INPA, CLCP)
     std::vector<std::unique_ptr<DisplayBase>> rows;
