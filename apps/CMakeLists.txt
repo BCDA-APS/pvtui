@@ -1,5 +1,4 @@
-add_executable(pvtui_motor motor_display.cpp motor.cpp)
-target_link_libraries(pvtui_motor PRIVATE pvtui)
+add_subdirectory(motor)
 
 add_executable(pvtui_asyn asyn.cpp)
 target_link_libraries(pvtui_asyn PRIVATE pvtui)
