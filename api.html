@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; PVTUI 2.0.0 documentation</title>
+    <title>API Reference &#8212; PVTUI 0.3.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
-    <script src="_static/documentation_options.js?v=51b770b3"></script>
+    <script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -44,14 +44,15 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui3App3AppEiA_Pc">
-<span id="_CPPv3N5pvtui3App3AppEiA_Pc"></span><span id="_CPPv2N5pvtui3App3AppEiA_Pc"></span><span id="pvtui::App::App__i.cPA"></span><span class="target" id="de/d49/structpvtui_1_1App_1a50e7cee6a9e8d63cdc8a92ea5c80bf67"></span><span class="sig-name descname"><span class="n"><span class="pre">App</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">argc</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">argv</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui3App3AppEiA_Pc" title="Link to this definition">¶</a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui3App3AppEiA_PcNSt16initializer_listIPCKcEE">
+<span id="_CPPv3N5pvtui3App3AppEiA_PcNSt16initializer_listIPCKcEE"></span><span id="_CPPv2N5pvtui3App3AppEiA_PcNSt16initializer_listIPCKcEE"></span><span id="pvtui::App::App__i.cPA.std::initializer_list:cCPC:"></span><span class="target" id="de/d49/structpvtui_1_1App_1af9465e4dd08ca7e282b8cbb6e706a710"></span><span class="sig-name descname"><span class="n"><span class="pre">App</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">argc</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">argv</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="p"><span class="pre">*</span></span><span class="k"><span class="pre">const</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">extra_params</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui3App3AppEiA_PcNSt16initializer_listIPCKcEE" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Constructs an <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a> which internally manages a pvac::ClientProvider <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">pvtui::PVGroup</span></a>, <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">pvtui::ArgParser</span></a>, and ftxui::ScreenInteractive. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>argc</strong> – Command line argument count </p></li>
 <li><p><strong>argv</strong> – Command line arguments </p></li>
+<li><p><strong>extra_params</strong> – Additional named parameters to register with the <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a>. </p></li>
 </ul>
 </dd>
 </dl>
@@ -117,33 +118,19 @@
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui9ArgParserE">
 <span id="_CPPv3N5pvtui9ArgParserE"></span><span id="_CPPv2N5pvtui9ArgParserE"></span><span id="pvtui::ArgParser"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArgParser</span></span></span><a class="headerlink" href="#_CPPv4N5pvtui9ArgParserE" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Parses command-line arguments for PVTUI applications. </p>
-<p>Handles macro definitions similar to MEDM, and any additional flags </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui9ArgParser9ArgParserEiA_Pc">
-<span id="_CPPv3N5pvtui9ArgParser9ArgParserEiA_Pc"></span><span id="_CPPv2N5pvtui9ArgParser9ArgParserEiA_Pc"></span><span id="pvtui::ArgParser::ArgParser__i.cPA"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1afea49d468563b3fdefedcaf12efef312"></span><span class="sig-name descname"><span class="n"><span class="pre">ArgParser</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">argc</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">argv</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui9ArgParser9ArgParserEiA_Pc" title="Link to this definition">¶</a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui9ArgParser9ArgParserEiA_PcNSt16initializer_listIPCKcEE">
+<span id="_CPPv3N5pvtui9ArgParser9ArgParserEiA_PcNSt16initializer_listIPCKcEE"></span><span id="_CPPv2N5pvtui9ArgParser9ArgParserEiA_PcNSt16initializer_listIPCKcEE"></span><span id="pvtui::ArgParser::ArgParser__i.cPA.std::initializer_list:cCPC:"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1a348934ca79c71ee26cb82db02527109e"></span><span class="sig-name descname"><span class="n"><span class="pre">ArgParser</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">argc</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">argv</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="p"><span class="pre">*</span></span><span class="k"><span class="pre">const</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">extra_params</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui9ArgParser9ArgParserEiA_PcNSt16initializer_listIPCKcEE" title="Link to this definition">¶</a><br /></dt>
 <dd><p>Constructs an <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> from command-line arguments. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>argc</strong> – Argument count. </p></li>
 <li><p><strong>argv</strong> – Argument values. </p></li>
+<li><p><strong>extra_params</strong> – Additional named parameters to register before parsing. </p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui9ArgParser14macros_presentERKNSt6vectorINSt6stringEEE">
-<span id="_CPPv3NK5pvtui9ArgParser14macros_presentERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK5pvtui9ArgParser14macros_presentERKNSt6vectorINSt6stringEEE"></span><span id="pvtui::ArgParser::macros_present__std::vector:ss:CRC"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1addb077142d10b8b3734732d5f1fd6234"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">macros_present</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">macro_list</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5pvtui9ArgParser14macros_presentERKNSt6vectorINSt6stringEEE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Checks if all specified macros are present in the parsed arguments. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>macro_list</strong> – A list of macro names to check. </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if all macros are present, false otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -177,15 +164,15 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui9ArgParser7replaceERKNSt6stringE">
-<span id="_CPPv3NK5pvtui9ArgParser7replaceERKNSt6stringE"></span><span id="_CPPv2NK5pvtui9ArgParser7replaceERKNSt6stringE"></span><span id="pvtui::ArgParser::replace__ssCRC"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1af4dd6161084c9db52bbc80185af5e782"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">replace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">str</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5pvtui9ArgParser7replaceERKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Replaces macros in a string with their corresponding values. </p>
+<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui9ArgParser5paramERKNSt6stringE">
+<span id="_CPPv3NK5pvtui9ArgParser5paramERKNSt6stringE"></span><span id="_CPPv2NK5pvtui9ArgParser5paramERKNSt6stringE"></span><span id="pvtui::ArgParser::param__ssCRC"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1acac8b3d8008c45c0d2889a364c8cb65e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">param</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5pvtui9ArgParser5paramERKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Gets the value of a named command-line parameter. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>str</strong> – A string with macros like , , etc. </p>
+<dd class="field-odd"><p><strong>name</strong> – The parameter name (e.g., “–prefix”). </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new string with all macros replaced by their values. </p>
+<dd class="field-even"><p>The parameter value, or an empty string if not provided. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -204,12 +191,6 @@
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui9ArgParser6macrosE">
-<span id="_CPPv3N5pvtui9ArgParser6macrosE"></span><span id="_CPPv2N5pvtui9ArgParser6macrosE"></span><span id="pvtui::ArgParser::macros__std::unordered_map:ss.ss:"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1a111452497dcc08d31ae0e4972f8d9fa9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">macros</span></span></span><a class="headerlink" href="#_CPPv4N5pvtui9ArgParser6macrosE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Parsed macros (e.g., “P=VAL”). </p>
-</dd></dl>
-
 <dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui9ArgParser8providerE">
 <span id="_CPPv3N5pvtui9ArgParser8providerE"></span><span id="_CPPv2N5pvtui9ArgParser8providerE"></span><span id="pvtui::ArgParser::provider__ss"></span><span class="target" id="d3/d09/classpvtui_1_1ArgParser_1a2083e462b59dc3b8519f6dc89d940d2c"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">provider</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;ca&quot;</span></span><a class="headerlink" href="#_CPPv4N5pvtui9ArgParser8providerE" title="Link to this definition">¶</a><br /></dt>
@@ -479,27 +460,9 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui11InputWidget11InputWidgetER7PVGroupRK9ArgParserRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE">
-<span id="_CPPv3N5pvtui11InputWidget11InputWidgetER7PVGroupRK9ArgParserRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="_CPPv2N5pvtui11InputWidget11InputWidgetER7PVGroupRK9ArgParserRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="pvtui::InputWidget::InputWidget__PVGroupR.ArgParserCR.ssCR.PVPutType.ftxui::Color.ftxui::Color"></span><span class="target" id="d2/d00/classpvtui_1_1InputWidget_1a50c6710161f51846aeef9b659b062c14"></span><span class="sig-name descname"><span class="n"><span class="pre">InputWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <a class="reference internal" href="#_CPPv4N5pvtui9PVPutTypeE" title="pvtui::PVPutType"><span class="n"><span class="pre">PVPutType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">put_type</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fg</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Black</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hover</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">GrayLight</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui11InputWidget11InputWidgetER7PVGroupRK9ArgParserRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs an <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">InputWidget</span></a> with macro expansion. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
-<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
-<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
-<li><p><strong>put_type</strong> – Specifies how the input value is written to the PV. </p></li>
-<li><p><strong>fg</strong> – Optional ftxui color for the input foreground (cursor and text). </p></li>
-<li><p><strong>hover</strong> – Optional ftxui color for the input box’s background when hovered. </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui11InputWidget11InputWidgetER7PVGroupRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE">
 <span id="_CPPv3N5pvtui11InputWidget11InputWidgetER7PVGroupRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="_CPPv2N5pvtui11InputWidget11InputWidgetER7PVGroupRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="pvtui::InputWidget::InputWidget__PVGroupR.ssCR.PVPutType.ftxui::Color.ftxui::Color"></span><span class="target" id="d2/d00/classpvtui_1_1InputWidget_1a0802d67569f09ddcdf7c856d13f5ccbc"></span><span class="sig-name descname"><span class="n"><span class="pre">InputWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <a class="reference internal" href="#_CPPv4N5pvtui9PVPutTypeE" title="pvtui::PVPutType"><span class="n"><span class="pre">PVPutType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">put_type</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fg</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Black</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">hover</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">GrayLight</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui11InputWidget11InputWidgetER7PVGroupRKNSt6stringE9PVPutTypeN5ftxui5ColorEN5ftxui5ColorE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs an <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">InputWidget</span></a> with an already expanded PV name. </p>
+<dd><p>Constructs an <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">InputWidget</span></a>. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -562,26 +525,9 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRK9ArgParserRKNSt6stringERKNSt6stringEi">
-<span id="_CPPv3N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRK9ArgParserRKNSt6stringERKNSt6stringEi"></span><span id="_CPPv2N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRK9ArgParserRKNSt6stringERKNSt6stringEi"></span><span id="pvtui::ButtonWidget::ButtonWidget__PVGroupR.ArgParserCR.ssCR.ssCR.i"></span><span class="target" id="d2/d81/classpvtui_1_1ButtonWidget_1a51d97d9a5de4ff9baa2abf89ff7b7dea"></span><span class="sig-name descname"><span class="n"><span class="pre">ButtonWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">label</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">press_val</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRK9ArgParserRKNSt6stringERKNSt6stringEi" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">ButtonWidget</span></a> with macro expansion. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
-<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
-<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
-<li><p><strong>label</strong> – The text displayed on the button. </p></li>
-<li><p><strong>press_val</strong> – The value written to the PV on press. </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRKNSt6stringERKNSt6stringEi">
 <span id="_CPPv3N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRKNSt6stringERKNSt6stringEi"></span><span id="_CPPv2N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRKNSt6stringERKNSt6stringEi"></span><span id="pvtui::ButtonWidget::ButtonWidget__PVGroupR.ssCR.ssCR.i"></span><span class="target" id="d2/d81/classpvtui_1_1ButtonWidget_1aa5d2dcef9ba18b909bc3bcff3e3f8e3b"></span><span class="sig-name descname"><span class="n"><span class="pre">ButtonWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">label</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">press_val</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12ButtonWidget12ButtonWidgetER7PVGroupRKNSt6stringERKNSt6stringEi" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">ButtonWidget</span></a> with an expanded PV name. </p>
+<dd><p>Constructs a <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">ButtonWidget</span></a>. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -625,24 +571,9 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui7Monitor7MonitorER7PVGroupRK9ArgParserRKNSt6stringE">
-<span id="_CPPv3N5pvtui7Monitor7MonitorER7PVGroupRK9ArgParserRKNSt6stringE"></span><span id="_CPPv2N5pvtui7Monitor7MonitorER7PVGroupRK9ArgParserRKNSt6stringE"></span><span id="pvtui::Monitor::Monitor__PVGroupR.ArgParserCR.ssCR"></span><span class="target" id="d4/d1e/classpvtui_1_1Monitor_1aeb556df23bf9e5546f43ee9b18b5b27c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Monitor</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui7Monitor7MonitorER7PVGroupRK9ArgParserRKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d4/d1e/classpvtui_1_1Monitor"><span class="std std-ref">Monitor</span></a> with macro expansion. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
-<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
-<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui7Monitor7MonitorER7PVGroupRKNSt6stringE">
 <span id="_CPPv3N5pvtui7Monitor7MonitorER7PVGroupRKNSt6stringE"></span><span id="_CPPv2N5pvtui7Monitor7MonitorER7PVGroupRKNSt6stringE"></span><span id="pvtui::Monitor::Monitor__PVGroupR.ssCR"></span><span class="target" id="d4/d1e/classpvtui_1_1Monitor_1afde0b66623893f5d1746fa4e0f5ac8c5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Monitor</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui7Monitor7MonitorER7PVGroupRKNSt6stringE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d4/d1e/classpvtui_1_1Monitor"><span class="std std-ref">Monitor</span></a> with a fully expanded PV name. </p>
+<dd><p>Constructs a <a class="reference internal" href="#d4/d1e/classpvtui_1_1Monitor"><span class="std std-ref">Monitor</span></a>. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -700,25 +631,9 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRK9ArgParserRKNSt6stringE11ChoiceStyle">
-<span id="_CPPv3N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRK9ArgParserRKNSt6stringE11ChoiceStyle"></span><span id="_CPPv2N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRK9ArgParserRKNSt6stringE11ChoiceStyle"></span><span id="pvtui::ChoiceWidget::ChoiceWidget__PVGroupR.ArgParserCR.ssCR.ChoiceStyle"></span><span class="target" id="d0/d0d/classpvtui_1_1ChoiceWidget_1a838f27016f4d922db4b0885467ae3667"></span><span class="sig-name descname"><span class="n"><span class="pre">ChoiceWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <a class="reference internal" href="#_CPPv4N5pvtui11ChoiceStyleE" title="pvtui::ChoiceStyle"><span class="n"><span class="pre">ChoiceStyle</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">style</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRK9ArgParserRKNSt6stringE11ChoiceStyle" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">ChoiceWidget</span></a> with macro expansion. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
-<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
-<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
-<li><p><strong>style</strong> – Layout style (vertical, horizontal, dropdown). </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRKNSt6stringE11ChoiceStyle">
 <span id="_CPPv3N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRKNSt6stringE11ChoiceStyle"></span><span id="_CPPv2N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRKNSt6stringE11ChoiceStyle"></span><span id="pvtui::ChoiceWidget::ChoiceWidget__PVGroupR.ssCR.ChoiceStyle"></span><span class="target" id="d0/d0d/classpvtui_1_1ChoiceWidget_1a5d0e2ac449416bd17f0d418e30c1dd32"></span><span class="sig-name descname"><span class="n"><span class="pre">ChoiceWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <a class="reference internal" href="#_CPPv4N5pvtui11ChoiceStyleE" title="pvtui::ChoiceStyle"><span class="n"><span class="pre">ChoiceStyle</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">style</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12ChoiceWidget12ChoiceWidgetER7PVGroupRKNSt6stringE11ChoiceStyle" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">ChoiceWidget</span></a> with a PV name without macros. </p>
+<dd><p>Constructs a <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">ChoiceWidget</span></a>. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -777,25 +692,9 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t">
-<span id="_CPPv3N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t"></span><span id="_CPPv2N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t"></span><span id="pvtui::BitsWidget::BitsWidget__PVGroupR.ArgParserCR.ssCR.s"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1ab9607425c1481523269ce66297d3ec65"></span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N5pvtui9ArgParserE" title="pvtui::ArgParser"><span class="n"><span class="pre">ArgParser</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">args</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nbits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRK9ArgParserRKNSt6stringE6size_t" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a> with macro expansion. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
-<li><p><strong>args</strong> – <a class="reference internal" href="#d3/d09/classpvtui_1_1ArgParser"><span class="std std-ref">ArgParser</span></a> for macro replacement. </p></li>
-<li><p><strong>pv_name</strong> – The PV name with macros, e.g. “$(P)$(M).VAL”. </p></li>
-<li><p><strong>nbits</strong> – Number of bits to display </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t">
 <span id="_CPPv3N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t"></span><span id="_CPPv2N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t"></span><span id="pvtui::BitsWidget::BitsWidget__PVGroupR.ssCR.s"></span><span class="target" id="d1/dc4/classpvtui_1_1BitsWidget_1a2490fbe145af2937aaec8e2aa83ca57a"></span><span class="sig-name descname"><span class="n"><span class="pre">BitsWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nbits</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui10BitsWidget10BitsWidgetER7PVGroupRKNSt6stringE6size_t" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a> with an expanded PV name. </p>
+<dd><p>Constructs a <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">BitsWidget</span></a>. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tutorial: Creating an App &#8212; PVTUI 2.0.0 documentation</title>
+    <title>Tutorial: Creating an App &#8212; PVTUI 0.3.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
-    <script src="_static/documentation_options.js?v=51b770b3"></script>
+    <script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -94,14 +94,16 @@ the Value.VAL and Value.DESC. Lets start by instantiating the widgets we will ne
 <span class="w">    </span><span class="c1">// Instantiate an App to manage everything</span>
 <span class="w">    </span><span class="n">pvtui</span><span class="o">::</span><span class="n">App</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
 
-<span class="w">    </span><span class="c1">// Check for required macros if desired</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">macros_present</span><span class="p">({</span><span class="s">&quot;P&quot;</span><span class="p">}))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Missing required macros</span><span class="se">\n</span><span class="s">Required macros: P</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Get positional arguments (the prefix, PV names, etc.)</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">positional_args</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pos_args</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Usage: tutorial &lt;prefix&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos_args</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
 <span class="w">    </span><span class="c1">// Create all the widgets we need</span>
-<span class="w">    </span><span class="c1">// InputWidget desc(app, &quot;$(P)pvname.DESC&quot;, PVPutType::String);</span>
+<span class="w">    </span><span class="c1">// InputWidget desc(app, prefix + &quot;pvname.DESC&quot;, PVPutType::String);</span>
 
 <span class="w">    </span><span class="c1">// ftxui container to define interactivity of components</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
@@ -122,15 +124,13 @@ the Value.VAL and Value.DESC. Lets start by instantiating the widgets we will ne
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Depending on your needs, you might need to modify the required macros check, but otherwise the above should apply to most
-basic TUIs.</p>
+<p>The above should apply to most basic TUIs. The prefix is taken as a positional argument and prepended to each PV name.</p>
 <p>First we will define the widgets we need.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create all the widgets we need</span>
-<span class="n">InputWidget</span><span class="w"> </span><span class="n">desc</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)Value.DESC&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">String</span><span class="p">);</span>
-<span class="n">InputWidget</span><span class="w"> </span><span class="n">val</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)Value.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
-<span class="n">InputWidget</span><span class="w"> </span><span class="n">twv</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakVal.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
-<span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twf</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakFwd.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; + &quot;</span><span class="p">);</span>
-<span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">InputWidget</span><span class="w"> </span><span class="n">desc</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Value.DESC&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">String</span><span class="p">);</span>
+<span class="n">InputWidget</span><span class="w"> </span><span class="n">val</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Value.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
+<span class="n">InputWidget</span><span class="w"> </span><span class="n">twv</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakVal.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
+<span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twf</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakFwd.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; + &quot;</span><span class="p">);</span>
+<span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Any widget that a user can interact with must be added to a ftxui::Container, so we’ll do that now.
@@ -192,19 +192,19 @@ For each widget we call its Render() function then apply styles to it with the <
 connection to the PV is lost. Following the style of MEDM, widgets with <code class="docutils literal notranslate"><span class="pre">EPICSColor</span></code> will be rendered as white for both the
 foreground and background if the underlying PV is disconnected. After defining the renderer, call <code class="docutils literal notranslate"><span class="pre">app.run(main_renderer)</span></code> to run the main application loop.</p>
 <p>Load the test database in an IOC with a <code class="docutils literal notranslate"><span class="pre">P</span></code> macro of your choosing, e.g. <code class="docutils literal notranslate"><span class="pre">softIoc</span> <span class="pre">-m</span> <span class="pre">&quot;P=MyIoc:&quot;</span> <span class="pre">-d</span> <span class="pre">test.db</span></code>.
-Then compile and run the PVTUI application: <code class="docutils literal notranslate"><span class="pre">./test_pvtui</span> <span class="pre">--macro</span> <span class="pre">&quot;P=MyIoc:</span></code></p>
+Then compile and run the tutorial application: <code class="docutils literal notranslate"><span class="pre">./tutorial</span> <span class="pre">MyIoc:</span></code></p>
 <p>You should have a PVTUI application as in the screenshot below.
 Clicking plus or minus will add/subtract the TweakVal to Value.</p>
 <blockquote>
-<div><a class="reference internal image-reference" href="_images/test_pvtui.png"><img alt="test_pvtui" class="align-center" src="_images/test_pvtui.png" style="width: 400px;" />
+<div><a class="reference internal image-reference" href="_images/tutorial.png"><img alt="tutorial" class="align-center" src="_images/tutorial.png" style="width: 400px;" />
 </a>
 </div></blockquote>
 <p>and if the PVs are not connected, it will look like this:</p>
 <blockquote>
-<div><a class="reference internal image-reference" href="_images/test_pvtui_down.png"><img alt="test_pvtui_down" class="align-center" src="_images/test_pvtui_down.png" style="width: 400px;" />
+<div><a class="reference internal image-reference" href="_images/tutorial_down.png"><img alt="tutorial_down" class="align-center" src="_images/tutorial_down.png" style="width: 400px;" />
 </a>
 </div></blockquote>
-<p>That’s it. Below the full code is provided.
+<p>That’s it. Below the full code is provided (also located at <code class="docutils literal notranslate"><span class="pre">tests/tutorial.cpp</span></code>).
 At this point you might still be missing some details needed to make more complex applications. The best way to
 learn is by looking through the provided applications here, and also in the FTXUI repository.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pvtui/pvtui.hpp&gt;</span>
@@ -215,21 +215,20 @@ learn is by looking through the provided applications here, and also in the FTXU
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w">    </span><span class="c1">// Instantiate an App to manage everything</span>
-<span class="w">    </span><span class="n">App</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pvtui</span><span class="o">::</span><span class="n">App</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
 
-<span class="w">    </span><span class="c1">// Check for required macros if desired</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">macros_present</span><span class="p">({</span><span class="s">&quot;P&quot;</span><span class="p">}))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Missing required macro P</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">positional_args</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pos_args</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Usage: tutorial &lt;prefix&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos_args</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
-<span class="w">    </span><span class="c1">// Create all the widgets</span>
-<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">desc</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)Value.DESC&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">String</span><span class="p">);</span>
-<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">val</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)Value.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
-<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">twv</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakVal.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
-<span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twf</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakFwd.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; + &quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;$(P)TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">desc</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Value.DESC&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">String</span><span class="p">);</span>
+<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">val</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Value.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
+<span class="w">    </span><span class="n">InputWidget</span><span class="w"> </span><span class="n">twv</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakVal.VAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PVPutType</span><span class="o">::</span><span class="n">Double</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twf</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakFwd.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; + &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// ftxui container to define interactivity of components</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
