@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
     auto pos_args = app.args.positional_args();
     if (pos_args.size() < 2) {
-	printf("Usage: test_pvtui <prefix>\n");
+	printf("Usage: tutorial <prefix>\n");
 	return EXIT_FAILURE;
     }
     const std::string prefix = pos_args[1];

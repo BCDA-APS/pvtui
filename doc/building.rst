@@ -3,7 +3,7 @@
 Building from Source
 ====================
 This page describes how to compile PVTUI from source.
-Note that PVTUI releases starting with R2-0-0 provide pre-built binaries for Linux x86-64.
+Note that PVTUI releases starting with v0.2.0 provide pre-built binaries for Linux x86-64.
 
 Dependencies
 ------------

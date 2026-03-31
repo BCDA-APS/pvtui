@@ -224,10 +224,16 @@ if(BUILD_DOCS)
         ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY
     )
 
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/doc/conf.py.in
+        ${CMAKE_CURRENT_BINARY_DIR}/doc/conf.py @ONLY
+    )
+
     add_custom_target(
         doc
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${SPHINX_EXECUTABLE} -b html
+            -c ${CMAKE_CURRENT_BINARY_DIR}/doc
             ${CMAKE_CURRENT_SOURCE_DIR}/doc
             ${CMAKE_CURRENT_BINARY_DIR}/doc/sphinx
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
