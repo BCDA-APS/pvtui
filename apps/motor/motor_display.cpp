@@ -217,7 +217,7 @@ ftxui::Element MediumMotorDisplay::get_renderer() {
     }) | center | EPICSColor::background();
 }
 
-AllMotorDisplay::AllMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
+LargeMotorDisplay::LargeMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
     : pvtui::DisplayBase(pvgroup), record_name(record),
     desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
     val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
@@ -259,7 +259,7 @@ AllMotorDisplay::AllMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &rec
     rrbv(pvgroup, record + ".RRBV")
 {}
 
-ftxui::Component AllMotorDisplay::get_container() {
+ftxui::Component LargeMotorDisplay::get_container() {
     using namespace ftxui;
     return Container::Vertical({
         desc.component(),
@@ -296,7 +296,7 @@ ftxui::Component AllMotorDisplay::get_container() {
     });
 }
 
-ftxui::Element AllMotorDisplay::get_renderer() {
+ftxui::Element LargeMotorDisplay::get_renderer() {
     using namespace ftxui;
     using namespace pvtui;
 

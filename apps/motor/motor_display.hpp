@@ -62,10 +62,10 @@ class MediumMotorDisplay : public pvtui::DisplayBase {
     pvtui::ChoiceWidget able;
 };
 
-class AllMotorDisplay : public pvtui::DisplayBase {
+class LargeMotorDisplay : public pvtui::DisplayBase {
   public:
-    AllMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
-    ~AllMotorDisplay() override = default;
+    LargeMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
+    ~LargeMotorDisplay() override = default;
     ftxui::Element get_renderer() override;
     ftxui::Component get_container() override;
 

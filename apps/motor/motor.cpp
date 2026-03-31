@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     } else {
         displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, motor_names[0]));
         displays.emplace_back(std::make_unique<MediumMotorDisplay>(app.pvgroup, motor_names[0]));
-        displays.emplace_back(std::make_unique<AllMotorDisplay>(app.pvgroup, motor_names[0]));
+        displays.emplace_back(std::make_unique<LargeMotorDisplay>(app.pvgroup, motor_names[0]));
     }
 
     int selected_tab = 0;
