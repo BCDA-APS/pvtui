@@ -24,8 +24,7 @@ DBD_SUFFIX_Linux = Linux
 DBD_SUFFIX_WIN32 = Win$(if $(findstring 32, $(T_A)),32,64)
 DBD_NAME = $(DBD_PREFIX)$(DBD_SUFFIX_$(OS_CLASS))
 
-DBD  += $(DBD_NAME).dbd
-
+DBD += $(DBD_NAME).dbd
 $(DBD_NAME)_DBD += base.dbd
 
 ifdef ASYN
@@ -44,6 +43,14 @@ endif
 ifdef CALC
   $(DBD_NAME)_DBD += calcSupport.dbd
   $(PROD_NAME)_LIBS := calc $($(PROD_NAME)_LIBS)
+endif
+
+# pvAccess server
+ifdef EPICS_QSRV_MAJOR_VERSION
+  $(DBD_NAME)_DBD += qsrv.dbd
+  $(DBD_NAME)_DBD += PVAServerRegister.dbd
+  $(PROD_NAME)_LIBS := qsrv $($(PROD_NAME)_LIBS)
+  $(PROD_NAME)_LIBS += $(EPICS_BASE_PVA_CORE_LIBS)
 endif
 
 $(PROD_NAME)_LIBS += $(EPICS_BASE_IOC_LIBS)
