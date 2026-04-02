@@ -77,7 +77,12 @@ int main(int argc, char* argv[]) {
 
     Component main_container = Container::Horizontal({});
     for (size_t i = 0; i < displays.size(); i++) {
-        main_container->Add(displays[i]->get_container());
+        main_container->Add(displays[i]->get_container() | Maybe([&selected_view, i] {
+            if ((i%2) == 0) {
+                return selected_view == 0;
+            } else {
+                return selected_view == i;
+            }}));
         main_container->Add(buttons[i]);
     }
 
