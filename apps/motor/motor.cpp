@@ -6,7 +6,6 @@
 #include <ftxui/screen/color.hpp>
 
 #include "motor_display.hpp"
-#include <thread>
 #include <pvtui/pvtui.hpp>
 
 using namespace ftxui;
@@ -52,77 +51,67 @@ int main(int argc, char* argv[]) {
         motor_names.push_back(prefix + pos_args[i]);
     }
 
-    bool display_multi = motor_names.size() > 1;
-
     std::vector<std::unique_ptr<DisplayBase>> displays;
-    if (display_multi) {
-        for (const auto& name : motor_names) {
-            displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, name));
-        }
-    } else {
-        displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, motor_names[0]));
-        displays.emplace_back(std::make_unique<MediumMotorDisplay>(app.pvgroup, motor_names[0]));
-        displays.emplace_back(std::make_unique<LargeMotorDisplay>(app.pvgroup, motor_names[0]));
+    for (auto& name : motor_names) {
+        displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, name));
+        displays.emplace_back(std::make_unique<LargeMotorDisplay>(app.pvgroup, name));
     }
 
-    int selected_tab = 0;
-    std::vector<std::string> labels = {"Small", "Medium", "All"};
-    auto dropdown_op = ftxui::DropdownOption();
-    dropdown_op.radiobox.entries = &labels;
-    dropdown_op.radiobox.selected = &selected_tab;
-    dropdown_op.transform = [](bool open, ftxui::Element checkbox, ftxui::Element radiobox) {
-        if (open) {
-            return ftxui::vbox({
-                checkbox | inverted,
-                radiobox | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10),
-                filler(),
-            });
-        }
-        return vbox({
-            checkbox,
-            filler(),
-        });
-    };
+    int selected_view = 0;
 
-    ftxui::Component main_container;
-    ftxui::Component main_renderer;
-
-    if (display_multi) {
-        main_container = ftxui::Container::Horizontal({});
-        for (auto& display : displays) {
-            main_container->Add(display->get_container());
-        }
-        main_renderer = ftxui::Renderer(main_container, [&] {
-            Elements elements;
-            for (auto& display : displays) {
-                elements.push_back(display->get_renderer());
+    Components buttons;
+    std::string button_label_more = " MORE ";
+    std::string button_label_top  = " BACK  ";
+    for (size_t i = 0; i < displays.size(); i++) {
+        auto opt = ButtonOption::Ascii();
+        opt.label = (i % 2) ? button_label_top : button_label_more;
+        opt.on_click = [&selected_view, i]{
+            if ((i % 2) == 0) {
+                selected_view = i+1;
+            } else {
+                selected_view = 0;
             }
-            return hbox({elements}) | center | EPICSColor::background();
-        });
-
-    } else {
-        auto tab_selector = ftxui::Dropdown(dropdown_op);
-
-        ftxui::Components tabs;
-        for (auto& display : displays) {
-            tabs.push_back(display->get_container());
-        }
-
-        main_container = ftxui::Container::Vertical({
-            ftxui::Container::Tab({tabs}, &selected_tab),
-            tab_selector
-        });
-
-        main_renderer = ftxui::Renderer(main_container, [&] {
-            return vbox({
-                displays.at(selected_tab)->get_renderer(),
-                tab_selector->Render()
-                    | color(Color::White)
-                    | bgcolor(Color::DarkGreen)
-                    | size(WIDTH, EQUAL, 7)
-            }) | center | pvtui::EPICSColor::background();
-        });
+        };
+        buttons.push_back(Button(opt));
     }
+
+    Component main_container = Container::Horizontal({});
+    for (size_t i = 0; i < displays.size(); i++) {
+        main_container->Add(displays[i]->get_container());
+        main_container->Add(buttons[i]);
+    }
+
+    Component main_renderer = Renderer(main_container, [&]{
+
+        Elements elements;
+
+        if (selected_view == 0) {
+            // view 0 means show all SmallMotorDisplays's aranged horizontally
+            for (size_t i = 0; i < displays.size(); i++) {
+                if ((i % 2) == 0) {
+                    elements.push_back(vbox({
+                        displays[i]->get_renderer(),
+                        hbox({
+                            buttons[i]->Render()
+                                | color(Color::White) | bgcolor(Color::DarkGreen)
+                                | size(WIDTH, EQUAL, 8)
+                        }) | center
+                    }));
+                }
+            }
+        } else {
+            // Show just the seleted LargeMotorDisplay
+            elements.push_back(vbox({
+                displays[selected_view]->get_renderer(),
+                hbox({
+                    buttons[selected_view]->Render()
+                        | color(Color::White) | bgcolor(Color::DarkGreen)
+                        | size(WIDTH, EQUAL, 8)
+                })
+            }));
+        }
+        return hbox({elements}) | center | EPICSColor::background();
+    });
 
     app.run(main_renderer);
 }

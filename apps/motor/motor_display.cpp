@@ -44,8 +44,9 @@ ftxui::Element SmallMotorDisplay::get_renderer() {
 
     return ftxui::vbox({
         desc.component()->Render()
+            | EPICSColor::custom(desc, color(Color::Black) | bgcolor(Color::RGB(210,210,210)))
             | size(WIDTH, EQUAL, 20)
-            | underlined
+            | bold
             | center,
 
         hbox({
