@@ -44,78 +44,75 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
+    // Get all the motor record names (prepending prefix if given)
     std::string prefix = app.args.param("--prefix");
-
     std::vector<std::string> motor_names;
     for (size_t i = 1; i < pos_args.size(); i++) {
         motor_names.push_back(prefix + pos_args[i]);
     }
 
-    std::vector<std::unique_ptr<DisplayBase>> displays;
+    // Create the displays for each motor record
+    std::vector<std::shared_ptr<MotorDisplay>> displays;
     for (auto& name : motor_names) {
-        displays.emplace_back(std::make_unique<SmallMotorDisplay>(app.pvgroup, name));
-        displays.emplace_back(std::make_unique<LargeMotorDisplay>(app.pvgroup, name));
+        displays.push_back(std::make_shared<MotorDisplay>(app.pvgroup, name));
     }
 
-    int selected_view = 0;
 
-    Components buttons;
-    std::string button_label_more = " MORE ";
-    std::string button_label_top  = " BACK  ";
+    int selected_motor = -1; // -1 = all
+
+    auto main_container = Container::Horizontal({});
+
+    std::string button_label = " MORE ";
+
+    // Buttons to switch between small, large, and all views
+    std::vector<Component> view_buttons;
     for (size_t i = 0; i < displays.size(); i++) {
-        auto opt = ButtonOption::Ascii();
-        opt.label = (i % 2) ? button_label_top : button_label_more;
-        opt.on_click = [&selected_view, i]{
-            if ((i % 2) == 0) {
-                selected_view = i+1;
+        auto op = ButtonOption::Ascii();
+        op.label = &button_label;
+        op.on_click = [&, i] {
+            if (selected_motor == i) {
+                // this means we currently we are on the large view
+                // for displays[i] and want to go back to all view.
+                button_label = " MORE ";
+                displays[i]->view = 0;
+                selected_motor = -1;
             } else {
-                selected_view = 0;
+                // we must be in the all screen and want to go to a
+                // specific large motor screen
+                button_label = " BACK ";
+                selected_motor = -1;
+                displays[i]->view = 1;
+                selected_motor = i;
             }
         };
-        buttons.push_back(Button(opt));
+        auto button = Button(op);
+        view_buttons.push_back(button | bgcolor(Color::DarkGreen) | color(Color::White));
+
+        main_container->Add(displays[i] | Maybe([&, i] {
+            return selected_motor == -1 || selected_motor == (int)i;
+        }));
+        main_container->Add(button | Maybe([&, i] {
+            return selected_motor == -1 || selected_motor == (int)i;
+        }));
+
     }
 
-    Component main_container = Container::Horizontal({});
-    for (size_t i = 0; i < displays.size(); i++) {
-        main_container->Add(displays[i]->get_container() | Maybe([&selected_view, i] {
-            if ((i%2) == 0) {
-                return selected_view == 0;
-            } else {
-                return selected_view == i;
-            }}));
-        main_container->Add(buttons[i]);
-    }
-
-    Component main_renderer = Renderer(main_container, [&]{
-
-        Elements elements;
-
-        if (selected_view == 0) {
-            // view 0 means show all SmallMotorDisplays's aranged horizontally
+    auto main_renderer = Renderer(main_container, [&] {
+        if (selected_motor == -1) {
+            Elements panels;
             for (size_t i = 0; i < displays.size(); i++) {
-                if ((i % 2) == 0) {
-                    elements.push_back(vbox({
-                        displays[i]->get_renderer(),
-                        hbox({
-                            buttons[i]->Render()
-                                | color(Color::White) | bgcolor(Color::DarkGreen)
-                                | size(WIDTH, EQUAL, 8)
-                        }) | center
-                    }));
-                }
+                panels.push_back(vbox({
+                    displays[i]->Render(),
+                    view_buttons[i]->Render() | center,
+                }));
             }
+            return hbox(panels) | center | EPICSColor::background();
         } else {
-            // Show just the seleted LargeMotorDisplay
-            elements.push_back(vbox({
-                displays[selected_view]->get_renderer(),
-                hbox({
-                    buttons[selected_view]->Render()
-                        | color(Color::White) | bgcolor(Color::DarkGreen)
-                        | size(WIDTH, EQUAL, 8)
-                })
-            }));
+            return vbox({
+                displays[selected_motor]->Render(),
+                view_buttons[selected_motor]->Render() | center,
+            }) | center | EPICSColor::background();
         }
-        return hbox({elements}) | center | EPICSColor::background();
     });
 
     app.run(main_renderer);
