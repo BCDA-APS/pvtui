@@ -62,27 +62,28 @@ int main(int argc, char* argv[]) {
 
     auto main_container = Container::Horizontal({});
 
-    std::string button_label = " MORE ";
-
-    // Buttons to switch between small, large, and all views
+    std::vector<std::string> button_labels;
     std::vector<Component> view_buttons;
     for (size_t i = 0; i < displays.size(); i++) {
+        button_labels.push_back(" MORE ");
+    }
+
+    for (size_t i = 0; i < displays.size(); i++) {
         auto op = ButtonOption::Ascii();
-        op.label = &button_label;
+        op.label = &button_labels[i];
         op.on_click = [&, i] {
-            if (selected_motor == i) {
-                // this means we currently we are on the large view
-                // for displays[i] and want to go back to all view.
-                button_label = " MORE ";
+            if (selected_motor == (int)i) {
                 displays[i]->view = 0;
                 selected_motor = -1;
+                button_labels[i] = " MORE ";
             } else {
-                // we must be in the all screen and want to go to a
-                // specific large motor screen
-                button_label = " BACK ";
-                selected_motor = -1;
+                if (selected_motor >= 0) {
+                    displays[selected_motor]->view = 0;
+                    button_labels[selected_motor] = " MORE ";
+                }
                 displays[i]->view = 1;
                 selected_motor = i;
+                button_labels[i] = " BACK ";
             }
         };
         auto button = Button(op);
@@ -94,7 +95,6 @@ int main(int argc, char* argv[]) {
         main_container->Add(button | Maybe([&, i] {
             return selected_motor == -1 || selected_motor == (int)i;
         }));
-
     }
 
     auto main_renderer = Renderer(main_container, [&] {
@@ -102,15 +102,15 @@ int main(int argc, char* argv[]) {
             Elements panels;
             for (size_t i = 0; i < displays.size(); i++) {
                 panels.push_back(vbox({
-                    displays[i]->Render(),
-                    view_buttons[i]->Render() | center,
+                    main_container->ChildAt(i * 2)->Render(),
+                    main_container->ChildAt(i * 2 + 1)->Render() | center,
                 }));
             }
             return hbox(panels) | center | EPICSColor::background();
         } else {
             return vbox({
-                displays[selected_motor]->Render(),
-                view_buttons[selected_motor]->Render() | center,
+                main_container->ChildAt(selected_motor * 2)->Render(),
+                main_container->ChildAt(selected_motor * 2 + 1)->Render() | center,
             }) | center | EPICSColor::background();
         }
     });
