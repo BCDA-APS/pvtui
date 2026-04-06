@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
     // ftxui container to define interactivity of components
     // Only interactive components need to be included here.
-    auto main_container = Container::Vertical({
+    auto container = Container::Vertical({
         inp1.component(),
         plus_button.component(),
         minus_button.component(),
@@ -75,7 +75,8 @@ int main(int argc, char* argv[]) {
     });
 
     // ftxui renderer defines the visual layout of components
-    auto main_renderer = Renderer(main_container, [&]{
+    // We apply the renderer to the container with the "|=" operator.
+    container |= Renderer([&](Element){
         auto row1 = hbox({
             text("Input      ") | color(Color::White),
             separator(),
@@ -134,7 +135,7 @@ int main(int argc, char* argv[]) {
         });
 
         auto row6 = hbox({
-            text("Gauge:     ") | color(Color::White) | vcenter,
+            text("Gauge      ") | color(Color::White) | vcenter,
             separator(),
             gaugeRight(bits.value() / 255.0) | color(Color::Purple) | xflex,
         });
@@ -155,9 +156,8 @@ int main(int argc, char* argv[]) {
             row6,
             separator(),
         }) | size(WIDTH, EQUAL, 50);
-
-    }) | bgcolor(Color::Black);
+    });
 
     // Main loop
-    app.run(main_renderer);
+    app.run(container);
 }

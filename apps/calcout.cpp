@@ -27,6 +27,18 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 
+
+Element make_input_row(InputWidget& inp, InputWidget& val, std::string label) {
+    return hbox({
+        text(label) | color(Color::Black),
+        separatorEmpty(),
+        inp.component()->Render() | size(WIDTH, EQUAL, 32) | EPICSColor::link(inp),
+        separatorEmpty(),
+        val.component()->Render() | size(WIDTH, EQUAL, 13) | EPICSColor::edit(val),
+    });
+};
+
+
 int main(int argc, char *argv[]) {
 
     pvtui::App app(argc, argv);
@@ -71,25 +83,35 @@ int main(int argc, char *argv[]) {
         scan.component(),
         proc.component(),
         prec.component(),
-        inpa.component(), a_val.component(),
-        inpb.component(), b_val.component(),
-        inpc.component(), c_val.component(),
-        inpd.component(), d_val.component(),
+        inpa.component(),
+        a_val.component(),
+        inpb.component(),
+        b_val.component(),
+        inpc.component(),
+        c_val.component(),
+        inpd.component(),
+        d_val.component(),
         calc.component(),
         ocal.component(),
-        odly.component(), oopt.component(), dopt.component(),
-        ivoa.component(), ivov.component(), out.component(), flnk.component(),
-    });
-
-    // Main renderer to define visual layout of components and elements
-    auto main_renderer = Renderer(main_container, [&] {
+        odly.component(),
+        oopt.component(),
+        dopt.component(),
+        ivoa.component(),
+        ivov.component(),
+        out.component(),
+        flnk.component(),
+    }) | Renderer([&](Element){
         return vbox({
             hbox({
-                desc.component()->Render() | color(Color::Black) |  bgcolor(Color::RGB(210,210,210)) | size(WIDTH, LESS_THAN, 32) | xflex,
+                desc.component()->Render()
+                    | color(Color::Black) |  bgcolor(Color::RGB(210,210,210))
+                    | size(WIDTH, LESS_THAN, 32) | xflex,
                 separatorEmpty(),
                 text("(" + record_name + ")") | color(Color::Black)
             }),
+
             separatorEmpty(),
+
             hbox({
                 scan.component()->Render()
                     | EPICSColor::edit(scan)
@@ -105,39 +127,16 @@ int main(int argc, char *argv[]) {
                     | size(WIDTH, EQUAL, 3),
                 separatorEmpty()
             }),
+
             separatorEmpty(),
 
-            hbox({
-            text("A") | color(Color::Black),
-                separatorEmpty(),
-                inpa.component()->Render() | size(WIDTH, EQUAL, 32) | EPICSColor::link(inpa),
-                separatorEmpty(),
-                a_val.component()->Render() | size(WIDTH, EQUAL, 13) | EPICSColor::edit(a_val)
-            }),
+            make_input_row(inpa, a_val, "A"),
             separatorEmpty(),
-            hbox({
-                text("B") | color(Color::Black),
-                separatorEmpty(),
-                inpb.component()->Render() | size(WIDTH, EQUAL, 32) | EPICSColor::link(inpb),
-                separatorEmpty(),
-                b_val.component()->Render() | size(WIDTH, EQUAL, 13) | EPICSColor::edit(b_val)
-            }),
+            make_input_row(inpb, b_val, "B"),
             separatorEmpty(),
-            hbox({
-                text("C") | color(Color::Black),
-                separatorEmpty(),
-                inpc.component()->Render() | size(WIDTH, EQUAL, 32) | EPICSColor::link(inpc),
-                separatorEmpty(),
-                c_val.component()->Render() | size(WIDTH, EQUAL, 13) | EPICSColor::edit(c_val)
-            }),
+            make_input_row(inpc, c_val, "C"),
             separatorEmpty(),
-            hbox({
-                text("D") | color(Color::Black),
-                separatorEmpty(),
-                inpd.component()->Render() | size(WIDTH, EQUAL, 32) | EPICSColor::link(inpd),
-                separatorEmpty(),
-                d_val.component()->Render() | size(WIDTH, EQUAL, 13) | EPICSColor::edit(d_val)
-            }),
+            make_input_row(inpd, d_val, "D"),
 
             separator() | color(Color::Black),
 
@@ -195,9 +194,8 @@ int main(int argc, char *argv[]) {
                 flnk.component()->Render() | size(WIDTH, EQUAL, 18) | EPICSColor::link(flnk)
             }),
         }) | border | color(Color::Black) | size(WIDTH, EQUAL, 52) | center | EPICSColor::background();
+
     });
 
-    app.run(main_renderer);
-
-    return EXIT_SUCCESS;
+    app.run(main_container);
 }
