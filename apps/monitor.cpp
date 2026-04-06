@@ -50,18 +50,13 @@ int main(int argc, char* argv[]) {
     });
 
     std::vector<std::unique_ptr<WidgetBase>> widgets;
-    if (app.args.flag("edit")) {
-        std::cout << "edit mode not implemented\n";
-        return 0;
-    } else {
-        for (auto& name : pv_names) {
-            std::cout << name << std::endl;
-            auto chan = app.pvgroup[name].channel.get();
-            if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
-                widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
-            } else {
-                widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
-            }
+    for (auto& name : pv_names) {
+        std::cout << name << std::endl;
+        auto chan = app.pvgroup[name].channel.get();
+        if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
+            widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
+        } else {
+            widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
         }
     }
 
@@ -69,12 +64,7 @@ int main(int argc, char* argv[]) {
     // from firing at construction of the widgets
     app.pvgroup.force_update();
 
-    auto main_contianer = Container::Vertical({});
-    for (auto& widget : widgets) {
-        main_contianer->Add(widget->component());
-    }
-
-    auto main_renderer = Renderer(main_contianer, [&] {
+    auto renderer = Renderer([&] {
         Elements name_col = {text("PV") | bold | italic};
         Elements val_col = {text("Value") | bold | italic};
 
@@ -98,5 +88,5 @@ int main(int argc, char* argv[]) {
         });
     });
 
-    app.run(main_renderer);
+    app.run(renderer);
 }
