@@ -30,6 +30,19 @@ Examples:
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
+
+// Helper to make the Element for toggle widgets for the asyn masks
+Element trace_toggle(ChoiceWidget& choice_widget, std::string label) {
+    return hbox({
+        choice_widget.component()->Render()
+            | EPICSColor::edit(choice_widget)
+            | size(WIDTH, EQUAL, 7),
+        separatorEmpty(),
+        text(label) | color(Color::Black)
+    });
+}
+
+
 int main(int argc, char *argv[]) {
 
     pvtui::App app(argc, argv);
@@ -74,33 +87,7 @@ int main(int argc, char *argv[]) {
     ChoiceWidget enbl(app, record_name + ".ENBL", ChoiceStyle::Dropdown);
     ChoiceWidget auct(app, record_name + ".AUCT", ChoiceStyle::Dropdown);
 
-    // ftxui container to define interactivity of components
-    auto main_container = ftxui::Container::Vertical({
-	    tmot.component(),
-	    tmod.component(),
-	    aout.component(),
-	    oeos.component(),
-        ieos.component(),
-	    cnct.component(),
-	    enbl.component(),
-	    auct.component(),
-	    tb0.component(),
-	    tb1.component(),
-	    tb2.component(),
-	    tb3.component(),
-	    tb4.component(),
-	    tb5.component(),
-	    tib0.component(),
-	    tib1.component(),
-	    tib2.component(),
-	    tinb0.component(),
-	    tinb1.component(),
-	    tinb2.component(),
-	    tinb3.component(),
-        tfil.component(),
-    });
-
-    auto sevr_color = [&]() -> Decorator{
+    auto sevr_color = [&]() -> Decorator {
         if (sevr.value().choice.find("MAJOR") != std::string::npos) {
             return EPICSColor::custom(sevr, color(Color::Red));
         } else if (sevr.value().choice.find("WARN") != std::string::npos) {
@@ -110,8 +97,30 @@ int main(int argc, char *argv[]) {
         }
     };
 
-    // ftxui renderer defines the visual layout
-    auto main_renderer = Renderer(main_container, [&] {
+    auto main_container = ftxui::Container::Vertical({
+        tmot.component(),
+        tmod.component(),
+        aout.component(),
+        oeos.component(),
+        ieos.component(),
+        cnct.component(),
+        enbl.component(),
+        auct.component(),
+        tb0.component(),
+        tb1.component(),
+        tb2.component(),
+        tb3.component(),
+        tb4.component(),
+        tb5.component(),
+        tib0.component(),
+        tib1.component(),
+        tib2.component(),
+        tinb0.component(),
+        tinb1.component(),
+        tinb2.component(),
+        tinb3.component(),
+        tfil.component(),
+    }) | Renderer([&](Element){
         return vbox({
             text(record_name)
                 | bold | italic
@@ -167,121 +176,39 @@ int main(int argc, char *argv[]) {
 
             separator(),
 
-            // trace mask toggles
             hbox({
                 vbox({
                     text("traceMask")
-                        | bold
-                        | underlined
+                        | bold | underlined
                         | size(WIDTH, EQUAL, 7)
                         | color(Color::Black),
-                    hbox({
-                        tb0.component()->Render()
-                            | EPICSColor::edit(tb0)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceError") | color(Color::Black)
-                    }),
-                    hbox({
-                        tb1.component()->Render()
-                            | EPICSColor::edit(tb1)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIODevice") | color(Color::Black)
-                    }),
-                    hbox({
-                        tb2.component()->Render()
-                            | EPICSColor::edit(tb2)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIOFilter") | color(Color::Black)
-                    }),
-                    hbox({
-                        tb3.component()->Render()
-                            | EPICSColor::edit(tb3)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIODriver") | color(Color::Black)
-                    }),
-                    hbox({
-                        tb4.component()->Render()
-                            | EPICSColor::edit(tb4)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceFlow") | color(Color::Black)
-                    }),
-                    hbox({
-                        tb5.component()->Render()
-                            | EPICSColor::edit(tb5)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceWarning") | color(Color::Black)
-                    }),
+                    trace_toggle(tb0, "traceError"),
+                    trace_toggle(tb1, "traceIODevice"),
+                    trace_toggle(tb2, "traceIOFilter"),
+                    trace_toggle(tb3, "traceDriver"),
+                    trace_toggle(tb4, "traceFlow"),
+                    trace_toggle(tb5, "traceWarning"),
                 }),
                 filler(),
                 vbox({
                     text("traceIOMask")
-                        | bold
-                        | underlined
+                        | bold | underlined
                         | size(WIDTH, EQUAL, 9)
                         | color(Color::Black),
-                    hbox({
-                        tib0.component()->Render()
-                            | EPICSColor::edit(tib0)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIOASCII") | color(Color::Black)
-                    }),
-                    hbox({
-                        tib1.component()->Render()
-                            | EPICSColor::edit(tib1)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIOEscape") | color(Color::Black)
-                    }),
-                    hbox({
-                        tib2.component()->Render()
-                            | EPICSColor::edit(tib2)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceIOHex") | color(Color::Black)
-                    }),
+                    trace_toggle(tib0, "traceIOASCII"),
+                    trace_toggle(tib1, "traceIOEscape"),
+                    trace_toggle(tib2, "traceIOHex"),
 
                     separatorEmpty(),
 
                     text("traceInfoMask")
-                        | bold
-                        | underlined
+                        | bold | underlined
                         | size(WIDTH, EQUAL, 11)
                         | color(Color::Black),
-                    hbox({
-                        tinb0.component()->Render()
-                            | EPICSColor::edit(tinb0)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceInfoTime") | color(Color::Black)
-                    }),
-                    hbox({
-                        tinb1.component()->Render()
-                            | EPICSColor::edit(tinb1)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceInfoPort") | color(Color::Black)
-                    }),
-                    hbox({
-                        tinb2.component()->Render()
-                            | EPICSColor::edit(tinb2)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceInfoSource") | color(Color::Black)
-                    }),
-                    hbox({
-                        tinb3.component()->Render()
-                            | EPICSColor::edit(tinb3)
-                            | size(WIDTH, EQUAL, 7),
-                        separatorEmpty(),
-                        text("traceInfoThread") | color(Color::Black)
-                    }),
+                    trace_toggle(tinb0, "traceInfoTime"),
+                    trace_toggle(tinb1, "traceInfoPort"),
+                    trace_toggle(tinb2, "traceInfoSource"),
+                    trace_toggle(tinb3, "traceInfoThread"),
                 }),
             }),
             separatorEmpty(),
@@ -293,5 +220,5 @@ int main(int argc, char *argv[]) {
         }) | border | color(Color::Black) | size(WIDTH, EQUAL, 52) | center | EPICSColor::background();
     });
 
-    app.run(main_renderer);
+    app.run(main_container);
 }
