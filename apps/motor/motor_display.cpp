@@ -47,8 +47,9 @@ MotorDisplay::MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
     using namespace pvtui;
     using namespace ftxui;
 
-    auto small_only = Maybe([this]{return view == 0;});
-    auto large_only = Maybe([this]{return view == 1;});
+    // TODO: I might need this...
+    // auto small_only = Maybe([this]{return view == 0;});
+    // auto large_only = Maybe([this]{return view == 1;});
 
     auto container = Container::Vertical({
         desc.component(),
@@ -57,32 +58,32 @@ MotorDisplay::MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
         twv.component(),
         twf.component(),
         use_set.component(),
-        stop.component() | small_only,
-        hlm.component() | large_only,
-        llm.component() | large_only,
-        rlv.component() | large_only,
-        dhlm.component() | large_only,
-        dval.component() | large_only,
-        dllm.component() | large_only,
-        rval.component() | large_only,
-        able.component() | large_only,
-        spmg.component() | large_only,
-        vmax.component() | large_only,
-        velo.component() | large_only,
-        vbas.component() | large_only,
-        accl.component() | large_only,
-        foff.component() | large_only,
-        off.component() | large_only,
-        dir.component() | large_only,
-        egu.component() | large_only,
-        mres.component() | large_only,
-        eres.component() | large_only,
-        rres.component() | large_only,
-        rtry.component() | large_only,
-        ueip.component() | large_only,
-        urip.component() | large_only,
-        prec.component() | large_only,
-        cnen.component() | large_only,
+        stop.component(),
+        hlm.component(),
+        llm.component(),
+        rlv.component(),
+        dhlm.component(),
+        dval.component(),
+        dllm.component(),
+        rval.component(),
+        able.component(),
+        spmg.component(),
+        vmax.component(),
+        velo.component(),
+        vbas.component(),
+        accl.component(),
+        foff.component(),
+        off.component(),
+        dir.component(),
+        egu.component(),
+        mres.component(),
+        eres.component(),
+        rres.component(),
+        rtry.component(),
+        ueip.component(),
+        urip.component(),
+        prec.component(),
+        cnen.component(),
     });
 
     Add(Renderer(container, [this]{
