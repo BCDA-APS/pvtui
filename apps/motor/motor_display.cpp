@@ -2,7 +2,7 @@
 #include <pvtui/pvtui.hpp>
 #include <ftxui/component/component.hpp>
 
-MotorDisplay::MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
+SmallMotorDisplay::SmallMotorDisplay(pvtui::PVGroup& pvgroup, const std::string& record)
     : record_name(record),
     desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
     val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
@@ -15,43 +15,12 @@ MotorDisplay::MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
     hls(pvgroup, record + ".HLS"),
     lvio(pvgroup, record + ".LVIO"),
     egu(pvgroup, record + ".EGU"),
-    able(pvgroup, record + "_able", pvtui::ChoiceStyle::Vertical),
+    able(pvgroup, record + "_able"),
     use_set(pvgroup, record + ".SET", pvtui::ChoiceStyle::Horizontal),
-    stop(pvgroup, record + ".STOP", " STOP "),
-    drbv(pvgroup, record + ".DRBV"),
-    dval(pvgroup, record + ".DVAL", pvtui::PVPutType::Double),
-    hlm(pvgroup, record + ".HLM", pvtui::PVPutType::Double),
-    dhlm(pvgroup, record + ".DHLM", pvtui::PVPutType::Double),
-    llm(pvgroup, record + ".LLM", pvtui::PVPutType::Double),
-    dllm(pvgroup, record + ".DLLM", pvtui::PVPutType::Double),
-    spmg(pvgroup, record + ".SPMG", pvtui::ChoiceStyle::Vertical),
-    vmax(pvgroup, record + ".VMAX", pvtui::PVPutType::Double),
-    velo(pvgroup, record + ".VELO", pvtui::PVPutType::Double),
-    vbas(pvgroup, record + ".VBAS", pvtui::PVPutType::Double),
-    accl(pvgroup, record + ".ACCL", pvtui::PVPutType::Double),
-    mres(pvgroup, record + ".MRES", pvtui::PVPutType::Double),
-    eres(pvgroup, record + ".ERES", pvtui::PVPutType::Double),
-    rres(pvgroup, record + ".RRES", pvtui::PVPutType::Double),
-    rtry(pvgroup, record + ".RTRY", pvtui::PVPutType::Integer),
-    off(pvgroup, record + ".OFF", pvtui::PVPutType::Double),
-    prec(pvgroup, record + ".PREC", pvtui::PVPutType::Integer),
-    rlv(pvgroup, record + ".RLV", pvtui::PVPutType::Double),
-    rval(pvgroup, record + ".RVAL", pvtui::PVPutType::Double),
-    ueip(pvgroup, record + ".UEIP", pvtui::ChoiceStyle::Horizontal),
-    urip(pvgroup, record + ".URIP", pvtui::ChoiceStyle::Horizontal),
-    dir(pvgroup, record + ".DIR", pvtui::ChoiceStyle::Horizontal),
-    cnen(pvgroup, record + ".CNEN", pvtui::ChoiceStyle::Horizontal),
-    foff(pvgroup, record + ".FOFF", pvtui::ChoiceStyle::Dropdown),
-    rrbv(pvgroup, record + ".RRBV")
+    stop(pvgroup, record + ".STOP", " STOP ")
 {
-    using namespace pvtui;
-    using namespace ftxui;
 
-    // TODO: I might need this...
-    // auto small_only = Maybe([this]{return view == 0;});
-    // auto large_only = Maybe([this]{return view == 1;});
-
-    auto container = Container::Vertical({
+    auto container = ftxui::Container::Vertical({
         desc.component(),
         val.component(),
         twr.component(),
@@ -59,43 +28,15 @@ MotorDisplay::MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record)
         twf.component(),
         use_set.component(),
         stop.component(),
-        hlm.component(),
-        llm.component(),
-        rlv.component(),
-        dhlm.component(),
-        dval.component(),
-        dllm.component(),
-        rval.component(),
-        able.component(),
-        spmg.component(),
-        vmax.component(),
-        velo.component(),
-        vbas.component(),
-        accl.component(),
-        foff.component(),
-        off.component(),
-        dir.component(),
         egu.component(),
-        mres.component(),
-        eres.component(),
-        rres.component(),
-        rtry.component(),
-        ueip.component(),
-        urip.component(),
-        prec.component(),
-        cnen.component(),
+    }) | ftxui::Renderer([this](ftxui::Element){
+        return this->render();
     });
 
-    Add(Renderer(container, [this]{
-        if (view == 0) {
-            return render_small();
-        } else {
-            return render_large();
-        }
-    }));
+    Add(container);
 }
 
-ftxui::Element MotorDisplay::render_small() {
+ftxui::Element SmallMotorDisplay::render() {
     using namespace ftxui;
     using namespace pvtui;
 
@@ -148,11 +89,94 @@ ftxui::Element MotorDisplay::render_small() {
         }) | center,
         separatorEmpty()
     }) | size(WIDTH, EQUAL, 24) | border | color(Color::Black) | center;
+
 }
 
 
-ftxui::Element MotorDisplay::render_large() {
+LargeMotorDisplay::LargeMotorDisplay(pvtui::PVGroup& pvgroup, const std::string& record)
+    : record_name(record),
+    desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
+    val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
+    twr(pvgroup, record + ".TWR", " < "),
+    twv(pvgroup, record + ".TWV", pvtui::PVPutType::Double),
+    twf(pvgroup, record + ".TWF", " > "),
+    rbv(pvgroup, record + ".RBV"),
+    dmov(pvgroup, record + ".DMOV"),
+    lls(pvgroup, record + ".LLS"),
+    hls(pvgroup, record + ".HLS"),
+    lvio(pvgroup, record + ".LVIO"),
+    egu(pvgroup, record + ".EGU"),
+    able(pvgroup, record + "_able", pvtui::ChoiceStyle::Vertical),
+    use_set(pvgroup, record + ".SET", pvtui::ChoiceStyle::Horizontal),
+    stop(pvgroup, record + ".STOP", " STOP "),
+    drbv(pvgroup, record + ".DRBV"),
+    dval(pvgroup, record + ".DVAL", pvtui::PVPutType::Double),
+    hlm(pvgroup, record + ".HLM", pvtui::PVPutType::Double),
+    dhlm(pvgroup, record + ".DHLM", pvtui::PVPutType::Double),
+    llm(pvgroup, record + ".LLM", pvtui::PVPutType::Double),
+    dllm(pvgroup, record + ".DLLM", pvtui::PVPutType::Double),
+    spmg(pvgroup, record + ".SPMG", pvtui::ChoiceStyle::Vertical),
+    vmax(pvgroup, record + ".VMAX", pvtui::PVPutType::Double),
+    velo(pvgroup, record + ".VELO", pvtui::PVPutType::Double),
+    vbas(pvgroup, record + ".VBAS", pvtui::PVPutType::Double),
+    accl(pvgroup, record + ".ACCL", pvtui::PVPutType::Double),
+    mres(pvgroup, record + ".MRES", pvtui::PVPutType::Double),
+    eres(pvgroup, record + ".ERES", pvtui::PVPutType::Double),
+    rres(pvgroup, record + ".RRES", pvtui::PVPutType::Double),
+    rtry(pvgroup, record + ".RTRY", pvtui::PVPutType::Integer),
+    off(pvgroup, record + ".OFF", pvtui::PVPutType::Double),
+    prec(pvgroup, record + ".PREC", pvtui::PVPutType::Integer),
+    rlv(pvgroup, record + ".RLV", pvtui::PVPutType::Double),
+    rval(pvgroup, record + ".RVAL", pvtui::PVPutType::Double),
+    ueip(pvgroup, record + ".UEIP", pvtui::ChoiceStyle::Horizontal),
+    urip(pvgroup, record + ".URIP", pvtui::ChoiceStyle::Horizontal),
+    dir(pvgroup, record + ".DIR", pvtui::ChoiceStyle::Horizontal),
+    cnen(pvgroup, record + ".CNEN", pvtui::ChoiceStyle::Horizontal),
+    foff(pvgroup, record + ".FOFF", pvtui::ChoiceStyle::Dropdown),
+    rrbv(pvgroup, record + ".RRBV")
+{
 
+    auto container = ftxui::Container::Vertical({
+        desc.component(),
+        val.component(),
+        twr.component(),
+        twv.component(),
+        twf.component(),
+        use_set.component(),
+        stop.component(),
+        hlm.component(),
+        llm.component(),
+        rlv.component(),
+        dhlm.component(),
+        dval.component(),
+        dllm.component(),
+        rval.component(),
+        able.component(),
+        spmg.component(),
+        vmax.component(),
+        velo.component(),
+        vbas.component(),
+        accl.component(),
+        foff.component(),
+        off.component(),
+        dir.component(),
+        egu.component(),
+        mres.component(),
+        eres.component(),
+        rres.component(),
+        rtry.component(),
+        ueip.component(),
+        urip.component(),
+        prec.component(),
+        cnen.component(),
+    }) | ftxui::Renderer([this](ftxui::Element){
+        return this->render();
+    });
+
+    Add(container);
+}
+
+ftxui::Element LargeMotorDisplay::render() {
     using namespace ftxui;
     using namespace pvtui;
 
@@ -343,5 +367,6 @@ ftxui::Element MotorDisplay::render_large() {
         }),
         separatorEmpty(),
     }) | size(WIDTH, EQUAL, 52);
+
 
 }

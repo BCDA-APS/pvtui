@@ -30,6 +30,11 @@ Examples:
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
+struct MotorUIStack {
+    Component small;
+    Component large;
+};
+
 int main(int argc, char* argv[]) {
 
     pvtui::App app(argc, argv, {"--prefix"});
@@ -52,96 +57,65 @@ int main(int argc, char* argv[]) {
     }
 
     // Create the displays for each motor record
-    std::vector<std::shared_ptr<MotorDisplay>> displays;
+    std::vector<MotorUIStack> displays;
     for (auto& name : motor_names) {
-        displays.push_back(std::make_shared<MotorDisplay>(app.pvgroup, name));
+        displays.push_back(MotorUIStack{
+            ftxui::Make<SmallMotorDisplay>(app.pvgroup, name),
+            ftxui::Make<LargeMotorDisplay>(app.pvgroup, name),
+        });
     }
 
-    int selected_motor = -1; // -1 = all
+    bool all = true; // Draw SmallMotorDisplay for each motor
+    int selected_motor = 0; // Draw this motor's LargeMotorDisplay
 
-    // displays[0]->view = 1;
-    // app.run(displays[0] | center | EPICSColor::background());
-
-    auto container = Container::Horizontal({});
+    // Container of SmallMotorDisplay's and "more" buttons
+    auto all_small_container = Container::Horizontal({});
     for (size_t i = 0; i < displays.size(); i++) {
-        container->Add(
-            displays[i] | Renderer([&](Element motor) {
-                return vbox({
-                    motor,
-                    text(" BUTTON ")| bgcolor(Color::DarkGreen) | color(Color::White) | size(WIDTH, EQUAL, 8) | center
-                });
-            })
-        );
+        auto op = ButtonOption::Ascii();
+        op.label = " MORE ";
+        op.on_click = [&selected_motor, &all, i]{
+            selected_motor = i;
+            all = false;
+        };
+        auto button = Button(op);
+
+        auto panel = Container::Vertical({displays[i].small, button});
+        panel |= Renderer([&, i, button](Element){
+            return vbox({
+                displays[i].small->Render(),
+                button->Render() | bgcolor(Color::DarkGreen) | color(Color::White) | center,
+            });
+        });
+
+        all_small_container->Add(panel);
     }
 
-    auto renderer = Renderer(container, [&]{
-        if (selected_motor == -1) {
-            return container->Render();
-        } else {
-            return container->ChildAt(selected_motor)->Render();
-        }
+    // Container of LargeMotorDisplay's and "back" button. Only one selected at a time.
+    auto large_container = Container::Tab({}, &selected_motor);
+    for (size_t i = 0; i < displays.size(); i++) {
+        auto op = ButtonOption::Ascii();
+        op.label = " BACK ";
+        op.on_click = [&, i]{
+            selected_motor = 0;
+            all = true;
+        };
+        auto button = Button(op);
+
+        auto panel = Container::Vertical({displays[i].large, button});
+        panel |= Renderer([&, i, button](Element){
+            return vbox({
+                displays[i].large->Render(),
+                button->Render() | bgcolor(Color::DarkGreen) | color(Color::White) | center,
+            });
+        });
+        large_container->Add(panel);
+    }
+
+    // Both containers gated by ftxui::Maybe
+    auto main_container = Container::Vertical({
+        all_small_container | Maybe([&]{return all;}),
+        large_container | Maybe([&]{return !all;})
     }) | center | EPICSColor::background();
 
-    app.run(renderer);
-
-    // int selected_motor = -1; // -1 = all
-
-    // auto main_container = Container::Horizontal({});
-
-    // std::vector<std::string> button_labels;
-    // std::vector<Component> view_buttons;
-    // for (size_t i = 0; i < displays.size(); i++) {
-        // button_labels.push_back(" MORE ");
-    // }
-
-    // for (size_t i = 0; i < displays.size(); i++) {
-        // auto op = ButtonOption::Ascii();
-        // op.label = &button_labels[i];
-        // op.on_click = [&, i] {
-            // if (selected_motor == (int)i) {
-                // displays[i]->view = 0;
-                // selected_motor = -1;
-                // button_labels[i] = " MORE ";
-            // } else {
-                // if (selected_motor >= 0) {
-                    // displays[selected_motor]->view = 0;
-                    // button_labels[selected_motor] = " MORE ";
-                // }
-                // displays[i]->view = 1;
-                // selected_motor = i;
-                // button_labels[i] = " BACK ";
-            // }
-        // };
-        // auto button = Button(op) | bgcolor(Color::DarkGreen) | color(Color::White);
-        // view_buttons.push_back(button);
-//
-        // main_container->Add(displays[i] | Maybe([&, i] {
-            // return selected_motor == -1 || selected_motor == (int)i;
-        // }));
-        // main_container->Add(button | Maybe([&, i] {
-            // return selected_motor == -1 || selected_motor == (int)i;
-        // }));
-    // }
-//
-    // auto main_renderer = Renderer(main_container, [&] {
-        // if (selected_motor == -1) {
-            // Elements panels;
-            // for (size_t i = 0; i < displays.size(); i++) {
-                // panels.push_back(vbox({
-                    // // the small motor ui:
-                    // main_container->ChildAt(i * 2)->Render(),
-                    // // the more button:
-                    // main_container->ChildAt(i * 2 + 1)->Render() | center,
-                // }));
-            // }
-            // return hbox(panels) | center | EPICSColor::background();
-        // } else {
-            // return vbox({
-                // main_container->ChildAt(selected_motor * 2)->Render(),
-                // main_container->ChildAt(selected_motor * 2 + 1)->Render() | center,
-            // }) | center | EPICSColor::background();
-        // }
-    // });
-
-    // app.run(main_renderer);
+    app.run(main_container);
 }

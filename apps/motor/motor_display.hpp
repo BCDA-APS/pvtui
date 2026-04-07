@@ -5,10 +5,33 @@
 #include <pvtui/display_base.hpp>
 #include <pvtui/pvtui.hpp>
 
-class MotorDisplay : public ftxui::ComponentBase {
+class SmallMotorDisplay : public ftxui::ComponentBase {
   public:
-    MotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
-    int view = 0; // 0 = small, 1 = large
+    SmallMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
+  private:
+    std::string record_name;
+    pvtui::InputWidget desc;
+    pvtui::InputWidget val;
+    pvtui::ButtonWidget twr;
+    pvtui::InputWidget twv;
+    pvtui::ButtonWidget twf;
+    pvtui::Monitor<std::string> rbv;
+    pvtui::Monitor<int> dmov;
+    pvtui::Monitor<int> lls;
+    pvtui::Monitor<int> hls;
+    pvtui::Monitor<int> lvio;
+    pvtui::Monitor<std::string> egu;
+    pvtui::ChoiceWidget use_set;
+    pvtui::ButtonWidget stop;
+    pvtui::Monitor<pvtui::PVEnum> able;
+
+    ftxui::Element render();
+};
+
+
+class LargeMotorDisplay : public ftxui::ComponentBase {
+  public:
+    LargeMotorDisplay(pvtui::PVGroup &pvgroup, const std::string &record);
   private:
     std::string record_name;
     pvtui::InputWidget desc;
@@ -51,6 +74,5 @@ class MotorDisplay : public ftxui::ComponentBase {
     pvtui::ChoiceWidget foff;
     pvtui::Monitor<std::string> rrbv;
 
-    ftxui::Element render_small();
-    ftxui::Element render_large();
+    ftxui::Element render();
 };
