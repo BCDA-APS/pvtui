@@ -341,6 +341,7 @@ ftxui::Element LargeMotorDisplay::render() {
     auto title = hbox({
         desc.component()->Render()
             | EPICSColor::custom(desc, color(Color::Black) | bgcolor(Color::RGB(210,210,210)))
+            | bold
             | size(WIDTH, EQUAL, 26),
         filler(),
         text("(" + record_name + ")")
