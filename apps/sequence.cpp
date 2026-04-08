@@ -33,46 +33,45 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 
 // DisplayBase subclass to simplify adding rows which are the same
 // except for the PV names
-class SequenceRow : public DisplayBase {
+class SequenceRow : public ComponentBase {
   public:
-    SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) : DisplayBase(app),
+    SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
 	dolx(app, record + ".DOL" + row_name, pvtui::PVPutType::String),
 	dlyx(app, record + ".DLY" + row_name, pvtui::PVPutType::Double),
 	dox(app, record + ".DO" + row_name, pvtui::PVPutType::Double),
 	lnkx(app, record + ".LNK" + row_name, pvtui::PVPutType::String),
-	row_name_(row_name) {}
-
-    ~SequenceRow() override = default;
-
-    ftxui::Component get_container() override {
-        return Container::Vertical({
+	row_name_(row_name)
+    {
+        auto container = Container::Vertical({
             dolx.component(),
             dlyx.component(),
             dox.component(),
             lnkx.component(),
         });
-    }
 
-    ftxui::Element get_renderer() override {
-        return hbox({
-            text(" " + row_name_ + " ") | color(Color::Black),
-            separator() | color(Color::Black),
-            dolx.component()->Render()
-                | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(dolx),
-            separator() | color(Color::Black),
-            dlyx.component()->Render()
-                | size(WIDTH, EQUAL, 10)
-                | EPICSColor::edit(dlyx),
-            separator() | color(Color::Black),
-            dox.component()->Render()
-                | size(WIDTH, EQUAL, 10)
-                | EPICSColor::edit(dox),
-            separator() | color(Color::Black),
-            lnkx.component()->Render()
-                | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(lnkx),
+        container |= Renderer([&](Element){
+            return hbox({
+                text(" " + row_name_ + " ") | color(Color::Black),
+                separator() | color(Color::Black),
+                dolx.component()->Render()
+                    | size(WIDTH, EQUAL, 20)
+                    | EPICSColor::link(dolx),
+                separator() | color(Color::Black),
+                dlyx.component()->Render()
+                    | size(WIDTH, EQUAL, 10)
+                    | EPICSColor::edit(dlyx),
+                separator() | color(Color::Black),
+                dox.component()->Render()
+                    | size(WIDTH, EQUAL, 10)
+                    | EPICSColor::edit(dox),
+                separator() | color(Color::Black),
+                lnkx.component()->Render()
+                    | size(WIDTH, EQUAL, 20)
+                    | EPICSColor::link(lnkx),
+            });
         });
+
+        Add(container);
     }
 
   private:
@@ -102,9 +101,9 @@ int main(int argc, char *argv[]) {
     InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
     InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
 
-    std::vector<std::unique_ptr<DisplayBase>> rows;
+    std::vector<Component> rows;
     for (int i = 0; i < 10; i++) {
-        rows.emplace_back(std::make_unique<SequenceRow>(app, record_name, std::to_string(i)));
+        rows.emplace_back(Make<SequenceRow>(app, record_name, std::to_string(i)));
     }
 
     // Main container to define interactivity of components
@@ -115,8 +114,8 @@ int main(int argc, char *argv[]) {
         prec.component(),
         flnk.component()
     });
-    for (auto &row : rows) {
-	    main_container->Add(row->get_container());
+    for (auto& row : rows) {
+	    main_container->Add(row);
     }
 
     // Main renderer to define visual layout of components and elements
@@ -166,7 +165,7 @@ int main(int argc, char *argv[]) {
             separator() | color(Color::Black)
         };
         for (auto &row : rows) {
-            elements.push_back(row->get_renderer());
+            elements.push_back(row->Render());
             elements.push_back(separator() | color(Color::Black));
         }
 
