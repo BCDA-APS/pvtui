@@ -1,14 +1,4 @@
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
-#include <ftxui/component/loop.hpp>
-#include <ftxui/component/event.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/dom/elements.hpp>
-#include <ftxui/screen/color.hpp>
-
-#include <memory>
 #include <pvtui/pvtui.hpp>
 
 using namespace ftxui;
@@ -30,7 +20,7 @@ Examples:
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
-
+// Defines a single row in the transform UI
 class TransformRow : public ComponentBase {
   public:
     TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
@@ -108,28 +98,13 @@ int main(int argc, char *argv[]) {
     InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
     ChoiceWidget copt(app, record_name + ".COPT", ChoiceStyle::Dropdown);
 
-    std::vector<Component> rows;
-    for (char c = 'A'; c <= 'P'; c++) {
-        std::string s {c};
-        rows.push_back(Make<TransformRow>(app, record_name, s));
-    }
-
-    // Main container to define interactivity of components
-    auto main_container = Container::Vertical({
+    auto head_container = Container::Horizontal({
         desc.component(),
         scan.component(),
         proc.component(),
         prec.component(),
-        copt.component(),
-        flnk.component()
-    });
-    for (auto &row : rows) {
-        main_container->Add(row);
-    }
-
-    // Main renderer to define visual layout of components and elements
-    auto main_renderer = Renderer(main_container, [&] {
-        Elements elements {
+    }) | Renderer([&](Element){
+        return vbox({
             desc.component()->Render()
                 | EPICSColor::edit(desc)
                 | size(WIDTH, EQUAL, 25),
@@ -176,34 +151,73 @@ int main(int argc, char *argv[]) {
                     | size(WIDTH, EQUAL, 20)
             }),
             separator() | color(Color::Black)
-        };
-        for (auto &row : rows) {
-            elements.push_back(row->Render());
-            elements.push_back(separator() | color(Color::Black));
-        }
-
-        elements.push_back(
-            hbox({
-                filler() | xflex,
-                text("Calc option: ") | color(Color::Black),
-                copt.component()->Render()
-                    | EPICSColor::edit(copt)
-                    | size(WIDTH, EQUAL, 15),
-                filler() | size(WIDTH, EQUAL, 5),
-                text("FLNK: ") | color(Color::Black),
-                flnk.component()->Render()
-                    | EPICSColor::link(flnk)
-                    | size(WIDTH, EQUAL, 25),
-                separatorEmpty()
-            })
-        );
-
-        return vbox({
-            elements,
-        }) | center | EPICSColor::background();
+        });
     });
 
-    app.run(main_renderer);
+    // When true, render all rows, otherwise just first 4.
+    bool show_more = false;
 
-    return EXIT_SUCCESS;
+    // Button to toggle between view of just first 4 rows and all rows
+    auto button_op = ButtonOption::Ascii();
+    std::string button_label = " MORE ";
+    button_op.label = &button_label;
+    button_op.on_click = [&]{
+        show_more = !show_more;
+        button_label = show_more ? " LESS " : " MORE ";
+    };
+    auto view_button = Button(button_op);
+
+    auto foot_container = Container::Horizontal({
+        view_button,
+        copt.component(),
+        flnk.component(),
+    }) | Renderer([&](Element){
+        return hbox({
+            view_button->Render() | bgcolor(Color::DarkGreen) | color(Color::White),
+            separatorEmpty(),
+            filler() | xflex,
+            text("Calc option: ") | color(Color::Black),
+            copt.component()->Render()
+                | EPICSColor::edit(copt)
+                | size(WIDTH, EQUAL, 15),
+            filler() | size(WIDTH, EQUAL, 5),
+            text("FLNK: ") | color(Color::Black),
+            flnk.component()->Render()
+                | EPICSColor::link(flnk)
+                | size(WIDTH, EQUAL, 25),
+            separatorEmpty()
+        });
+    });
+
+    std::vector<Component> rows;
+    for (char c = 'A'; c <= 'P'; c++) {
+        std::string s {c};
+        rows.push_back(Make<TransformRow>(app, record_name, s));
+    }
+
+    auto some_rows_container = Container::Vertical({});
+    auto more_rows_container = Container::Vertical({});
+    for (size_t i = 0; i < rows.size(); i++) {
+        auto renderer = Renderer([&](Element inner){
+            return vbox({
+                inner,
+                separator() | color(Color::Black)
+            });
+        });
+        auto row_comp = rows.at(i) |= renderer;
+        if (i < 4) {
+            some_rows_container->Add(row_comp);
+        } else {
+            more_rows_container->Add(row_comp);
+        }
+    }
+
+    auto container = Container::Vertical({
+        head_container,
+        some_rows_container,
+        more_rows_container | Maybe([&]{return show_more;}),
+        foot_container
+    });
+
+    app.run(container | center | EPICSColor::background());
 }
