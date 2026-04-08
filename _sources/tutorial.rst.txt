@@ -82,22 +82,16 @@ We will start with the below code, which is a good starting point for most appli
         // Create all the widgets we need
         // InputWidget desc(app, prefix + "pvname.DESC", PVPutType::String);
 
-        // ftxui container to define interactivity of components
-        auto main_container = Container::Vertical({
-            // include all the interactive widgets here
-            // desc.component(),
-        });
-
-        // ftxui renderer defines the visual layout
-        auto main_renderer = Renderer(main_container, [&] {
-            // define the visual layout of the application
-            // return hbox({ // e.g.
-            //    desc.component()->Render()
-            // })
-        });
+        // Create a container for a logical group of widgets, and pipe
+        // a Renderer to define its visual layout.
+        // auto my_container = Container::Vertical({
+        //     desc.component(),
+        // }) | Renderer([&](Element) {
+        //     return desc.component()->Render();
+        // });
 
         // Run the main loop
-        app.run(main_renderer);
+        app.run(my_container);
     }
 
 The above should apply to most basic TUIs. The prefix is taken as a positional argument and prepended to each PV name.
@@ -112,70 +106,83 @@ First we will define the widgets we need.
     ButtonWidget twf(app, prefix + "TweakFwd.PROC", " + ");
     ButtonWidget twr(app, prefix + "TweakRev.PROC", " - ");
 
-Any widget that a user can interact with must be added to a ftxui::Container, so we'll do that now.
-Don't worry too much about this. For most PVTUI apps, simply putting all the components in a
-Container::Vertical is all you need to do.
+Any widget that a user can interact with must be added to a ``Container``. The general pattern is to
+group related widgets into a ``Container`` that matches their layout direction (``Vertical`` or ``Horizontal``),
+then pipe a ``Renderer`` onto it to define its visual layout. This keeps interactivity and rendering
+together in one self-contained unit.
+
+Our application has two logical groups: the DESC and VAL fields stacked vertically, and
+the tweak buttons arranged horizontally. We create a container for each:
 
 .. code-block:: cpp
 
-    // ftxui container to define interactivity of components
-    auto main_container = Container::Vertical({
-	desc.component(),
-	val.component(),
-	twf.component(),
-	twr.component(),
-	twv.component(),
-    });
-
-Everything up to this point can mostly be considered to be boilerplate. Now we will do the *hard* part of defining the
-visual layout of the TUI. Some may find the syntax a bit different at first glace, but it is very nice when you
-get used to it. For more details on this part, consult the `FTXUI <https://github.com/ArthurSonzogni/FTXUI>`_
-documentation and example code.
-
-.. code-block:: cpp
-
-    // ftxui renderer defines the visual layout
-    auto main_renderer = ftxui::Renderer(main_container, [&] {
+    auto top_container = Container::Vertical({
+        desc.component(),
+        val.component(),
+    }) | Renderer([&](Element) {
         return vbox({
-
             hbox({
                 text("DESC: "),
                 desc.component()->Render()
                     | size(WIDTH, EQUAL, 15)
                     | EPICSColor::edit(desc),
             }),
-
             separator(),
-
             hbox({
                 text("VAL: "),
                 val.component()->Render()
                     | size(WIDTH, EQUAL, 11)
                     | EPICSColor::edit(val),
             }),
+        });
+    });
 
+    auto tweak_container = Container::Horizontal({
+        twr.component(),
+        twv.component(),
+        twf.component(),
+    }) | Renderer([&](Element) {
+        return hbox({
+            twr.component()->Render(),
             separatorEmpty(),
+            twv.component()->Render()
+                | size(WIDTH, EQUAL, 5)
+                | EPICSColor::edit(twv),
+            separatorEmpty(),
+            twf.component()->Render(),
+        });
+    });
 
-            hbox({
-                twr.component()->Render(),
-                separatorEmpty(),
-                twv.component()->Render()
-                    | size(WIDTH, EQUAL, 5)
-                    | EPICSColor::edit(twv),
-                separatorEmpty(),
-                twf.component()->Render(),
-            })
+Each container owns its widgets and knows how to render them. The ``Renderer`` lambda
+receives an ``Element`` argument (which can be ignored) and returns the visual layout
+using FTXUI's ``vbox``/``hbox`` functions. For each widget we call its ``Render()`` function
+then apply styles to it with the ``|`` operator. You'll also notice the ``EPICSColor``
+namespace which defines some convenience functions for applying standard color schemes which
+also change if connection to the PV is lost. Following the style of MEDM, widgets with
+``EPICSColor`` will be rendered as white for both the foreground and background if the
+underlying PV is disconnected.
 
+Finally, we compose the two containers into a top-level container and run the application:
+
+.. code-block:: cpp
+
+    auto container = Container::Vertical({
+        top_container,
+        tweak_container,
+    }) | Renderer([&](Element) {
+        return vbox({
+            top_container->Render(),
+            separatorEmpty(),
+            tweak_container->Render(),
         }) | size(WIDTH, EQUAL, 20);
     });
 
-Looking through the above code, you'll see we create a top level vbox ("vertical box") with hbox's ("horizontal box") inside.
-For each widget we call its Render() function then apply styles to it with the ``|`` operator. You'll also notice the
-``EPICSColor`` namespace which defines some convenience functions for applying standard color schemes which also change if
-connection to the PV is lost. Following the style of MEDM, widgets with ``EPICSColor`` will be rendered as white for both the
-foreground and background if the underlying PV is disconnected. After defining the renderer, call ``app.run(main_renderer)`` to run the main application loop.
+    app.run(container);
 
-Load the test database in an IOC with a ``P`` macro of your choosing, e.g. ``softIoc -m "P=MyIoc:" -d test.db``.
+For more details on the FTXUI layout system, consult the `FTXUI <https://github.com/ArthurSonzogni/FTXUI>`_
+documentation and example code.
+
+Load the test database in an IOC with a ``P`` macro of your choosing, e.g. ``softIoc -m "P=MyIoc:" -d tutorial.db``.
 Then compile and run the tutorial application: ``./tutorial MyIoc:``
 
 You should have a PVTUI application as in the screenshot below.
@@ -222,53 +229,55 @@ learn is by looking through the provided applications here, and also in the FTXU
         ButtonWidget twf(app, prefix + "TweakFwd.PROC", " + ");
         ButtonWidget twr(app, prefix + "TweakRev.PROC", " - ");
 
-        // ftxui container to define interactivity of components
-        auto main_container = Container::Vertical({
+        auto top_container = Container::Vertical({
             desc.component(),
             val.component(),
-            twf.component(),
-            twr.component(),
-            twv.component(),
-        });
-
-        // ftxui renderer defines the visual layout
-        auto main_renderer = ftxui::Renderer(main_container, [&] {
+        }) | Renderer([&](Element) {
             return vbox({
-
                 hbox({
                     text("DESC: "),
                     desc.component()->Render()
                         | size(WIDTH, EQUAL, 15)
                         | EPICSColor::edit(desc),
                 }),
-
                 separator(),
-
                 hbox({
                     text("VAL: "),
                     val.component()->Render()
                         | size(WIDTH, EQUAL, 11)
                         | EPICSColor::edit(val),
                 }),
+            });
+        });
 
+        auto tweak_container = Container::Horizontal({
+            twr.component(),
+            twv.component(),
+            twf.component(),
+        }) | Renderer([&](Element) {
+            return hbox({
+                twr.component()->Render(),
                 separatorEmpty(),
+                twv.component()->Render()
+                    | size(WIDTH, EQUAL, 5)
+                    | EPICSColor::edit(twv),
+                separatorEmpty(),
+                twf.component()->Render(),
+            });
+        });
 
-                hbox({
-                    twr.component()->Render(),
-                    separatorEmpty(),
-                    twv.component()->Render()
-                        | size(WIDTH, EQUAL, 5)
-                        | EPICSColor::edit(twv),
-                    separatorEmpty(),
-                    twf.component()->Render(),
-                })
-
+        auto container = Container::Vertical({
+            top_container,
+            tweak_container,
+        }) | Renderer([&](Element) {
+            return vbox({
+                top_container->Render(),
+                separatorEmpty(),
+                tweak_container->Render(),
             }) | size(WIDTH, EQUAL, 20);
         });
 
-        // Run the main loop
-        app.run(main_renderer);
+        app.run(container);
 
         return EXIT_SUCCESS;
     }
-

@@ -105,22 +105,16 @@ the Value.VAL and Value.DESC. Lets start by instantiating the widgets we will ne
 <span class="w">    </span><span class="c1">// Create all the widgets we need</span>
 <span class="w">    </span><span class="c1">// InputWidget desc(app, prefix + &quot;pvname.DESC&quot;, PVPutType::String);</span>
 
-<span class="w">    </span><span class="c1">// ftxui container to define interactivity of components</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
-<span class="w">        </span><span class="c1">// include all the interactive widgets here</span>
-<span class="w">        </span><span class="c1">// desc.component(),</span>
-<span class="w">    </span><span class="p">});</span>
-
-<span class="w">    </span><span class="c1">// ftxui renderer defines the visual layout</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_renderer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Renderer</span><span class="p">(</span><span class="n">main_container</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// define the visual layout of the application</span>
-<span class="w">        </span><span class="c1">// return hbox({ // e.g.</span>
-<span class="w">        </span><span class="c1">//    desc.component()-&gt;Render()</span>
-<span class="w">        </span><span class="c1">// })</span>
-<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="c1">// Create a container for a logical group of widgets, and pipe</span>
+<span class="w">    </span><span class="c1">// a Renderer to define its visual layout.</span>
+<span class="w">    </span><span class="c1">// auto my_container = Container::Vertical({</span>
+<span class="w">    </span><span class="c1">//     desc.component(),</span>
+<span class="w">    </span><span class="c1">// }) | Renderer([&amp;](Element) {</span>
+<span class="w">    </span><span class="c1">//     return desc.component()-&gt;Render();</span>
+<span class="w">    </span><span class="c1">// });</span>
 
 <span class="w">    </span><span class="c1">// Run the main loop</span>
-<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">main_renderer</span><span class="p">);</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">my_container</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -133,65 +127,76 @@ the Value.VAL and Value.DESC. Lets start by instantiating the widgets we will ne
 <span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Any widget that a user can interact with must be added to a ftxui::Container, so we’ll do that now.
-Don’t worry too much about this. For most PVTUI apps, simply putting all the components in a
-Container::Vertical is all you need to do.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// ftxui container to define interactivity of components</span>
-<span class="k">auto</span><span class="w"> </span><span class="n">main_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
+<p>Any widget that a user can interact with must be added to a <code class="docutils literal notranslate"><span class="pre">Container</span></code>. The general pattern is to
+group related widgets into a <code class="docutils literal notranslate"><span class="pre">Container</span></code> that matches their layout direction (<code class="docutils literal notranslate"><span class="pre">Vertical</span></code> or <code class="docutils literal notranslate"><span class="pre">Horizontal</span></code>),
+then pipe a <code class="docutils literal notranslate"><span class="pre">Renderer</span></code> onto it to define its visual layout. This keeps interactivity and rendering
+together in one self-contained unit.</p>
+<p>Our application has two logical groups: the DESC and VAL fields stacked vertically, and
+the tweak buttons arranged horizontally. We create a container for each:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">top_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
 <span class="w">    </span><span class="n">desc</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
 <span class="w">    </span><span class="n">val</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">    </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">    </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">    </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="p">});</span>
-</pre></div>
-</div>
-<p>Everything up to this point can mostly be considered to be boilerplate. Now we will do the <em>hard</em> part of defining the
-visual layout of the TUI. Some may find the syntax a bit different at first glace, but it is very nice when you
-get used to it. For more details on this part, consult the <a class="reference external" href="https://github.com/ArthurSonzogni/FTXUI">FTXUI</a>
-documentation and example code.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// ftxui renderer defines the visual layout</span>
-<span class="k">auto</span><span class="w"> </span><span class="n">main_renderer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ftxui</span><span class="o">::</span><span class="n">Renderer</span><span class="p">(</span><span class="n">main_container</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">vbox</span><span class="p">({</span>
-
 <span class="w">        </span><span class="n">hbox</span><span class="p">({</span>
 <span class="w">            </span><span class="n">text</span><span class="p">(</span><span class="s">&quot;DESC: &quot;</span><span class="p">),</span>
 <span class="w">            </span><span class="n">desc</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
 <span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">)</span>
 <span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span>
 <span class="w">        </span><span class="p">}),</span>
-
 <span class="w">        </span><span class="n">separator</span><span class="p">(),</span>
-
 <span class="w">        </span><span class="n">hbox</span><span class="p">({</span>
 <span class="w">            </span><span class="n">text</span><span class="p">(</span><span class="s">&quot;VAL: &quot;</span><span class="p">),</span>
 <span class="w">            </span><span class="n">val</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
 <span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">)</span>
 <span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">val</span><span class="p">),</span>
 <span class="w">        </span><span class="p">}),</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">});</span>
 
+<span class="k">auto</span><span class="w"> </span><span class="n">tweak_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Horizontal</span><span class="p">({</span>
+<span class="w">    </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">hbox</span><span class="p">({</span>
+<span class="w">        </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
 <span class="w">        </span><span class="n">separatorEmpty</span><span class="p">(),</span>
-
-<span class="w">        </span><span class="n">hbox</span><span class="p">({</span>
-<span class="w">            </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
-<span class="w">            </span><span class="n">separatorEmpty</span><span class="p">(),</span>
-<span class="w">            </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
-<span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span>
-<span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">twv</span><span class="p">),</span>
-<span class="w">            </span><span class="n">separatorEmpty</span><span class="p">(),</span>
-<span class="w">            </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
-<span class="w">        </span><span class="p">})</span>
-
-<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="w">        </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">twv</span><span class="p">),</span>
+<span class="w">        </span><span class="n">separatorEmpty</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">});</span>
 <span class="p">});</span>
 </pre></div>
 </div>
-<p>Looking through the above code, you’ll see we create a top level vbox (“vertical box”) with hbox’s (“horizontal box”) inside.
-For each widget we call its Render() function then apply styles to it with the <code class="docutils literal notranslate"><span class="pre">|</span></code> operator. You’ll also notice the
-<code class="docutils literal notranslate"><span class="pre">EPICSColor</span></code> namespace which defines some convenience functions for applying standard color schemes which also change if
-connection to the PV is lost. Following the style of MEDM, widgets with <code class="docutils literal notranslate"><span class="pre">EPICSColor</span></code> will be rendered as white for both the
-foreground and background if the underlying PV is disconnected. After defining the renderer, call <code class="docutils literal notranslate"><span class="pre">app.run(main_renderer)</span></code> to run the main application loop.</p>
-<p>Load the test database in an IOC with a <code class="docutils literal notranslate"><span class="pre">P</span></code> macro of your choosing, e.g. <code class="docutils literal notranslate"><span class="pre">softIoc</span> <span class="pre">-m</span> <span class="pre">&quot;P=MyIoc:&quot;</span> <span class="pre">-d</span> <span class="pre">test.db</span></code>.
+<p>Each container owns its widgets and knows how to render them. The <code class="docutils literal notranslate"><span class="pre">Renderer</span></code> lambda
+receives an <code class="docutils literal notranslate"><span class="pre">Element</span></code> argument (which can be ignored) and returns the visual layout
+using FTXUI’s <code class="docutils literal notranslate"><span class="pre">vbox</span></code>/<code class="docutils literal notranslate"><span class="pre">hbox</span></code> functions. For each widget we call its <code class="docutils literal notranslate"><span class="pre">Render()</span></code> function
+then apply styles to it with the <code class="docutils literal notranslate"><span class="pre">|</span></code> operator. You’ll also notice the <code class="docutils literal notranslate"><span class="pre">EPICSColor</span></code>
+namespace which defines some convenience functions for applying standard color schemes which
+also change if connection to the PV is lost. Following the style of MEDM, widgets with
+<code class="docutils literal notranslate"><span class="pre">EPICSColor</span></code> will be rendered as white for both the foreground and background if the
+underlying PV is disconnected.</p>
+<p>Finally, we compose the two containers into a top-level container and run the application:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
+<span class="w">    </span><span class="n">top_container</span><span class="p">,</span>
+<span class="w">    </span><span class="n">tweak_container</span><span class="p">,</span>
+<span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">vbox</span><span class="p">({</span>
+<span class="w">        </span><span class="n">top_container</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">separatorEmpty</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">tweak_container</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">container</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>For more details on the FTXUI layout system, consult the <a class="reference external" href="https://github.com/ArthurSonzogni/FTXUI">FTXUI</a>
+documentation and example code.</p>
+<p>Load the test database in an IOC with a <code class="docutils literal notranslate"><span class="pre">P</span></code> macro of your choosing, e.g. <code class="docutils literal notranslate"><span class="pre">softIoc</span> <span class="pre">-m</span> <span class="pre">&quot;P=MyIoc:&quot;</span> <span class="pre">-d</span> <span class="pre">tutorial.db</span></code>.
 Then compile and run the tutorial application: <code class="docutils literal notranslate"><span class="pre">./tutorial</span> <span class="pre">MyIoc:</span></code></p>
 <p>You should have a PVTUI application as in the screenshot below.
 Clicking plus or minus will add/subtract the TweakVal to Value.</p>
@@ -230,52 +235,55 @@ learn is by looking through the provided applications here, and also in the FTXU
 <span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twf</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakFwd.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; + &quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="n">ButtonWidget</span><span class="w"> </span><span class="n">twr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;TweakRev.PROC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="p">);</span>
 
-<span class="w">    </span><span class="c1">// ftxui container to define interactivity of components</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">top_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
 <span class="w">        </span><span class="n">desc</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
 <span class="w">        </span><span class="n">val</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">        </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">        </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">        </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
-<span class="w">    </span><span class="p">});</span>
-
-<span class="w">    </span><span class="c1">// ftxui renderer defines the visual layout</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_renderer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ftxui</span><span class="o">::</span><span class="n">Renderer</span><span class="p">(</span><span class="n">main_container</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">vbox</span><span class="p">({</span>
-
 <span class="w">            </span><span class="n">hbox</span><span class="p">({</span>
 <span class="w">                </span><span class="n">text</span><span class="p">(</span><span class="s">&quot;DESC: &quot;</span><span class="p">),</span>
 <span class="w">                </span><span class="n">desc</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
 <span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">)</span>
 <span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span>
 <span class="w">            </span><span class="p">}),</span>
-
 <span class="w">            </span><span class="n">separator</span><span class="p">(),</span>
-
 <span class="w">            </span><span class="n">hbox</span><span class="p">({</span>
 <span class="w">                </span><span class="n">text</span><span class="p">(</span><span class="s">&quot;VAL: &quot;</span><span class="p">),</span>
 <span class="w">                </span><span class="n">val</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
 <span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">)</span>
 <span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">val</span><span class="p">),</span>
 <span class="w">            </span><span class="p">}),</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
 
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">tweak_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Horizontal</span><span class="p">({</span>
+<span class="w">        </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hbox</span><span class="p">({</span>
+<span class="w">            </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
 <span class="w">            </span><span class="n">separatorEmpty</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
+<span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span>
+<span class="w">                </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">twv</span><span class="p">),</span>
+<span class="w">            </span><span class="n">separatorEmpty</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
 
-<span class="w">            </span><span class="n">hbox</span><span class="p">({</span>
-<span class="w">                </span><span class="n">twr</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
-<span class="w">                </span><span class="n">separatorEmpty</span><span class="p">(),</span>
-<span class="w">                </span><span class="n">twv</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">()</span>
-<span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span>
-<span class="w">                    </span><span class="o">|</span><span class="w"> </span><span class="n">EPICSColor</span><span class="o">::</span><span class="n">edit</span><span class="p">(</span><span class="n">twv</span><span class="p">),</span>
-<span class="w">                </span><span class="n">separatorEmpty</span><span class="p">(),</span>
-<span class="w">                </span><span class="n">twf</span><span class="p">.</span><span class="n">component</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
-<span class="w">            </span><span class="p">})</span>
-
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Container</span><span class="o">::</span><span class="n">Vertical</span><span class="p">({</span>
+<span class="w">        </span><span class="n">top_container</span><span class="p">,</span>
+<span class="w">        </span><span class="n">tweak_container</span><span class="p">,</span>
+<span class="w">    </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Renderer</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="n">Element</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">vbox</span><span class="p">({</span>
+<span class="w">            </span><span class="n">top_container</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">separatorEmpty</span><span class="p">(),</span>
+<span class="w">            </span><span class="n">tweak_container</span><span class="o">-&gt;</span><span class="n">Render</span><span class="p">(),</span>
 <span class="w">        </span><span class="p">})</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">WIDTH</span><span class="p">,</span><span class="w"> </span><span class="n">EQUAL</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
 <span class="w">    </span><span class="p">});</span>
 
-<span class="w">    </span><span class="c1">// Run the main loop</span>
-<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">main_renderer</span><span class="p">);</span>
+<span class="w">    </span><span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">container</span><span class="p">);</span>
 
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span>
 <span class="p">}</span>
