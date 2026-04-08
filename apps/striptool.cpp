@@ -170,20 +170,15 @@ int main(int argc, char *argv[]) {
     op.ymax = &ymax;
     auto plot = Plot(op);
 
-    // Main container to define interactivity of components
-    auto main_container = Container::Vertical({
-        plot,
+    bool show_menu = true;
+
+    auto menu_container = Container::Vertical({
         ymin_inp,
         ymax_inp,
         xmin_inp,
         xmax_inp,
         refresh_rate_inp,
-    });
-
-    bool show_menu = true;
-
-    // Menu/sidebar to set axes limits and show plot legend
-    auto menu_renderer = Renderer([&] {
+    }) | Renderer([&](Element){
         return vbox({
             text("Axis Limits") | underlined | bold,
             hbox({
@@ -229,23 +224,23 @@ int main(int argc, char *argv[]) {
             filler() | yflex,
             text("Press 'm' to show/hide") | italic | dim
         }) | border | flex | size(WIDTH, GREATER_THAN, 34);
-    }) | Maybe(&show_menu);
+    });
 
-    // show/hide menu side bar with 'm' key
-    main_container |= CatchEvent([&](Event event){
+    auto container = Container::Horizontal({
+        menu_container | Maybe([&]{ return show_menu; })
+    }) | CatchEvent([&](Event event){
+        // show/hide menu side bar with 'm' key
         if (event == Event::Character('m')) {
-            show_menu = show_menu ? false : true;
+            show_menu = !show_menu;
             return true;
         }
         return false;
     });
 
-
-    // Main renderer to define visual layout of components and elements
-    auto main_renderer = Renderer(main_container, [&] {
+    container |= Renderer([&](Element inner){
         return hbox({
-            plot->Render() | (border | (plot->Active() ? color(Color::LightSkyBlue1) : color(Color::White))),
-            menu_renderer->Render()
+            plot->Render() | border,
+            inner
         });
     });
 
@@ -274,7 +269,7 @@ int main(int argc, char *argv[]) {
         }
     };
 
-    app.run(main_renderer);
+    app.run(container);
 
     return 0;
 }
