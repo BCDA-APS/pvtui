@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <pvtui/pvtui.hpp>
-#include <pvtui/display_base.hpp>
 
 using namespace ftxui;
 using namespace pvtui;
@@ -34,52 +33,52 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 
 // DisplayBase subclass to simplify adding rows which are the same
 // except for the PV names
-class TransformRow : public DisplayBase {
+class TransformRow : public ComponentBase {
   public:
-    TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) : DisplayBase(app),
-	cmtx(app, record + ".CMT" + row_name, pvtui::PVPutType::String),
-	inpx(app, record + ".INP" + row_name, pvtui::PVPutType::String),
-	clcx(app, record + ".CLC" + row_name, pvtui::PVPutType::String),
-	valx(app, record + "." + row_name, pvtui::PVPutType::Double),
-	outx(app, record + ".OUT" + row_name, pvtui::PVPutType::String),
-	row_name_(row_name) {}
-
-    ~TransformRow() override = default;
-
-    ftxui::Component get_container() override {
-        return Container::Vertical({
+    TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
+        cmtx(app, record + ".CMT" + row_name, pvtui::PVPutType::String),
+        inpx(app, record + ".INP" + row_name, pvtui::PVPutType::String),
+        clcx(app, record + ".CLC" + row_name, pvtui::PVPutType::String),
+        valx(app, record + "." + row_name, pvtui::PVPutType::Double),
+        outx(app, record + ".OUT" + row_name, pvtui::PVPutType::String),
+        row_name_(row_name)
+    {
+        auto container = Container::Vertical({
             cmtx.component(),
             inpx.component(),
             clcx.component(),
             valx.component(),
             outx.component()
         });
-    }
 
-    ftxui::Element get_renderer() override {
-        return hbox({
-            text(" " + row_name_ + " ") | color(Color::Black),
-            separator() | color(Color::Black),
-            cmtx.component()->Render()
-                | size(WIDTH, EQUAL, 15)
-                | EPICSColor::edit(cmtx),
-            separator() | color(Color::Black),
-            inpx.component()->Render()
-                | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(inpx),
-            separator() | color(Color::Black),
-            clcx.component()->Render()
-                | size(WIDTH, EQUAL, 25)
-                | EPICSColor::edit(clcx),
-            separator() | color(Color::Black),
-            valx.component()->Render()
-                | size(WIDTH, EQUAL, 15)
-                | EPICSColor::edit(valx),
-            separator() | color(Color::Black),
-            outx.component()->Render()
-                | size(WIDTH, EQUAL, 20)
-                | EPICSColor::link(outx),
+        container |= Renderer([&](Element){
+            return hbox({
+                text(" " + row_name_ + " ") | color(Color::Black),
+                separator() | color(Color::Black),
+                cmtx.component()->Render()
+                    | size(WIDTH, EQUAL, 15)
+                    | EPICSColor::edit(cmtx),
+                separator() | color(Color::Black),
+                inpx.component()->Render()
+                    | size(WIDTH, EQUAL, 20)
+                    | EPICSColor::link(inpx),
+                separator() | color(Color::Black),
+                clcx.component()->Render()
+                    | size(WIDTH, EQUAL, 25)
+                    | EPICSColor::edit(clcx),
+                separator() | color(Color::Black),
+                valx.component()->Render()
+                    | size(WIDTH, EQUAL, 15)
+                    | EPICSColor::edit(valx),
+                separator() | color(Color::Black),
+                outx.component()->Render()
+                    | size(WIDTH, EQUAL, 20)
+                    | EPICSColor::link(outx),
+            });
         });
+
+        Add(container);
+
     }
 
   private:
@@ -111,10 +110,10 @@ int main(int argc, char *argv[]) {
     InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
     ChoiceWidget copt(app, record_name + ".COPT", ChoiceStyle::Dropdown);
 
-    std::vector<std::unique_ptr<DisplayBase>> rows;
+    std::vector<Component> rows;
     for (char c = 'A'; c <= 'P'; c++) {
         std::string s {c};
-        rows.emplace_back(std::make_unique<TransformRow>(app, record_name, s));
+        rows.push_back(Make<TransformRow>(app, record_name, s));
     }
 
     // Main container to define interactivity of components
@@ -127,7 +126,7 @@ int main(int argc, char *argv[]) {
         flnk.component()
     });
     for (auto &row : rows) {
-        main_container->Add(row->get_container());
+        main_container->Add(row);
     }
 
     // Main renderer to define visual layout of components and elements
@@ -138,72 +137,72 @@ int main(int argc, char *argv[]) {
                 | size(WIDTH, EQUAL, 25),
             separatorEmpty(),
             hbox({
-            scan.component()->Render()
-                | EPICSColor::edit(scan)
-                | size(WIDTH, EQUAL, 10),
-            filler() | size(WIDTH, EQUAL, 20),
-            proc.component()->Render()
-                | EPICSColor::edit(proc)
-                | size(WIDTH, EQUAL, 8),
-            filler() | size(WIDTH, EQUAL, 5),
-            text("PREC: ") | color(Color::Black),
-            prec.component()->Render()
-                | EPICSColor::edit(prec)
-                | size(WIDTH, EQUAL, 3),
-            filler() | xflex,
+                scan.component()->Render()
+                    | EPICSColor::edit(scan)
+                    | size(WIDTH, EQUAL, 10),
+                filler() | size(WIDTH, EQUAL, 20),
+                proc.component()->Render()
+                    | EPICSColor::edit(proc)
+                    | size(WIDTH, EQUAL, 8),
+                filler() | size(WIDTH, EQUAL, 5),
+                text("PREC: ") | color(Color::Black),
+                prec.component()->Render()
+                    | EPICSColor::edit(prec)
+                    | size(WIDTH, EQUAL, 3),
+                filler() | xflex,
             }),
             separatorEmpty(),
             hbox({
-            filler()
-                | size(WIDTH, EQUAL, 3)
-                | color(Color::Black),
-            separator() | color(Color::Black),
-            text("Comment")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 15),
-            separator() | color(Color::Black),
-            text("In link")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 20),
-            separator() | color(Color::Black),
-            text("Calc")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 25),
-            separator() | color(Color::Black),
-            text("Value")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 15),
-            separator() | color(Color::Black),
-            text("Out link")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 20)
+                filler()
+                    | size(WIDTH, EQUAL, 3)
+                    | color(Color::Black),
+                separator() | color(Color::Black),
+                text("Comment")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 15),
+                separator() | color(Color::Black),
+                text("In link")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 20),
+                separator() | color(Color::Black),
+                text("Calc")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 25),
+                separator() | color(Color::Black),
+                text("Value")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 15),
+                separator() | color(Color::Black),
+                text("Out link")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 20)
             }),
             separator() | color(Color::Black)
         };
         for (auto &row : rows) {
-            elements.push_back(row->get_renderer());
+            elements.push_back(row->Render());
             elements.push_back(separator() | color(Color::Black));
         }
 
         elements.push_back(
             hbox({
-            filler() | xflex,
-            text("Calc option: ") | color(Color::Black),
-            copt.component()->Render()
-                | EPICSColor::edit(copt)
-                | size(WIDTH, EQUAL, 15),
-            filler() | size(WIDTH, EQUAL, 5),
-            text("FLNK: ") | color(Color::Black),
-            flnk.component()->Render()
-                | EPICSColor::link(flnk)
-                | size(WIDTH, EQUAL, 25),
-            separatorEmpty()
+                filler() | xflex,
+                text("Calc option: ") | color(Color::Black),
+                copt.component()->Render()
+                    | EPICSColor::edit(copt)
+                    | size(WIDTH, EQUAL, 15),
+                filler() | size(WIDTH, EQUAL, 5),
+                text("FLNK: ") | color(Color::Black),
+                flnk.component()->Render()
+                    | EPICSColor::link(flnk)
+                    | size(WIDTH, EQUAL, 25),
+                separatorEmpty()
             })
         );
 
         return vbox({
             elements,
-        }) | center | bgcolor(Color::RGB(196,196,196));
+        }) | center | EPICSColor::background();
     });
 
     app.run(main_renderer);
