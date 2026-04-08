@@ -1,13 +1,4 @@
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
-#include <ftxui/component/loop.hpp>
-#include <ftxui/component/event.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/dom/elements.hpp>
-#include <ftxui/screen/color.hpp>
-
-#include <memory>
 #include <pvtui/pvtui.hpp>
 
 using namespace ftxui;
@@ -29,15 +20,14 @@ Examples:
 For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
-
 class SequenceRow : public ComponentBase {
   public:
     SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
-	dolx(app, record + ".DOL" + row_name, pvtui::PVPutType::String),
-	dlyx(app, record + ".DLY" + row_name, pvtui::PVPutType::Double),
-	dox(app, record + ".DO" + row_name, pvtui::PVPutType::Double),
-	lnkx(app, record + ".LNK" + row_name, pvtui::PVPutType::String),
-	row_name_(row_name)
+        dolx(app, record + ".DOL" + row_name, pvtui::PVPutType::String),
+        dlyx(app, record + ".DLY" + row_name, pvtui::PVPutType::Double),
+        dox(app, record + ".DO" + row_name, pvtui::PVPutType::Double),
+        lnkx(app, record + ".LNK" + row_name, pvtui::PVPutType::String),
+        row_name_(row_name)
     {
         auto container = Container::Vertical({
             dolx.component(),
@@ -98,92 +88,113 @@ int main(int argc, char *argv[]) {
     InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
     InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
 
-    std::vector<Component> rows;
-    for (int i = 0; i < 10; i++) {
-        rows.emplace_back(Make<SequenceRow>(app, record_name, std::to_string(i)));
-    }
-
-    // Main container to define interactivity of components
-    auto main_container = Container::Vertical({
+    auto head_container = Container::Horizontal({
         desc.component(),
         scan.component(),
         proc.component(),
         prec.component(),
-        flnk.component()
-    });
-    for (auto& row : rows) {
-	    main_container->Add(row);
-    }
-
-    // Main renderer to define visual layout of components and elements
-    auto main_renderer = Renderer(main_container, [&] {
-        Elements elements {
+    }) | Renderer([&](Element){
+        return vbox({
             desc.component()->Render()
-            | EPICSColor::edit(desc)
-            | size(WIDTH, EQUAL, 25),
+                | EPICSColor::edit(desc)
+                | size(WIDTH, EQUAL, 25),
             separatorEmpty(),
             hbox({
-            scan.component()->Render()
-                | EPICSColor::edit(scan)
-                | size(WIDTH, EQUAL, 12),
-            filler() | size(WIDTH, EQUAL, 20),
-            proc.component()->Render()
-                | EPICSColor::edit(proc)
-                | size(WIDTH, EQUAL, 8),
-            filler() | size(WIDTH, EQUAL, 5),
-            text("PREC: ") | color(Color::Black),
-            prec.component()->Render()
-                | EPICSColor::edit(prec)
-                | size(WIDTH, EQUAL, 3),
-            filler() | xflex,
+                scan.component()->Render()
+                    | EPICSColor::edit(scan)
+                    | size(WIDTH, EQUAL, 12),
+                filler() | size(WIDTH, EQUAL, 20),
+                proc.component()->Render()
+                    | EPICSColor::edit(proc)
+                    | size(WIDTH, EQUAL, 8),
+                filler() | size(WIDTH, EQUAL, 5),
+                text("PREC: ") | color(Color::Black),
+                prec.component()->Render()
+                    | EPICSColor::edit(prec)
+                    | size(WIDTH, EQUAL, 3),
+                filler() | xflex,
             }),
             separatorEmpty(),
             hbox({
-            filler()
-                | size(WIDTH, EQUAL, 3)
-                | color(Color::Black),
-            separator() | color(Color::Black),
-            text("DOLx")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 20),
-            separator() | color(Color::Black),
-            text("DLYx")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 10),
-            separator() | color(Color::Black),
-            text("DOx")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 10),
-            separator() | color(Color::Black),
-            text("LNKx")
-                | color(Color::Black)
-                | size(WIDTH, EQUAL, 20),
+                filler()
+                    | size(WIDTH, EQUAL, 3)
+                    | color(Color::Black),
+                separator() | color(Color::Black),
+                text("DOLx")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 20),
+                separator() | color(Color::Black),
+                text("DLYx")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 10),
+                separator() | color(Color::Black),
+                text("DOx")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 10),
+                separator() | color(Color::Black),
+                text("LNKx")
+                    | color(Color::Black)
+                    | size(WIDTH, EQUAL, 20),
             }),
             separator() | color(Color::Black)
-        };
-        for (auto &row : rows) {
-            elements.push_back(row->Render());
-            elements.push_back(separator() | color(Color::Black));
-        }
+        });
+    });
 
-        elements.push_back(
-            hbox({
+    bool show_more = false;
+
+    auto button_op = ButtonOption::Ascii();
+    std::string button_label = " MORE ";
+    button_op.label = &button_label;
+    button_op.on_click = [&]{
+        show_more = !show_more;
+        button_label = show_more ? " LESS " : " MORE ";
+    };
+    auto view_button = Button(button_op);
+
+    auto foot_container = Container::Horizontal({
+        view_button,
+        flnk.component(),
+    }) | Renderer([&](Element){
+        return hbox({
+            view_button->Render() | bgcolor(Color::DarkGreen) | color(Color::White),
+            separatorEmpty(),
             filler() | xflex,
             text("FLNK: ") | color(Color::Black),
             flnk.component()->Render()
                 | EPICSColor::link(flnk)
                 | size(WIDTH, EQUAL, 25),
             separatorEmpty()
-            })
-        );
-
-        return vbox({
-            elements,
-        }) | center | bgcolor(Color::RGB(196,196,196));
+        });
     });
 
+    std::vector<Component> rows;
+    for (int i = 0; i < 10; i++) {
+        rows.emplace_back(Make<SequenceRow>(app, record_name, std::to_string(i)));
+    }
 
-    app.run(main_renderer);
+    auto some_rows_container = Container::Vertical({});
+    auto more_rows_container = Container::Vertical({});
+    for (size_t i = 0; i < rows.size(); i++) {
+        auto renderer = Renderer([&](Element inner){
+            return vbox({
+                inner,
+                separator() | color(Color::Black)
+            });
+        });
+        auto row_comp = rows.at(i) |= renderer;
+        if (i < 4) {
+            some_rows_container->Add(row_comp);
+        } else {
+            more_rows_container->Add(row_comp);
+        }
+    }
 
-    return EXIT_SUCCESS;
+    auto container = Container::Vertical({
+        head_container,
+        some_rows_container,
+        more_rows_container | Maybe([&]{return show_more;}),
+        foot_container
+    });
+
+    app.run(container | center | EPICSColor::background());
 }

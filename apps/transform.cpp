@@ -66,7 +66,6 @@ class TransformRow : public ComponentBase {
         });
 
         Add(container);
-
     }
 
   private:
