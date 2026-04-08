@@ -1,0 +1,22 @@
+record(ao, "Tutorial:Value") {
+    field(DESC, "Tutorial!")
+    field(VAL, 0.0)
+}
+
+record(ao, "Tutorial:TweakVal") {
+    field(VAL, 1.0)
+}
+
+record(calcout, "Tutorial:TweakFwd") {
+    field(INPA, "Tutorial:Value.VAL")
+    field(INPB, "Tutorial:TweakVal.VAL")
+    field(CALC, "A + B")
+    field(OUT, "Tutorial:Value.VAL PP")
+}
+
+record(calcout, "Tutorial:TweakRev") {
+    field(INPA, "Tutorial:Value.VAL")
+    field(INPB, "Tutorial:TweakVal.VAL")
+    field(CALC, "A - B")
+    field(OUT, "Tutorial:Value.VAL PP")
+}
