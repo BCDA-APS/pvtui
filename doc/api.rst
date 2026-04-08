@@ -49,10 +49,6 @@ UI Widgets
    :project: pvtui
    :members:
 
-.. doxygenclass:: pvtui::DisplayBase
-   :project: pvtui
-   :members:
-
 
 Utility Namespaces
 ------------------

@@ -2,7 +2,6 @@
 #include <pv/caProvider.h>
 #include <pva/client.h>
 
-#include <pvtui/display_base.hpp>
 #include <pvtui/pvtui.hpp>
 
 class SmallMotorDisplay : public ftxui::ComponentBase {

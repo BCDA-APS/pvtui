@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <pvtui/pvtui.hpp>
-#include <pvtui/display_base.hpp>
 
 using namespace ftxui;
 using namespace pvtui;
@@ -31,8 +30,6 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 
-// DisplayBase subclass to simplify adding rows which are the same
-// except for the PV names
 class SequenceRow : public ComponentBase {
   public:
     SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) :

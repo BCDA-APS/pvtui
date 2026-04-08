@@ -31,8 +31,6 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 )";
 
 
-// DisplayBase subclass to simplify adding rows which are the same
-// except for the PV names
 class TransformRow : public ComponentBase {
   public:
     TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
