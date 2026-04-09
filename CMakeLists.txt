@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(pvtui
     LANGUAGES CXX
-    VERSION 1.0.0
+    VERSION 0.3.0
 )
 
 # Generate compile_commands.json for LSP's

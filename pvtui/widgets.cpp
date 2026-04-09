@@ -24,7 +24,6 @@ std::string rectangle(int len) {
 namespace {
 
 ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value, ftxui::ButtonOption op) {
-    // auto op = ftxui::ButtonOption::Ascii();
     op.label = label;
     op.on_click = [&pv, value]() {
         if (pv.connected()) {
