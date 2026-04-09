@@ -23,8 +23,8 @@ std::string rectangle(int len) {
 
 namespace {
 
-ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value) {
-    auto op = ftxui::ButtonOption::Ascii();
+ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value, ftxui::ButtonOption op) {
+    // auto op = ftxui::ButtonOption::Ascii();
     op.label = label;
     op.on_click = [&pv, value]() {
         if (pv.connected()) {
@@ -261,15 +261,16 @@ const PVEnum& ChoiceWidget::value() const { return *value_ptr_; }
 
 std::string ChoiceWidget::value_as_string() const { return value_ptr_->choice; }
 
-ButtonWidget::ButtonWidget(App& app, const std::string& pv_name, const std::string& label, int press_val)
+ButtonWidget::ButtonWidget(App& app, const std::string& pv_name, const std::string& label,
+                           ftxui::ButtonOption op, int press_val)
     : WidgetBase(app.pvgroup, pv_name) {
-    component_ = make_button_widget(app.pvgroup.get_pv(pv_name_), label, press_val);
+    component_ = make_button_widget(app.pvgroup.get_pv(pv_name_), label, press_val, op);
 }
 
 ButtonWidget::ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& label,
-                           int press_val)
+                           ftxui::ButtonOption op, int press_val)
     : WidgetBase(pvgroup, pv_name) {
-    component_ = make_button_widget(pvgroup.get_pv(pv_name_), label, press_val);
+    component_ = make_button_widget(pvgroup.get_pv(pv_name_), label, press_val, op);
 }
 
 } // namespace pvtui

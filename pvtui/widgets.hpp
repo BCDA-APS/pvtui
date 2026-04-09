@@ -117,15 +117,19 @@ class ButtonWidget : public WidgetBase {
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param label The text displayed on the button.
+    /// \param op Button style option to use
     /// \param press_val The value written to the PV on press.
-    ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& label, int press_val = 1);
+    ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& label,
+                 ftxui::ButtonOption op = ftxui::ButtonOption::Ascii(), int press_val = 1);
 
     /// \brief Constructs a ButtonWidget from an App class
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     /// \param label The text displayed on the button.
+    /// \param op Button style option to use
     /// \param press_val The value written to the PV on press.
-    ButtonWidget(App& app, const std::string& pv_name, const std::string& label, int press_val = 1);
+    ButtonWidget(App& app, const std::string& pv_name, const std::string& label,
+                 ftxui::ButtonOption op = ftxui::ButtonOption::Ascii(), int press_val = 1);
 };
 
 /// \brief A read-only widget that monitors a PV. The underlying FTXUI component
@@ -171,9 +175,7 @@ class Monitor : public WidgetBase {
   private:
     std::shared_ptr<T> value_ptr_;
 
-    ftxui::Component monitor_component_ = ftxui::Renderer([this] {
-        return ftxui::text(value_as_string());
-    });
+    ftxui::Component monitor_component_ = ftxui::Renderer([this] { return ftxui::text(value_as_string()); });
 };
 
 /// \brief A widget to display an integer in binary

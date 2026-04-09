@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
     }
 
     InputWidget inp1(app, prefix + "string.VAL", PVPutType::String, Color::Black, Color::White);
-    ButtonWidget plus_button(app, prefix + "add1.PROC", " + ");
-    ButtonWidget minus_button(app, prefix + "subtract1.PROC", " - ");
+    ButtonWidget plus_button(app, prefix + "add1.PROC", " + ", ButtonOption::Simple());
+    ButtonWidget minus_button(app, prefix + "subtract1.PROC", " - ", ButtonOption::Simple());
     Monitor<int> int_val(app, prefix + "long.VAL");
     ChoiceWidget enum_h(app, prefix + "enum.VAL", ChoiceStyle::Horizontal);
     ChoiceWidget enum_v(app, prefix + "enum.VAL", ChoiceStyle::Vertical);
@@ -99,26 +99,26 @@ int main(int argc, char* argv[]) {
         });
 
         auto row4 = hbox({
-            vbox({text("Menus      ") | color(Color::White)}) | center,
+            vbox({text("Selectors  ") | color(Color::White)}) | center,
             separator(),
             hbox({
                 vbox({
                     separatorEmpty(),
-                    enum_h.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+                    enum_h.component()->Render() | EPICSColor::menu(enum_h),
                     separatorEmpty(),
                 }),
                 separatorEmpty(),
                 separatorEmpty(),
                 vbox({
                     separatorEmpty(),
-                    enum_v.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+                    enum_v.component()->Render() | EPICSColor::menu(enum_v),
                     separatorEmpty(),
                 }),
                 separatorEmpty(),
                 separatorEmpty(),
                 vbox({
                     separatorEmpty(),
-                    enum_d.component()->Render() | color(Color::White) | bgcolor(Color::DarkGreen),
+                    enum_d.component()->Render() | EPICSColor::menu(enum_d),
                     separatorEmpty(),
                 }),
             }) | center | size(HEIGHT, EQUAL, 5),
