@@ -37,4 +37,4 @@ PVTUI makes available several optional flags when running cmake
 
 To install the cmake configuration files so other cmake projects can find the PVTUI library,
 set an install prefix with ``cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/prefix`` and then
-run ``make install``.
+run ``cmake --install <build_dir>``.
