@@ -6,68 +6,70 @@ Included Applications
 Packaged with the library is a collection of ready to use TUIs which are shown below.
 Most of these UIs are heavily inspired by MEDM screens included in synApps.
 
+demo
+====
+
+A demonstration of some of the available widgets in PVTUI
+
+    .. image:: img/demo.gif
+       :alt: demo
+       :width: 75%
+       :align: center
+
+
 striptool
 =========
 
 Monitor PVs with a live plot
 
-    .. image:: img/pvtui_striptool.gif
-       :alt: pvtui_striptool
-       :width: 1200px
+    .. image:: img/striptool.gif
+       :alt: striptool
+       :width: 100%
        :align: center
 
 
 motor record
 ============
 
-UI for a single motor with tabs for three levels of detail
-    .. figure:: img/pvtui_motor.gif
-       :alt: pvtui_motor
-       :width: 1200px
-       :align: center
-
-
-Small motor UI for any number of motors layed out horizontally
-
-    .. figure:: img/pvtui_motor3x.gif
-       :alt: pvtui_motor3x
-       :width: 1200px
+    .. figure:: img/motor.gif
+       :alt: motor
+       :width: 100%
        :align: center
 
 
 calcout record
 ==============
 
-    .. image:: img/pvtui_calcout.gif
-       :alt: pvtui_calcout
-       :width: 1200px
+    .. image:: img/calcout.gif
+       :alt: calcout
+       :width: 100%
        :align: center
 
 
 asyn record
 ===========
 
-    .. image:: img/pvtui_asyn.gif
-       :alt: pvtui_asyn
-       :width: 1200px
+    .. image:: img/asyn.gif
+       :alt: asyn
+       :width: 100%
        :align: center
 
 
 transform record
 ================
 
-    .. image:: img/pvtui_transform.gif
-       :alt: pvtui_transform
-       :width: 1200px
+    .. image:: img/transform.gif
+       :alt: transform
+       :width: 100%
        :align: center
 
 
 sequence record
 ===============
 
-    .. image:: img/pvtui_sequence.gif
-       :alt: pvtui_sequence
-       :width: 1200px
+    .. image:: img/sequence.gif
+       :alt: sequence
+       :width: 100%
        :align: center
 
 
@@ -76,9 +78,9 @@ monitor
 
 A table to monitor any number of PVs
 
-    .. image:: img/pvtui_monitor.png
-       :alt: pvtui_monitor
-       :width: 1200px
+    .. image:: img/monitor.png
+       :alt: monitor
+       :width: 100%
        :align: center
 
 
@@ -87,7 +89,7 @@ APS storage ring status
 
 *If you're at the APS...*
 
-    .. image:: img/pvtui_sr.png
-       :alt: pvtui_sr
-       :width: 1200px
+    .. image:: img/sr.png
+       :alt: sr
+       :width: 100%
        :align: center
