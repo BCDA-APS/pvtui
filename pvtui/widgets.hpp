@@ -185,13 +185,17 @@ class BitsWidget : public WidgetBase {
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits);
+    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits,
+               ftxui::Color color_on = ftxui::Color::Green,
+               ftxui::Color color_off = ftxui::Color::GrayDark);
 
     /// \brief Constructs a BitsWidget from an App class
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(App& app, const std::string& pv_name, size_t nbits);
+    BitsWidget(App& app, const std::string& pv_name, size_t nbits,
+               ftxui::Color color_on = ftxui::Color::Green,
+               ftxui::Color color_off = ftxui::Color::GrayDark);
 
     /// \brief Gets the current integer value displayed in the UI.
     /// \return The current integer value from the UI.
