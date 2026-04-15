@@ -54,9 +54,10 @@ int main(int argc, char* argv[]) {
     ChoiceWidget enum_h(app, prefix + "enum.VAL", ChoiceStyle::Horizontal);
     ChoiceWidget enum_v(app, prefix + "enum.VAL", ChoiceStyle::Vertical);
     ChoiceWidget enum_d(app, prefix + "enum.VAL", ChoiceStyle::Dropdown);
+    SliderWidget int_val_slide(app, prefix + "long.VAL");
 
     size_t nbits = 8;
-    BitsWidget bits(app, prefix + "int8.VAL", nbits);
+    BitsWidget bits(app, prefix + "int8.VAL", {0, nbits});
     Elements labs;
     for (size_t i = 0; i < nbits; i++) {
         labs.push_back(text(std::to_string(i) + ":") | color(Color::White));
@@ -72,6 +73,7 @@ int main(int argc, char* argv[]) {
         enum_h.component(),
         enum_v.component(),
         enum_d.component(),
+        int_val_slide.component()
     });
 
     // ftxui renderer defines the visual layout of components
@@ -138,6 +140,12 @@ int main(int argc, char* argv[]) {
             text("Gauge      ") | color(Color::White) | vcenter,
             separator(),
             gaugeRight(bits.value() / 255.0) | color(Color::Purple) | xflex,
+        });
+
+        auto row7 = hbox({
+            text("Slider     ") | color(Color::White) | vcenter,
+            separator(),
+            int_val_slide.component()->Render()
         });
 
         return vbox({

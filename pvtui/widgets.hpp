@@ -40,6 +40,11 @@ enum class ChoiceStyle {
     Dropdown,
 };
 
+struct BitRange {
+    size_t start;
+    size_t end;
+};
+
 /// \brief A base class for all TUI widgets that interact with EPICS PVs.
 ///
 /// This class provides a standard interface for managing PV connections, accessing
@@ -185,7 +190,7 @@ class BitsWidget : public WidgetBase {
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits,
+    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 
@@ -193,7 +198,7 @@ class BitsWidget : public WidgetBase {
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(App& app, const std::string& pv_name, size_t nbits,
+    BitsWidget(App& app, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 
@@ -232,6 +237,29 @@ class ChoiceWidget : public WidgetBase {
 
   private:
     std::shared_ptr<PVEnum> value_ptr_;
+};
+
+class SliderWidget : public WidgetBase {
+  public:
+
+    /// \brief Constructs a SliderWidget.
+    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param pv_name The PV name.
+    SliderWidget(PVGroup& pvgroup, const std::string& pv_name);
+
+    /// \brief Constructs a Sliderwidget from an App class
+    /// \param app A reference to the App.
+    /// \param pv_name The PV name.
+    SliderWidget(App& app, const std::string& pv_name);
+
+    /// \brief Gets the current enum value displayed in the UI.
+    /// \return The current slider (double) value from the UI.
+    const double& value() const;
+
+    std::string value_as_string() const override;
+
+  private:
+    std::shared_ptr<double> value_ptr_;
 };
 
 /// \brief Functions to generate FTXUI decorators for EPICS-style UI elements.

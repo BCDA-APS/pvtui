@@ -155,11 +155,11 @@ ftxui::Component make_dropdown_widget(PVHandler& pv, const std::vector<std::stri
     return ftxui::Dropdown(dropdown_op);
 }
 
-ftxui::Component make_bits_widget(int& value, size_t nbits,ftxui::Color color_on, ftxui::Color color_off) {
+ftxui::Component make_bits_widget(int& value, BitRange range, ftxui::Color color_on, ftxui::Color color_off) {
     using namespace ftxui;
-    return Renderer([&value, nbits, color_on, color_off] {
+    return Renderer([&value, range, color_on, color_off] {
         Elements rows;
-        for (size_t i = 0; i < nbits; i++) {
+        for (size_t i = range.start; i < range.end; i++) {
             int v = value & (1u << i);
             auto clr = v ? color(color_on) : color(color_off);
             rows.push_back(text(unicode::rectangle(2)) | clr);
@@ -205,18 +205,18 @@ const std::string& InputWidget::value() const { return *value_ptr_; }
 
 std::string InputWidget::value_as_string() const { return *value_ptr_; }
 
-BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits,
+BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
                        ftxui::Color color_on,ftxui::Color color_off)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, nbits, color_on, color_off);
+    component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
-BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits,
+BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range,
                        ftxui::Color color_on,ftxui::Color color_off)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, nbits, color_on, color_off);
+    component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
 const int& BitsWidget::value() const { return *value_ptr_; }
@@ -273,5 +273,55 @@ ButtonWidget::ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const s
     : WidgetBase(pvgroup, pv_name) {
     component_ = make_button_widget(pvgroup.get_pv(pv_name_), label, press_val, op);
 }
+
+
+
+ftxui::Component make_slider_widget(PVHandler& pv, double& value, double minv, double maxv, double inc) {
+    using namespace ftxui;
+    auto op = SliderOption<double>();
+    op.value = value;
+    op.min = minv;
+    op.max = maxv;
+    op.increment = inc;
+    // op.on_change = [&pv, value]{
+        // if (pv.connected()) {
+            // pv.channel.put().set("value", value).exec();
+        // }
+    // };
+    return Slider(op);
+}
+
+SliderWidget::SliderWidget(pvtui::App& app, const std::string& pv_name)
+    : WidgetBase(app.pvgroup, pv_name) {
+    component_ = make_slider_widget(app.pvgroup.get_pv(pv_name), *value_ptr_, 0.0, 1.0, 0.1);
+}
+
+
+const double& SliderWidget::value() const { return *value_ptr_; }
+
+std::string SliderWidget::value_as_string() const { return std::to_string(*value_ptr_); }
+
+// class SliderWidget : public WidgetBase {
+  // public:
+//
+    // /// \brief Constructs a SliderWidget.
+    // /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    // /// \param pv_name The PV name.
+    // SliderWidget(PVGroup& pvgroup, const std::string& pv_name);
+//
+    // /// \brief Constructs a Sliderwidget from an App class
+    // /// \param app A reference to the App.
+    // /// \param pv_name The PV name.
+    // SliderWidget(App& app, const std::string& pv_name);
+//
+    // /// \brief Gets the current enum value displayed in the UI.
+    // /// \return The current slider (double) value from the UI.
+    // const PVEnum& value() const;
+//
+    // std::string value_as_string() const override;
+//
+  // private:
+    // std::shared_ptr<double> value_ptr_;
+// };
 
 } // namespace pvtui
