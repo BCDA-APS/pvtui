@@ -40,6 +40,11 @@ enum class ChoiceStyle {
     Dropdown,
 };
 
+struct BitRange {
+    size_t start;
+    size_t end;
+};
+
 /// \brief A base class for all TUI widgets that interact with EPICS PVs.
 ///
 /// This class provides a standard interface for managing PV connections, accessing
@@ -185,7 +190,7 @@ class BitsWidget : public WidgetBase {
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits,
+    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 
@@ -193,7 +198,7 @@ class BitsWidget : public WidgetBase {
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     /// \param nbits Number of bits to display.
-    BitsWidget(App& app, const std::string& pv_name, size_t nbits,
+    BitsWidget(App& app, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 

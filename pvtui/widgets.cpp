@@ -23,7 +23,8 @@ std::string rectangle(int len) {
 
 namespace {
 
-ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value, ftxui::ButtonOption op) {
+ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value,
+                                    ftxui::ButtonOption op) {
     op.label = label;
     op.on_click = [&pv, value]() {
         if (pv.connected()) {
@@ -155,11 +156,11 @@ ftxui::Component make_dropdown_widget(PVHandler& pv, const std::vector<std::stri
     return ftxui::Dropdown(dropdown_op);
 }
 
-ftxui::Component make_bits_widget(int& value, size_t nbits,ftxui::Color color_on, ftxui::Color color_off) {
+ftxui::Component make_bits_widget(int& value, BitRange range, ftxui::Color color_on, ftxui::Color color_off) {
     using namespace ftxui;
-    return Renderer([&value, nbits, color_on, color_off] {
+    return Renderer([&value, range, color_on, color_off] {
         Elements rows;
-        for (size_t i = 0; i < nbits; i++) {
+        for (size_t i = range.start; i < range.end; i++) {
             int v = value & (1u << i);
             auto clr = v ? color(color_on) : color(color_off);
             rows.push_back(text(unicode::rectangle(2)) | clr);
@@ -205,18 +206,18 @@ const std::string& InputWidget::value() const { return *value_ptr_; }
 
 std::string InputWidget::value_as_string() const { return *value_ptr_; }
 
-BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, size_t nbits,
-                       ftxui::Color color_on,ftxui::Color color_off)
+BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range, ftxui::Color color_on,
+                       ftxui::Color color_off)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, nbits, color_on, color_off);
+    component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
-BitsWidget::BitsWidget(App& app, const std::string& pv_name, size_t nbits,
-                       ftxui::Color color_on,ftxui::Color color_off)
+BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range, ftxui::Color color_on,
+                       ftxui::Color color_off)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
-    component_ = make_bits_widget(*value_ptr_, nbits, color_on, color_off);
+    component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
 const int& BitsWidget::value() const { return *value_ptr_; }

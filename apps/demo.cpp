@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     ChoiceWidget enum_d(app, prefix + "enum.VAL", ChoiceStyle::Dropdown);
 
     size_t nbits = 8;
-    BitsWidget bits(app, prefix + "int8.VAL", nbits);
+    BitsWidget bits(app, prefix + "int8.VAL", {0, nbits});
     Elements labs;
     for (size_t i = 0; i < nbits; i++) {
         labs.push_back(text(std::to_string(i) + ":") | color(Color::White));
