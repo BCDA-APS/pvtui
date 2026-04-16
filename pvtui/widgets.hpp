@@ -45,6 +45,12 @@ struct BitRange {
     size_t end;
 };
 
+struct SliderRange {
+    double min = 0.0;
+    double max = 100.0;
+    double increment = 5.0;
+};
+
 /// \brief A base class for all TUI widgets that interact with EPICS PVs.
 ///
 /// This class provides a standard interface for managing PV connections, accessing
@@ -245,14 +251,24 @@ class SliderWidget : public WidgetBase {
     /// \brief Constructs a SliderWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
-    SliderWidget(PVGroup& pvgroup, const std::string& pv_name);
+    /// \param range Slider range (min, max, increment).
+    /// \param color_active Color of the filled portion when the slider is focused.
+    /// \param color_inactive Color of the filled portion when the slider is not focused.
+    SliderWidget(PVGroup& pvgroup, const std::string& pv_name, SliderRange range = {},
+                 ftxui::Color color_active = ftxui::Color::White,
+                 ftxui::Color color_inactive = ftxui::Color::GrayDark);
 
-    /// \brief Constructs a Sliderwidget from an App class
+    /// \brief Constructs a SliderWidget from an App class.
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
-    SliderWidget(App& app, const std::string& pv_name);
+    /// \param range Slider range (min, max, increment).
+    /// \param color_active Color of the filled portion when the slider is focused.
+    /// \param color_inactive Color of the filled portion when the slider is not focused.
+    SliderWidget(App& app, const std::string& pv_name, SliderRange range = {},
+                 ftxui::Color color_active = ftxui::Color::White,
+                 ftxui::Color color_inactive = ftxui::Color::GrayDark);
 
-    /// \brief Gets the current enum value displayed in the UI.
+    /// \brief Gets the current slider value.
     /// \return The current slider (double) value from the UI.
     const double& value() const;
 

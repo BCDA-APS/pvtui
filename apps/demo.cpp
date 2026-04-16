@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     ChoiceWidget enum_h(app, prefix + "enum.VAL", ChoiceStyle::Horizontal);
     ChoiceWidget enum_v(app, prefix + "enum.VAL", ChoiceStyle::Vertical);
     ChoiceWidget enum_d(app, prefix + "enum.VAL", ChoiceStyle::Dropdown);
-    SliderWidget int_val_slide(app, prefix + "long.VAL");
+    SliderWidget int_val_slide(app, prefix + "long.VAL", {0, 255, 1}, Color::Cyan, Color::GrayDark);
 
     size_t nbits = 8;
     BitsWidget bits(app, prefix + "int8.VAL", {0, nbits});
@@ -101,6 +101,12 @@ int main(int argc, char* argv[]) {
         });
 
         auto row4 = hbox({
+            text("Slider     ") | color(Color::White) | vcenter,
+            separator(),
+            int_val_slide.component()->Render()
+        });
+
+        auto row5 = hbox({
             vbox({text("Selectors  ") | color(Color::White)}) | center,
             separator(),
             hbox({
@@ -126,7 +132,7 @@ int main(int argc, char* argv[]) {
             }) | center | size(HEIGHT, EQUAL, 5),
         });
 
-        auto row5 = hbox({
+        auto row6 = hbox({
             text("Bit monitor") | color(Color::White) | vcenter,
             separator(),
             hbox({
@@ -136,16 +142,10 @@ int main(int argc, char* argv[]) {
             })
         });
 
-        auto row6 = hbox({
+        auto row7 = hbox({
             text("Gauge      ") | color(Color::White) | vcenter,
             separator(),
             gaugeRight(bits.value() / 255.0) | color(Color::Purple) | xflex,
-        });
-
-        auto row7 = hbox({
-            text("Slider     ") | color(Color::White) | vcenter,
-            separator(),
-            int_val_slide.component()->Render()
         });
 
         return vbox({
@@ -162,6 +162,8 @@ int main(int argc, char* argv[]) {
             row5,
             separator(),
             row6,
+            separator(),
+            row7,
             separator(),
         }) | size(WIDTH, EQUAL, 50);
     });

@@ -169,6 +169,27 @@ ftxui::Component make_bits_widget(int& value, BitRange range, ftxui::Color color
     });
 }
 
+ftxui::Component make_slider_widget(PVHandler& pv, double& value, const SliderRange& range,
+                                    ftxui::Color color_active, ftxui::Color color_inactive) {
+    using namespace ftxui;
+    auto op = SliderOption<double>();
+    op.value = &value;
+    op.min = range.min;
+    op.max = range.max;
+    op.increment = range.increment;
+    op.color_active = color_active;
+    op.color_inactive = color_inactive;
+    op.on_change = [&pv, &value] {
+        if (pv.connected()) {
+            try {
+                pv.channel.put().set("value", value).exec();
+            } catch (...) {
+            }
+        }
+    };
+    return Slider(op);
+}
+
 } // namespace
 
 WidgetBase::WidgetBase(PVGroup& pvgroup, const std::string& pv_name) : pvgroup_(pvgroup), pv_name_(pv_name) {
@@ -275,54 +296,24 @@ ButtonWidget::ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const s
     component_ = make_button_widget(pvgroup.get_pv(pv_name_), label, press_val, op);
 }
 
-
-
-ftxui::Component make_slider_widget(PVHandler& pv, double& value, double minv, double maxv, double inc) {
-    using namespace ftxui;
-    auto op = SliderOption<double>();
-    op.value = value;
-    op.min = minv;
-    op.max = maxv;
-    op.increment = inc;
-    // op.on_change = [&pv, value]{
-        // if (pv.connected()) {
-            // pv.channel.put().set("value", value).exec();
-        // }
-    // };
-    return Slider(op);
+SliderWidget::SliderWidget(App& app, const std::string& pv_name, SliderRange range,
+                           ftxui::Color color_active, ftxui::Color color_inactive)
+    : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<double>(0.0)) {
+    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    component_ = make_slider_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, range, color_active,
+                                    color_inactive);
 }
 
-SliderWidget::SliderWidget(pvtui::App& app, const std::string& pv_name)
-    : WidgetBase(app.pvgroup, pv_name) {
-    component_ = make_slider_widget(app.pvgroup.get_pv(pv_name), *value_ptr_, 0.0, 1.0, 0.1);
+SliderWidget::SliderWidget(PVGroup& pvgroup, const std::string& pv_name, SliderRange range,
+                           ftxui::Color color_active, ftxui::Color color_inactive)
+    : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<double>(0.0)) {
+    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    component_ = make_slider_widget(pvgroup.get_pv(pv_name_), *value_ptr_, range, color_active,
+                                    color_inactive);
 }
-
 
 const double& SliderWidget::value() const { return *value_ptr_; }
 
 std::string SliderWidget::value_as_string() const { return std::to_string(*value_ptr_); }
-
-// class SliderWidget : public WidgetBase {
-  // public:
-//
-    // /// \brief Constructs a SliderWidget.
-    // /// \param pvgroup The PVGroup managing the PVs used in this widget.
-    // /// \param pv_name The PV name.
-    // SliderWidget(PVGroup& pvgroup, const std::string& pv_name);
-//
-    // /// \brief Constructs a Sliderwidget from an App class
-    // /// \param app A reference to the App.
-    // /// \param pv_name The PV name.
-    // SliderWidget(App& app, const std::string& pv_name);
-//
-    // /// \brief Gets the current enum value displayed in the UI.
-    // /// \return The current slider (double) value from the UI.
-    // const PVEnum& value() const;
-//
-    // std::string value_as_string() const override;
-//
-  // private:
-    // std::shared_ptr<double> value_ptr_;
-// };
 
 } // namespace pvtui
