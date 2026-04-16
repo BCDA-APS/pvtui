@@ -45,6 +45,10 @@ UI Widgets
    :project: pvtui
    :members:
 
+.. doxygenclass:: pvtui::SliderWidget
+   :project: pvtui
+   :members:
+
 .. doxygenclass:: pvtui::WidgetBase
    :project: pvtui
    :members:

@@ -702,7 +702,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
 <li><p><strong>pv_name</strong> – The PV name. </p></li>
-<li><p><strong>nbits</strong> – Number of bits to display. </p></li>
+<li><p><strong>range</strong> – Bit range to display (start inclusive, end exclusive). </p></li>
+<li><p><strong>color_on</strong> – Color for set bits. </p></li>
+<li><p><strong>color_off</strong> – Color for unset bits. </p></li>
 </ul>
 </dd>
 </dl>
@@ -717,7 +719,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>app</strong> – A reference to the <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a>. </p></li>
 <li><p><strong>pv_name</strong> – The PV name. </p></li>
-<li><p><strong>nbits</strong> – Number of bits to display. </p></li>
+<li><p><strong>range</strong> – Bit range to display (start inclusive, end exclusive). </p></li>
+<li><p><strong>color_on</strong> – Color for set bits. </p></li>
+<li><p><strong>color_off</strong> – Color for unset bits. </p></li>
 </ul>
 </dd>
 </dl>
@@ -749,11 +753,76 @@
 </dd></dl>
 
 <dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui12SliderWidgetE">
+<span id="_CPPv3N5pvtui12SliderWidgetE"></span><span id="_CPPv2N5pvtui12SliderWidgetE"></span><span id="pvtui::SliderWidget"></span><span class="target" id="d3/d36/classpvtui_1_1SliderWidget"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SliderWidget</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">pvtui</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N5pvtui10WidgetBaseE" title="pvtui::WidgetBase"><span class="n"><span class="pre">WidgetBase</span></span></a><a class="headerlink" href="#_CPPv4N5pvtui12SliderWidgetE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>A slider widget bound to a numeric PV. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui12SliderWidget12SliderWidgetER7PVGroupRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE">
+<span id="_CPPv3N5pvtui12SliderWidget12SliderWidgetER7PVGroupRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="_CPPv2N5pvtui12SliderWidget12SliderWidgetER7PVGroupRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="pvtui::SliderWidget::SliderWidget__PVGroupR.ssCR.SliderRange.ftxui::Color.ftxui::Color"></span><span class="target" id="d3/d36/classpvtui_1_1SliderWidget_1a2e6acdf289d1b4db5281ef3b303fbb03"></span><span class="sig-name descname"><span class="n"><span class="pre">SliderWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui7PVGroupE" title="pvtui::PVGroup"><span class="n"><span class="pre">PVGroup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pvgroup</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">SliderRange</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">range</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color_active</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">White</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color_inactive</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">GrayDark</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12SliderWidget12SliderWidgetER7PVGroupRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Constructs a <a class="reference internal" href="#d3/d36/classpvtui_1_1SliderWidget"><span class="std std-ref">SliderWidget</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pvgroup</strong> – The <a class="reference internal" href="#da/d13/classpvtui_1_1PVGroup"><span class="std std-ref">PVGroup</span></a> managing the PVs used in this widget. </p></li>
+<li><p><strong>pv_name</strong> – The PV name. </p></li>
+<li><p><strong>range</strong> – Slider range (min, max, increment). </p></li>
+<li><p><strong>color_active</strong> – Color of the filled portion when the slider is focused. </p></li>
+<li><p><strong>color_inactive</strong> – Color of the filled portion when the slider is not focused. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N5pvtui12SliderWidget12SliderWidgetER3AppRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE">
+<span id="_CPPv3N5pvtui12SliderWidget12SliderWidgetER3AppRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="_CPPv2N5pvtui12SliderWidget12SliderWidgetER3AppRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE"></span><span id="pvtui::SliderWidget::SliderWidget__AppR.ssCR.SliderRange.ftxui::Color.ftxui::Color"></span><span class="target" id="d3/d36/classpvtui_1_1SliderWidget_1a93a514def3377850dc86ca62a4061f24"></span><span class="sig-name descname"><span class="n"><span class="pre">SliderWidget</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N5pvtui3AppE" title="pvtui::App"><span class="n"><span class="pre">App</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">app</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pv_name</span></span>, <span class="n"><span class="pre">SliderRange</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">range</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color_active</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">White</span></span>, <span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color_inactive</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ftxui</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Color</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">GrayDark</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5pvtui12SliderWidget12SliderWidgetER3AppRKNSt6stringE11SliderRangeN5ftxui5ColorEN5ftxui5ColorE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Constructs a <a class="reference internal" href="#d3/d36/classpvtui_1_1SliderWidget"><span class="std std-ref">SliderWidget</span></a> from an <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a> class. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> – A reference to the <a class="reference internal" href="#de/d49/structpvtui_1_1App"><span class="std std-ref">App</span></a>. </p></li>
+<li><p><strong>pv_name</strong> – The PV name. </p></li>
+<li><p><strong>range</strong> – Slider range (min, max, increment). </p></li>
+<li><p><strong>color_active</strong> – Color of the filled portion when the slider is focused. </p></li>
+<li><p><strong>color_inactive</strong> – Color of the filled portion when the slider is not focused. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui12SliderWidget5valueEv">
+<span id="_CPPv3NK5pvtui12SliderWidget5valueEv"></span><span id="_CPPv2NK5pvtui12SliderWidget5valueEv"></span><span id="pvtui::SliderWidget::valueC"></span><span class="target" id="d3/d36/classpvtui_1_1SliderWidget_1a775c83b6534b48cb79b7f8e5454f068a"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK5pvtui12SliderWidget5valueEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Gets the current slider value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current slider (double) value from the UI. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK5pvtui12SliderWidget15value_as_stringEv">
+<span id="_CPPv3NK5pvtui12SliderWidget15value_as_stringEv"></span><span id="_CPPv2NK5pvtui12SliderWidget15value_as_stringEv"></span><span id="pvtui::SliderWidget::value_as_stringC"></span><span class="target" id="d3/d36/classpvtui_1_1SliderWidget_1adf5d72d5fa0fd91e22db6fdc27450032"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value_as_string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK5pvtui12SliderWidget15value_as_stringEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Returns the widget’s current PV value as a string. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A string representation of the underlying PV value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
 <dt class="sig sig-object cpp" id="_CPPv4N5pvtui10WidgetBaseE">
 <span id="_CPPv3N5pvtui10WidgetBaseE"></span><span id="_CPPv2N5pvtui10WidgetBaseE"></span><span id="pvtui::WidgetBase"></span><span class="target" id="de/dc4/classpvtui_1_1WidgetBase"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WidgetBase</span></span></span><a class="headerlink" href="#_CPPv4N5pvtui10WidgetBaseE" title="Link to this definition">¶</a><br /></dt>
 <dd><p>A base class for all TUI widgets that interact with EPICS PVs. </p>
 <p>This class provides a standard interface for managing PV connections, accessing PV names, and retrieving the underlying FTXUI component. </p>
-<p>Subclassed by <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">pvtui::BitsWidget</span></a>, <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">pvtui::ButtonWidget</span></a>, <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">pvtui::ChoiceWidget</span></a>, <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">pvtui::InputWidget</span></a>, <a class="reference internal" href="#d4/d1e/classpvtui_1_1Monitor"><span class="std std-ref">pvtui::Monitor&lt; T &gt;</span></a></p>
+<p>Subclassed by <a class="reference internal" href="#d1/dc4/classpvtui_1_1BitsWidget"><span class="std std-ref">pvtui::BitsWidget</span></a>, <a class="reference internal" href="#d2/d81/classpvtui_1_1ButtonWidget"><span class="std std-ref">pvtui::ButtonWidget</span></a>, <a class="reference internal" href="#d0/d0d/classpvtui_1_1ChoiceWidget"><span class="std std-ref">pvtui::ChoiceWidget</span></a>, <a class="reference internal" href="#d2/d00/classpvtui_1_1InputWidget"><span class="std std-ref">pvtui::InputWidget</span></a>, <a class="reference internal" href="#d4/d1e/classpvtui_1_1Monitor"><span class="std std-ref">pvtui::Monitor&lt; T &gt;</span></a>, <a class="reference internal" href="#d3/d36/classpvtui_1_1SliderWidget"><span class="std std-ref">pvtui::SliderWidget</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
@@ -1028,6 +1097,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN5pvtui7MonitorE"><code class="docutils literal notranslate"><span class="pre">pvtui::Monitor</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui12ChoiceWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::ChoiceWidget</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui10BitsWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::BitsWidget</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui12SliderWidgetE"><code class="docutils literal notranslate"><span class="pre">pvtui::SliderWidget</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N5pvtui10WidgetBaseE"><code class="docutils literal notranslate"><span class="pre">pvtui::WidgetBase</span></code></a></li>
 </ul>
 </li>
