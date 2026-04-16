@@ -195,15 +195,19 @@ class BitsWidget : public WidgetBase {
     /// \brief Constructs a BitsWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
-    /// \param nbits Number of bits to display.
+    /// \param range Bit range to display (start inclusive, end exclusive).
+    /// \param color_on Color for set bits.
+    /// \param color_off Color for unset bits.
     BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 
-    /// \brief Constructs a BitsWidget from an App class
+    /// \brief Constructs a BitsWidget from an App class.
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
-    /// \param nbits Number of bits to display.
+    /// \param range Bit range to display (start inclusive, end exclusive).
+    /// \param color_on Color for set bits.
+    /// \param color_off Color for unset bits.
     BitsWidget(App& app, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
@@ -245,6 +249,7 @@ class ChoiceWidget : public WidgetBase {
     std::shared_ptr<PVEnum> value_ptr_;
 };
 
+/// \brief A slider widget bound to a numeric PV.
 class SliderWidget : public WidgetBase {
   public:
 
