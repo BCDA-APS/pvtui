@@ -23,7 +23,8 @@ std::string rectangle(int len) {
 
 namespace {
 
-ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value, ftxui::ButtonOption op) {
+ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int value,
+                                    ftxui::ButtonOption op) {
     op.label = label;
     op.on_click = [&pv, value]() {
         if (pv.connected()) {
@@ -205,15 +206,15 @@ const std::string& InputWidget::value() const { return *value_ptr_; }
 
 std::string InputWidget::value_as_string() const { return *value_ptr_; }
 
-BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
-                       ftxui::Color color_on,ftxui::Color color_off)
+BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range, ftxui::Color color_on,
+                       ftxui::Color color_off)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     pvgroup.set_monitor(pv_name_, *value_ptr_);
     component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
-BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range,
-                       ftxui::Color color_on,ftxui::Color color_off)
+BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range, ftxui::Color color_on,
+                       ftxui::Color color_off)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
     app.pvgroup.set_monitor(pv_name_, *value_ptr_);
     component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
