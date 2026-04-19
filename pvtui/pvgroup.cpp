@@ -94,43 +94,50 @@ struct pvd_type_map<std::string> {
 
 void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
 
-    // Copy all monitor slots under lock
-    std::unordered_map<std::type_index, MonitorVar> slots_copy;
+    // Snapshot each slot's latest_value and field_path under lock
+    struct SlotSnapshot {
+        size_t index;
+        std::string field_path;
+        MonitorVar value;
+    };
+    std::vector<SlotSnapshot> snapshots;
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        for (auto& [type_id, slot] : monitor_slots_) {
-            if (!std::holds_alternative<std::monostate>(slot.data)) {
-                slots_copy.emplace(type_id, slot.data);
+        for (size_t i = 0; i < monitor_slots_.size(); ++i) {
+            auto& slot = monitor_slots_[i];
+            if (!std::holds_alternative<std::monostate>(slot->latest_value)) {
+                snapshots.push_back({i, slot->field_path, slot->latest_value});
             }
         }
     }
 
-    if (slots_copy.empty())
+    if (snapshots.empty())
         return;
 
-    // Extract data from PVStructure into each slot's type
-    for (auto& [type_id, incoming] : slots_copy) {
+    // Extract data from PVStructure into each snapshot's value
+    for (auto& snap : snapshots) {
         bool success = false;
         std::visit(
             [&](auto& var) {
                 using VarType = std::decay_t<decltype(var)>;
 
                 if constexpr (std::is_arithmetic_v<VarType>) {
-                    if (auto val_field = pstruct->getSubField<pvd::PVScalar>("value")) {
+                    if (auto val_field = pstruct->getSubField<pvd::PVScalar>(snap.field_path)) {
                         var = val_field->getAs<VarType>();
                         success = true;
                     }
                 }
 
                 else if constexpr (std::is_same_v<VarType, std::string>) {
-                    if (auto val_field = pstruct->getSubField<pvd::PVString>("value")) {
+                    if (auto val_field = pstruct->getSubField<pvd::PVString>(snap.field_path)) {
                         var = val_field->getAs<std::string>();
                         success = true;
-                    } else if (auto val_field = pstruct->getSubField<pvd::PVByteArray>("value")) {
+                    } else if (auto val_field =
+                                   pstruct->getSubField<pvd::PVByteArray>(snap.field_path)) {
                         auto pbytearr = val_field->view();
                         var.assign(pbytearr.begin(), pbytearr.end());
                         success = true;
-                    } else if (auto val_field = pstruct->getSubField("value")) {
+                    } else if (auto val_field = pstruct->getSubField(snap.field_path)) {
                         std::ostringstream oss;
                         oss << std::fixed << std::setprecision(get_precision(pstruct));
                         val_field->dumpValue(oss);
@@ -140,8 +147,9 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
                 }
 
                 else if constexpr (std::is_same_v<VarType, PVEnum>) {
-                    auto pchoices = pstruct->getSubField<pvd::PVStringArray>("value.choices");
-                    auto pindex = pstruct->getSubField<pvd::PVInt>("value.index");
+                    auto pchoices =
+                        pstruct->getSubField<pvd::PVStringArray>(snap.field_path + ".choices");
+                    auto pindex = pstruct->getSubField<pvd::PVInt>(snap.field_path + ".index");
                     if (pchoices && pindex) {
                         pvd::shared_vector<const std::string> choices = pchoices->view();
                         size_t index = pindex->getAs<size_t>();
@@ -157,7 +165,7 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
                 else if constexpr (is_vector_v<VarType>) {
                     using ElementType = typename VarType::value_type;
                     using PVDArray = typename pvd_type_map<ElementType>::array_type;
-                    if (auto parr = pstruct->getSubField<PVDArray>("value")) {
+                    if (auto parr = pstruct->getSubField<PVDArray>(snap.field_path)) {
                         auto vec = parr->view();
                         var.assign(vec.begin(), vec.end());
                         success = true;
@@ -168,10 +176,11 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
                     success = false;
                 }
             },
-            incoming);
+            snap.value);
 
         if (!success) {
-            std::cerr << "Incompatible types for monitor: " << this->channel.name() << "\n";
+            std::cerr << "Incompatible types for monitor: " << this->channel.name()
+                      << " field_path: " << snap.field_path << "\n";
             std::abort();
         }
     }
@@ -179,8 +188,8 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
     // Write updated values back under lock
     {
         const std::lock_guard<std::mutex> lock(mutex_);
-        for (auto& [type_id, incoming] : slots_copy) {
-            monitor_slots_[type_id].data = std::move(incoming);
+        for (auto& snap : snapshots) {
+            monitor_slots_[snap.index]->latest_value = std::move(snap.value);
         }
     }
     new_data_.store(true, std::memory_order_release);
@@ -196,11 +205,8 @@ bool PVHandler::sync() {
         return false;
 
     const std::lock_guard<std::mutex> lock(mutex_);
-    for (auto& [type_id, slot] : monitor_slots_) {
-        for (auto& task : slot.tasks) {
-            task(slot.data);
-        }
-    }
+    for (auto& slot : monitor_slots_)
+        slot->copy_to_targets();
 
     new_data_.store(false, std::memory_order_relaxed);
     return true;

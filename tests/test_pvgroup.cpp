@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 
     // Start the client
     epics::pvAccess::ca::CAClientFactory::start();
-    pvac::ClientProvider provider("ca");
+    pvac::ClientProvider provider("pva");
 
     // Create the group and add our PVs
     pvtui::PVGroup pvgroup(provider, {
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
         prefix+"m1.RBV",
         prefix+"double_array.VAL",
         prefix+"string_array.VAL",
+        prefix+"Position",
     });
 
     double rbv_double;
@@ -60,6 +61,13 @@ int main(int argc, char *argv[]) {
 
     std::string desc;
     pvgroup.set_monitor<std::string>(prefix+"m1.DESC", desc);
+
+    double pos_x;
+    pvgroup.set_monitor<double>(prefix+"Position", pos_x, "X.value");
+    double pos_y;
+    pvgroup.set_monitor<double>(prefix+"Position", pos_y, "Y.value");
+    double pos_z;
+    pvgroup.set_monitor<double>(prefix+"Position", pos_z, "Z.value");
 
     std::vector<double> double_arr;
     pvgroup.set_monitor<std::vector<double>>(prefix+"double_array.VAL", double_arr);
@@ -76,6 +84,10 @@ int main(int argc, char *argv[]) {
             std::cout << "RBV[double] = " << rbv_double << std::endl;
 
             std::cout << "RBV[string] = " << rbv_string << std::endl;
+
+            std::cout << "POS X[double] = " << pos_x << std::endl;
+            std::cout << "POS Y[double] = " << pos_y << std::endl;
+            std::cout << "POS Z[double] = " << pos_z << std::endl;
 
             std::cout << "double_array = ";
             print_vec(double_arr);

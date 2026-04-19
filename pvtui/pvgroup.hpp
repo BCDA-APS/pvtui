@@ -1,11 +1,9 @@
 #pragma once
 
 #include <atomic>
-#include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
-#include <typeindex>
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -27,6 +25,27 @@ struct PVEnum {
 /// This allows a single mechanism to update variables of different types.
 using MonitorVar = std::variant<std::monostate, std::string, int, double, std::vector<std::string>,
                                 std::vector<int>, std::vector<double>, PVEnum>;
+
+/// \brief Abstract base for type-erased monitor slots.
+struct MonitorSlotBase {
+    std::string field_path;
+    MonitorVar latest_value;
+    virtual ~MonitorSlotBase() = default;
+    virtual void copy_to_targets() = 0;
+};
+
+/// \brief Concrete monitor slot that copies the latest value to typed target pointers.
+/// \tparam T The C++ type of the monitored value.
+template <typename T>
+struct MonitorSlot : MonitorSlotBase {
+    std::vector<T*> targets;
+    void copy_to_targets() override {
+        if (auto* val = std::get_if<T>(&latest_value)) {
+            for (T* target : targets)
+                *target = *val;
+        }
+    }
+};
 
 /// \brief Monitors a pvac::ClientChannel's connection status.
 class ConnectionMonitor : public pvac::ClientChannel::ConnectCallback {
@@ -73,20 +92,23 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
     /// \brief Registers a variable to be updated when the PV monitor receives new data and sync() is called.
     /// \tparam T The type of the variable to monitor.
     /// \param var A reference to the variable that will be updated.
-    ///
+    /// \param field_path The dotted field path to extract from the PVStructure (e.g. "value", "someField.value").
     template <typename T>
-    void set_monitor(T& var) {
+    void set_monitor(T& var, const std::string& field_path = "value") {
         std::lock_guard<std::mutex> lock(mutex_);
-        auto key = std::type_index(typeid(T));
-        auto& slot = monitor_slots_[key];
-        if (std::holds_alternative<std::monostate>(slot.data)) {
-            slot.data = T{};
-        }
-        slot.tasks.push_back([&var](const MonitorVar& latest_data) {
-            if (auto* val = std::get_if<T>(&latest_data)) {
-                var = *val;
+        for (auto& slot_ptr : monitor_slots_) {
+            if (slot_ptr->field_path == field_path) {
+                if (auto* typed = dynamic_cast<MonitorSlot<T>*>(slot_ptr.get())) {
+                    typed->targets.push_back(&var);
+                    return;
+                }
             }
-        });
+        }
+        auto slot = std::make_unique<MonitorSlot<T>>();
+        slot->field_path = field_path;
+        slot->latest_value = T{};
+        slot->targets.push_back(&var);
+        monitor_slots_.push_back(std::move(slot));
     }
 
     /// \brief Forces an update of all monitored variables by performing a synchronous channel get.
@@ -106,16 +128,10 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
     std::shared_ptr<ConnectionMonitor> get_connection_monitor() const { return connection_monitor_; }
 
   private:
-    /// \brief A monitor slot holding one typed MonitorVar and its sync callbacks.
-    struct MonitorSlot {
-        MonitorVar data;                                           ///< The latest value for this type.
-        std::vector<std::function<void(const MonitorVar&)>> tasks; ///< Callbacks to copy data to user variables.
-    };
-
     std::mutex mutex_;
-    pvac::Monitor monitor_;                                 ///< PVA data monitor.
-    std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors connection status.
-    std::unordered_map<std::type_index, MonitorSlot> monitor_slots_; ///< One slot per monitored type.
+    pvac::Monitor monitor_;                                        ///< PVA data monitor.
+    std::shared_ptr<ConnectionMonitor> connection_monitor_;        ///< Monitors connection status.
+    std::vector<std::unique_ptr<MonitorSlotBase>> monitor_slots_;  ///< One slot per monitored (field_path, type).
     std::atomic<bool> new_data_ = false;
 
     /// \brief Callback invoked when a monitor event occurs (e.g., new data).
@@ -151,12 +167,12 @@ class PVGroup {
     /// \tparam T The type of the variable to monitor.
     /// \param pv_name The name of the PV to monitor.
     /// \param var A reference to the variable that will be updated.
+    /// \param field_path The dotted field path to extract from the PVStructure (e.g. "value", "value.x").
     /// \throws std::runtime_error if the PV is not found in the group.
-    ///
     template <typename T>
-    void set_monitor(const std::string& pv_name, T& var) {
+    void set_monitor(const std::string& pv_name, T& var, const std::string& field_path = "value") {
         PVHandler& pv = this->get_pv(pv_name);
-        pv.set_monitor(var);
+        pv.set_monitor(var, field_path);
     }
 
     /// \brief Retrieves a PVHandler from the group by its name.

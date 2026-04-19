@@ -73,3 +73,28 @@ record(calcout, "$(P)calcout1") {
 record(seq, "$(P)seq1") {
     field(PREC, 2)
 }
+
+record(ao, "$(P)X") {
+    field(VAL, 1.11)
+    info(Q:group, {
+        "$(P)Position" : {
+            "X" : {+channel : "VAL"}
+        }
+    })
+}
+record(ao, "$(P)Y") {
+    field(VAL, 2.22)
+    info(Q:group, {
+        "$(P)Position" : {
+            "Y" : {+channel : "VAL"}
+        }
+    })
+}
+record(ao, "$(P)Z") {
+    field(VAL, 3.33)
+    info(Q:group, {
+        "$(P)Position" : {
+            "Z" : {+channel : "VAL"}
+        }
+    })
+}
