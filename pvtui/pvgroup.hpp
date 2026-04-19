@@ -94,8 +94,10 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
     /// \param var A reference to the variable that will be updated.
     /// \param field_path The dotted field path to extract from the PVStructure (e.g. "value", "someField.value").
     template <typename T>
-    void set_monitor(T& var, const std::string& field_path = "value") {
+    void bind(T& var, const std::string& field_path = "value") {
         std::lock_guard<std::mutex> lock(mutex_);
+
+        // adds a target to the slot's targets vector
         for (auto& slot_ptr : monitor_slots_) {
             if (slot_ptr->field_path == field_path) {
                 if (auto* typed = dynamic_cast<MonitorSlot<T>*>(slot_ptr.get())) {
@@ -104,6 +106,8 @@ class PVHandler : public pvac::ClientChannel::MonitorCallback {
                 }
             }
         }
+
+        // a slot for this type or field path doesn't exist yet so we create it
         auto slot = std::make_unique<MonitorSlot<T>>();
         slot->field_path = field_path;
         slot->latest_value = T{};
@@ -170,9 +174,9 @@ class PVGroup {
     /// \param field_path The dotted field path to extract from the PVStructure (e.g. "value", "value.x").
     /// \throws std::runtime_error if the PV is not found in the group.
     template <typename T>
-    void set_monitor(const std::string& pv_name, T& var, const std::string& field_path = "value") {
+    void bind(T& var, const std::string& pv_name, const std::string& field_path = "value") {
         PVHandler& pv = this->get_pv(pv_name);
-        pv.set_monitor(var, field_path);
+        pv.bind(var, field_path);
     }
 
     /// \brief Retrieves a PVHandler from the group by its name.

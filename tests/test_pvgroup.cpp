@@ -54,28 +54,27 @@ int main(int argc, char *argv[]) {
     });
 
     double rbv_double;
-    pvgroup.set_monitor<double>(prefix+"m1.RBV", rbv_double);
+    pvgroup.bind<double>(rbv_double, prefix+"m1.RBV");
 
     std::string rbv_string;
-    pvgroup.set_monitor<std::string>(prefix+"m1.RBV", rbv_string);
+    pvgroup.bind<std::string>(rbv_string, prefix+"m1.RBV");
 
     std::string desc;
-    pvgroup.set_monitor<std::string>(prefix+"m1.DESC", desc);
+    pvgroup.bind<std::string>(desc, prefix+"m1.DESC");
 
-    double pos_x;
-    pvgroup.set_monitor<double>(prefix+"Position", pos_x, "X.value");
-    double pos_y;
-    pvgroup.set_monitor<double>(prefix+"Position", pos_y, "Y.value");
-    double pos_z;
-    pvgroup.set_monitor<double>(prefix+"Position", pos_z, "Z.value");
+    // Using PVA structured data
+    double pos_x = 0.0;
+    pvgroup.bind<double>(pos_x, prefix+"Position", "X.value");
+    double pos_y = 0.0;
+    pvgroup.bind<double>(pos_y, prefix+"Position", "Y.value");
+    double pos_z = 0.0;
+    pvgroup.bind<double>(pos_z, prefix+"Position", "Z.value");
 
     std::vector<double> double_arr;
-    pvgroup.set_monitor<std::vector<double>>(prefix+"double_array.VAL", double_arr);
+    pvgroup.bind<std::vector<double>>(double_arr, prefix+"double_array.VAL");
 
-    // std::vector<std::string> string_arr;
-    // pvgroup.set_monitor<std::vector<std::string>>(prefix+"string_array.VAL", string_arr);
     std::string string_arr;
-    pvgroup.set_monitor<std::string>(prefix+"string_array.VAL", string_arr);
+    pvgroup.bind<std::string>(string_arr, prefix+"string_array.VAL");
 
     while (g_signal_caught == 0) {
         if (pvgroup.sync()) {

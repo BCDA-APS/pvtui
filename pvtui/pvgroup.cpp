@@ -105,6 +105,7 @@ void PVHandler::update_monitored_variable(const pvd::PVStructure* pstruct) {
         const std::lock_guard<std::mutex> lock(mutex_);
         for (size_t i = 0; i < monitor_slots_.size(); ++i) {
             auto& slot = monitor_slots_[i];
+            // can this ever even be monostate?
             if (!std::holds_alternative<std::monostate>(slot->latest_value)) {
                 snapshots.push_back({i, slot->field_path, slot->latest_value});
             }

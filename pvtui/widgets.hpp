@@ -154,7 +154,7 @@ class Monitor : public WidgetBase {
     /// \param pv_name The PV name.
     Monitor(PVGroup& pvgroup, const std::string& pv_name)
         : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        pvgroup.set_monitor(pv_name_, *value_ptr_);
+        pvgroup.bind(*value_ptr_, pv_name);
         component_ = monitor_component_;
     }
 
@@ -163,7 +163,7 @@ class Monitor : public WidgetBase {
     /// \param pv_name The PV name.
     Monitor(App& app, const std::string& pv_name)
         : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+        app.pvgroup.bind(*value_ptr_, pv_name);
         component_ = monitor_component_;
     }
 

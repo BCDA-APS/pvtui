@@ -212,14 +212,14 @@ ftxui::Component WidgetBase::component() const {
 InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
                          ftxui::Color hover)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
-    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    app.pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
 
 InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
                          ftxui::Color hover)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
 }
 
@@ -230,14 +230,14 @@ std::string InputWidget::value_as_string() const { return *value_ptr_; }
 BitsWidget::BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range, ftxui::Color color_on,
                        ftxui::Color color_off)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
 BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range, ftxui::Color color_on,
                        ftxui::Color color_off)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<int>()) {
-    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    app.pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_bits_widget(*value_ptr_, range, color_on, color_off);
 }
 
@@ -247,7 +247,7 @@ std::string BitsWidget::value_as_string() const { return std::to_string(*value_p
 
 ChoiceWidget::ChoiceWidget(App& app, const std::string& pv_name, ChoiceStyle style)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<PVEnum>()) {
-    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    app.pvgroup.bind(*value_ptr_, pv_name);
     switch (style) {
     case pvtui::ChoiceStyle::Vertical:
         component_ =
@@ -266,7 +266,7 @@ ChoiceWidget::ChoiceWidget(App& app, const std::string& pv_name, ChoiceStyle sty
 
 ChoiceWidget::ChoiceWidget(PVGroup& pvgroup, const std::string& pv_name, ChoiceStyle style)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<PVEnum>()) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    pvgroup.bind(*value_ptr_, pv_name);
     switch (style) {
     case pvtui::ChoiceStyle::Vertical:
         component_ = make_choice_v_widget(pvgroup.get_pv(pv_name_), value_ptr_->choices, value_ptr_->index);
@@ -299,7 +299,7 @@ ButtonWidget::ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const s
 SliderWidget::SliderWidget(App& app, const std::string& pv_name, SliderRange range,
                            ftxui::Color color_active, ftxui::Color color_inactive)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<double>(0.0)) {
-    app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+    app.pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_slider_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, range, color_active,
                                     color_inactive);
 }
@@ -307,7 +307,7 @@ SliderWidget::SliderWidget(App& app, const std::string& pv_name, SliderRange ran
 SliderWidget::SliderWidget(PVGroup& pvgroup, const std::string& pv_name, SliderRange range,
                            ftxui::Color color_active, ftxui::Color color_inactive)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<double>(0.0)) {
-    pvgroup.set_monitor(pv_name_, *value_ptr_);
+    pvgroup.bind(*value_ptr_, pv_name);
     component_ = make_slider_widget(pvgroup.get_pv(pv_name_), *value_ptr_, range, color_active,
                                     color_inactive);
 }
