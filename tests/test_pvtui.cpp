@@ -18,6 +18,9 @@ int main(int argc, char *argv[]) {
     InputWidget x(app, prefix + "Position", "X.value");
     InputWidget y(app, prefix + "Position", "Y.value");
     InputWidget z(app, prefix + "Position", "Z.value");
+    Monitor<double> x_rbv(app, prefix + "Position", "X.value");
+    Monitor<double> y_rbv(app, prefix + "Position", "Y.value");
+    Monitor<double> z_rbv(app, prefix + "Position", "Z.value");
 
     auto container = Container::Vertical({
         x.component(),
@@ -25,6 +28,7 @@ int main(int argc, char *argv[]) {
         z.component(),
     }) | Renderer([&](Element) {
         return vbox({
+            separator() | size(WIDTH, EQUAL, 15),
             hbox({
                 text("X: "),
                 x.component()->Render()
@@ -43,8 +47,26 @@ int main(int argc, char *argv[]) {
                     | size(WIDTH, EQUAL, 15)
                     | EPICSColor::edit(z),
             }),
-
-            separator(),
+            separator() | size(WIDTH, EQUAL, 15),
+            hbox({
+                text("X RBV: "),
+                x_rbv.component()->Render()
+                    | size(WIDTH, EQUAL, 15)
+                    | EPICSColor::custom(x_rbv, color(Color::SteelBlue)),
+            }),
+            hbox({
+                text("Y RBV: "),
+                y_rbv.component()->Render()
+                    | size(WIDTH, EQUAL, 15)
+                    | EPICSColor::custom(y_rbv, color(Color::SteelBlue)),
+            }),
+            hbox({
+                text("Z RBV: "),
+                z_rbv.component()->Render()
+                    | size(WIDTH, EQUAL, 15)
+                    | EPICSColor::custom(z_rbv, color(Color::SteelBlue)),
+            }),
+            separator() | size(WIDTH, EQUAL, 15),
         });
     });
 

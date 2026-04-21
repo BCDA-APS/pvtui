@@ -144,18 +144,18 @@ class Monitor : public WidgetBase {
     /// \brief Constructs a Monitor.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
-    Monitor(PVGroup& pvgroup, const std::string& pv_name)
+    Monitor(PVGroup& pvgroup, const std::string& pv_name, const std::string& field_path = "value")
         : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        pvgroup.bind(*value_ptr_, pv_name);
+        pvgroup.bind(*value_ptr_, pv_name, field_path);
         component_ = monitor_component_;
     }
 
     /// \brief Constructs a Monitor from an App class
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
-    Monitor(App& app, const std::string& pv_name)
+    Monitor(App& app, const std::string& pv_name, const std::string& field_path = "value")
         : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        app.pvgroup.bind(*value_ptr_, pv_name);
+        app.pvgroup.bind(*value_ptr_, pv_name, field_path);
         component_ = monitor_component_;
     }
 
