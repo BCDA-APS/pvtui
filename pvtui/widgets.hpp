@@ -92,7 +92,7 @@ class InputWidget : public WidgetBase {
     /// \param pv_name The PV name.
     /// \param fg Optional ftxui color for the input foreground (cursor and text).
     /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(PVGroup& pvgroup, const std::string& pv_name,
+    InputWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& field_path = "value",
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
 
     /// \brief Constructs an InputWidget from an App class
@@ -100,7 +100,7 @@ class InputWidget : public WidgetBase {
     /// \param pv_name The PV name.
     /// \param fg Optional ftxui color for the input foreground (cursor and text).
     /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(App& app, const std::string& pv_name,
+    InputWidget(App& app, const std::string& pv_name, const std::string& field_path = "value",
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
 
     /// \brief Gets the current value of the string displayed in the UI.

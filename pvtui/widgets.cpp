@@ -94,8 +94,8 @@ bool put_string_as_scalar(pvac::ClientChannel& channel, const std::string& value
     // return true;
 // }
 
-ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, ftxui::Color fg,
-                                   ftxui::Color hover) {
+ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, const std::string& field_path,
+                                   ftxui::Color fg, ftxui::Color hover) {
 
     ftxui::InputOption input_op;
 
@@ -117,9 +117,9 @@ ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, ftxui::
         return s.element | ftxui::color(fg);
     };
 
-    input_op.on_enter = [&pv, &disp_str]() {
+    input_op.on_enter = [&pv, &disp_str, field_path]() {
         if (pv.connected()) {
-            put_string_as_scalar(pv.channel, disp_str);
+            put_string_as_scalar(pv.channel, disp_str, field_path);
         }
     };
 
@@ -245,18 +245,18 @@ ftxui::Component WidgetBase::component() const {
     }
 }
 
-InputWidget::InputWidget(App& app, const std::string& pv_name, ftxui::Color fg,
-                         ftxui::Color hover)
+InputWidget::InputWidget(App& app, const std::string& pv_name, const std::string& field_path,
+                         ftxui::Color fg, ftxui::Color hover)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
-    app.pvgroup.bind(*value_ptr_, pv_name);
-    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, fg, hover);
+    app.pvgroup.bind(*value_ptr_, pv_name, field_path);
+    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, field_path, fg, hover);
 }
 
-InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, ftxui::Color fg,
-                         ftxui::Color hover)
+InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& field_path,
+                         ftxui::Color fg, ftxui::Color hover)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
-    pvgroup.bind(*value_ptr_, pv_name);
-    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, fg, hover);
+    pvgroup.bind(*value_ptr_, pv_name, field_path);
+    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, field_path, fg, hover);
 }
 
 const std::string& InputWidget::value() const { return *value_ptr_; }
