@@ -78,7 +78,7 @@ record(ao, "$(P)X") {
     field(VAL, 1.11)
     info(Q:group, {
         "$(P)Position" : {
-            "X" : {+channel : "VAL"}
+            "X" : {+channel : "VAL", +putorder : 0}
         }
     })
 }
@@ -86,7 +86,7 @@ record(ao, "$(P)Y") {
     field(VAL, 2.22)
     info(Q:group, {
         "$(P)Position" : {
-            "Y" : {+channel : "VAL"}
+            "Y" : {+channel : "VAL", +putorder : 1}
         }
     })
 }
@@ -94,7 +94,7 @@ record(ao, "$(P)Z") {
     field(VAL, 3.33)
     info(Q:group, {
         "$(P)Position" : {
-            "Z" : {+channel : "VAL"}
+            "Z" : {+channel : "VAL", +putorder : 2, +trigger : "*"}
         }
     })
 }
