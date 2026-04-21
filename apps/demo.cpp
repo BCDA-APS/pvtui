@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    InputWidget inp1(app, prefix + "string.VAL", PVPutType::String, Color::Black, Color::White);
+    InputWidget inp1(app, prefix + "string.VAL", Color::Black, Color::White);
     ButtonWidget plus_button(app, prefix + "add1.PROC", " + ", ButtonOption::Simple());
     ButtonWidget minus_button(app, prefix + "subtract1.PROC", " - ", ButtonOption::Simple());
     Monitor<int> int_val(app, prefix + "long.VAL");

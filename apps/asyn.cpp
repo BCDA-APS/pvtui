@@ -57,12 +57,12 @@ int main(int argc, char *argv[]) {
     }
     const std::string record_name = pos_args[1];
 
-    InputWidget aout(app, record_name + ".AOUT", PVPutType::String);
-    InputWidget oeos(app, record_name + ".OEOS", PVPutType::String);
-    InputWidget ieos(app, record_name + ".IEOS", PVPutType::String);
-    InputWidget tmot(app, record_name + ".TMOT", PVPutType::Double);
-    InputWidget tfil(app, record_name + ".TFIL", PVPutType::String);
-    InputWidget nowt(app, record_name + ".NOWT", PVPutType::Integer);
+    InputWidget aout(app, record_name + ".AOUT");
+    InputWidget oeos(app, record_name + ".OEOS");
+    InputWidget ieos(app, record_name + ".IEOS");
+    InputWidget tmot(app, record_name + ".TMOT");
+    InputWidget tfil(app, record_name + ".TFIL");
+    InputWidget nowt(app, record_name + ".NOWT");
     Monitor<PVEnum> stat(app, record_name + ".STAT");
     Monitor<PVEnum> sevr(app, record_name + ".SEVR");
     Monitor<std::string> tinp(app, record_name + ".TINP");

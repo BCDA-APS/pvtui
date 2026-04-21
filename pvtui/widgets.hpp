@@ -26,13 +26,6 @@ constexpr std::string_view red_circle = "🔴";   ///< Unicode character for a r
 std::string rectangle(int len);
 } // namespace unicode
 
-/// \brief Defines the data types for PV put operations for InputWidget
-enum class PVPutType {
-    Integer,
-    Double,
-    String,
-};
-
 /// \brief Style options for ChoiceWidget
 enum class ChoiceStyle {
     Vertical,
@@ -40,6 +33,7 @@ enum class ChoiceStyle {
     Dropdown,
 };
 
+/// \brief Start and top bits for BitsWidget
 struct BitRange {
     size_t start;
     size_t end;
@@ -96,19 +90,17 @@ class InputWidget : public WidgetBase {
     /// \brief Constructs an InputWidget.
     /// \param pvgroup The PVGroup managing the PVs used in this widget.
     /// \param pv_name The PV name.
-    /// \param put_type Specifies how the input value is written to the PV.
     /// \param fg Optional ftxui color for the input foreground (cursor and text).
     /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type,
+    InputWidget(PVGroup& pvgroup, const std::string& pv_name,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
 
     /// \brief Constructs an InputWidget from an App class
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
-    /// \param put_type Specifies how the input value is written to the PV.
     /// \param fg Optional ftxui color for the input foreground (cursor and text).
     /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(App& app, const std::string& pv_name, PVPutType put_type,
+    InputWidget(App& app, const std::string& pv_name,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
 
     /// \brief Gets the current value of the string displayed in the UI.

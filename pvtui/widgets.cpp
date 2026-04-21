@@ -34,25 +34,67 @@ ftxui::Component make_button_widget(PVHandler& pv, const std::string& label, int
     return ftxui::Button(op);
 }
 
-template <typename T>
-bool put_string_as(std::string_view str, PVHandler& pv) {
-    T val{};
-    try {
-        if constexpr (std::is_same_v<T, double>) {
-            val = std::stod(str.data());
-        } else if constexpr (std::is_same_v<T, int>) {
-            val = std::stoi(str.data());
-        } else if constexpr (std::is_same_v<T, std::string>) {
-            val = str;
-        }
-        pv.channel.put().set("value", val).exec();
-    } catch (...) {
-        return false;
+bool put_string_as_scalar(pvac::ClientChannel& channel, const std::string& value_str,
+                          const std::string& field_path = "value") {
+
+    epics::pvData::PVStructure::const_shared_pointer pstruct = channel.get();
+    if (!pstruct) {
+        throw std::runtime_error("put_string_as: get() returned null");
     }
+
+    auto vfield = pstruct->getSubField<epics::pvData::PVScalar>(field_path);
+    if (!vfield) {
+        throw std::runtime_error("put_string_as_scalar: Requested field of PV is not scalar");
+    }
+
+    epics::pvData::ScalarType stype = vfield->getScalar()->getScalarType();
+
+    auto put_builder = channel.put();
+    if (stype == epics::pvData::pvString) {
+        put_builder.set(field_path, value_str);
+    } else if (stype == epics::pvData::pvDouble || stype == epics::pvData::pvFloat) {
+        double value = 0.0;
+        try {
+            value = stod(value_str);
+        } catch (...) {
+            return false;
+        }
+        put_builder.set(field_path, value);
+    } else {
+        // assume otherwise we can put as an int
+        int value = 0.0;
+        try {
+            value = stoi(value_str);
+        } catch (...) {
+            return false;
+        }
+        put_builder.set(field_path, value);
+    }
+
+    put_builder.exec();
+
     return true;
 }
 
-ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutType put_type, ftxui::Color fg,
+// template <typename T>
+// bool put_string_as(std::string_view str, PVHandler& pv) {
+    // T val{};
+    // try {
+        // if constexpr (std::is_same_v<T, double>) {
+            // val = std::stod(str.data());
+        // } else if constexpr (std::is_same_v<T, int>) {
+            // val = std::stoi(str.data());
+        // } else if constexpr (std::is_same_v<T, std::string>) {
+            // val = str;
+        // }
+        // pv.channel.put().set("value", val).exec();
+    // } catch (...) {
+        // return false;
+    // }
+    // return true;
+// }
+
+ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, ftxui::Color fg,
                                    ftxui::Color hover) {
 
     ftxui::InputOption input_op;
@@ -75,15 +117,9 @@ ftxui::Component make_input_widget(PVHandler& pv, std::string& disp_str, PVPutTy
         return s.element | ftxui::color(fg);
     };
 
-    input_op.on_enter = [&pv, &disp_str, put_type]() {
+    input_op.on_enter = [&pv, &disp_str]() {
         if (pv.connected()) {
-            if (put_type == PVPutType::Double) {
-                put_string_as<double>(disp_str, pv);
-            } else if (put_type == PVPutType::Integer) {
-                put_string_as<int>(disp_str, pv);
-            } else if (put_type == PVPutType::String) {
-                put_string_as<std::string>(disp_str, pv);
-            }
+            put_string_as_scalar(pv.channel, disp_str);
         }
     };
 
@@ -209,18 +245,18 @@ ftxui::Component WidgetBase::component() const {
     }
 }
 
-InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
+InputWidget::InputWidget(App& app, const std::string& pv_name, ftxui::Color fg,
                          ftxui::Color hover)
     : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
     app.pvgroup.bind(*value_ptr_, pv_name);
-    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
+    component_ = make_input_widget(app.pvgroup.get_pv(pv_name_), *value_ptr_, fg, hover);
 }
 
-InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
+InputWidget::InputWidget(PVGroup& pvgroup, const std::string& pv_name, ftxui::Color fg,
                          ftxui::Color hover)
     : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<std::string>()) {
     pvgroup.bind(*value_ptr_, pv_name);
-    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, put_type, fg, hover);
+    component_ = make_input_widget(pvgroup.get_pv(pv_name_), *value_ptr_, fg, hover);
 }
 
 const std::string& InputWidget::value() const { return *value_ptr_; }

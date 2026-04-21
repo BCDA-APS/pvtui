@@ -24,11 +24,11 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 class TransformRow : public ComponentBase {
   public:
     TransformRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
-        cmtx(app, record + ".CMT" + row_name, pvtui::PVPutType::String),
-        inpx(app, record + ".INP" + row_name, pvtui::PVPutType::String),
-        clcx(app, record + ".CLC" + row_name, pvtui::PVPutType::String),
-        valx(app, record + "." + row_name, pvtui::PVPutType::Double),
-        outx(app, record + ".OUT" + row_name, pvtui::PVPutType::String),
+        cmtx(app, record + ".CMT" + row_name),
+        inpx(app, record + ".INP" + row_name),
+        clcx(app, record + ".CLC" + row_name),
+        valx(app, record + "." + row_name),
+        outx(app, record + ".OUT" + row_name),
         row_name_(row_name)
     {
         auto container = Container::Vertical({
@@ -92,9 +92,9 @@ int main(int argc, char *argv[]) {
 
     ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
     ButtonWidget proc(app, record_name + ".PROC", " PROC ");
-    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
-    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
-    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
+    InputWidget desc(app, record_name + ".DESC");
+    InputWidget prec(app, record_name + ".PREC");
+    InputWidget flnk(app, record_name + ".FLNK");
     ChoiceWidget copt(app, record_name + ".COPT", ChoiceStyle::Dropdown);
 
     auto head_container = Container::Horizontal({

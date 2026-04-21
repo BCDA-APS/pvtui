@@ -96,11 +96,11 @@ int main(int argc, char *argv[]) {
     // Monitor does not work right here since there isn't a way to preallocate 1440
     std::vector<double> user_ops_current(1440, 0.0);
     app.pvgroup.add("S:UserOpsCurrent");
-    app.pvgroup.set_monitor("S:UserOpsCurrent", user_ops_current);
+    app.pvgroup.bind(user_ops_current, "S:UserOpsCurrent");
 
     std::vector<double> other_current(1440, 0.0);
     app.pvgroup.add("S:OtherCurrent");
-    app.pvgroup.set_monitor("S:OtherCurrent", other_current);
+    app.pvgroup.bind(other_current, "S:OtherCurrent");
 
     auto plot1_renderer = Renderer([&] {
         const double CURR_MAX = 200;

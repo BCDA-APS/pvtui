@@ -54,27 +54,27 @@ int main(int argc, char *argv[]) {
     const std::string record_name = pos_args[1];
 
     ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
-    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
-    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
-    InputWidget inpa(app, record_name + ".INPA", PVPutType::String);
-    InputWidget a_val(app, record_name + ".A", PVPutType::Double);
-    InputWidget inpb(app, record_name + ".INPB", PVPutType::String);
-    InputWidget b_val(app, record_name + ".B", PVPutType::Double);
-    InputWidget inpc(app, record_name + ".INPC", PVPutType::String);
-    InputWidget c_val(app, record_name + ".C", PVPutType::Double);
-    InputWidget inpd(app, record_name + ".INPD", PVPutType::String);
-    InputWidget d_val(app, record_name + ".D", PVPutType::Double);
-    InputWidget calc(app, record_name + ".CALC", PVPutType::String);
-    InputWidget ocal(app, record_name + ".OCAL", PVPutType::String);
-    InputWidget out(app, record_name + ".OUT", PVPutType::String);
-    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
+    InputWidget desc(app, record_name + ".DESC");
+    InputWidget prec(app, record_name + ".PREC");
+    InputWidget inpa(app, record_name + ".INPA");
+    InputWidget a_val(app, record_name + ".A");
+    InputWidget inpb(app, record_name + ".INPB");
+    InputWidget b_val(app, record_name + ".B");
+    InputWidget inpc(app, record_name + ".INPC");
+    InputWidget c_val(app, record_name + ".C");
+    InputWidget inpd(app, record_name + ".INPD");
+    InputWidget d_val(app, record_name + ".D");
+    InputWidget calc(app, record_name + ".CALC");
+    InputWidget ocal(app, record_name + ".OCAL");
+    InputWidget out(app, record_name + ".OUT");
+    InputWidget flnk(app, record_name + ".FLNK");
     Monitor<std::string> val(app, record_name + ".VAL");
     Monitor<std::string> oval(app, record_name + ".OVAL");
     ChoiceWidget dopt(app, record_name + ".DOPT", ChoiceStyle::Dropdown);
     ChoiceWidget ivoa(app, record_name + ".IVOA", ChoiceStyle::Dropdown);
     ChoiceWidget oopt(app, record_name + ".OOPT", ChoiceStyle::Dropdown);
-    InputWidget odly(app, record_name + ".ODLY", PVPutType::Double);
-    InputWidget ivov(app, record_name + ".IVOV", PVPutType::Double);
+    InputWidget odly(app, record_name + ".ODLY");
+    InputWidget ivov(app, record_name + ".IVOV");
     ButtonWidget proc(app, record_name + ".PROC", " PROC ");
 
     // Main container to define interactivity of components

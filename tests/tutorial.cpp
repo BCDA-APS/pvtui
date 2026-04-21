@@ -15,9 +15,9 @@ int main(int argc, char *argv[]) {
     }
     const std::string prefix = pos_args[1];
 
-    InputWidget desc(app, prefix + "Value.DESC", PVPutType::String);
-    InputWidget val(app, prefix + "Value.VAL", PVPutType::Double);
-    InputWidget twv(app, prefix + "TweakVal.VAL", PVPutType::Double);
+    InputWidget desc(app, prefix + "Value.DESC");
+    InputWidget val(app, prefix + "Value.VAL");
+    InputWidget twv(app, prefix + "TweakVal.VAL");
     ButtonWidget twf(app, prefix + "TweakFwd.PROC", " + ");
     ButtonWidget twr(app, prefix + "TweakRev.PROC", " - ");
 

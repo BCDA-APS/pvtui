@@ -23,10 +23,10 @@ For more details, visit: https://github.com/BCDA-APS/pvtui
 class SequenceRow : public ComponentBase {
   public:
     SequenceRow(pvtui::App &app, const std::string &record, const std::string &row_name) :
-        dolx(app, record + ".DOL" + row_name, pvtui::PVPutType::String),
-        dlyx(app, record + ".DLY" + row_name, pvtui::PVPutType::Double),
-        dox(app, record + ".DO" + row_name, pvtui::PVPutType::Double),
-        lnkx(app, record + ".LNK" + row_name, pvtui::PVPutType::String),
+        dolx(app, record + ".DOL" + row_name),
+        dlyx(app, record + ".DLY" + row_name),
+        dox(app, record + ".DO" + row_name),
+        lnkx(app, record + ".LNK" + row_name),
         row_name_(row_name)
     {
         auto container = Container::Vertical({
@@ -84,9 +84,9 @@ int main(int argc, char *argv[]) {
 
     ChoiceWidget scan(app, record_name + ".SCAN", ChoiceStyle::Dropdown);
     ButtonWidget proc(app, record_name + ".PROC", " PROC ");
-    InputWidget desc(app, record_name + ".DESC", PVPutType::String);
-    InputWidget prec(app, record_name + ".PREC", PVPutType::Integer);
-    InputWidget flnk(app, record_name + ".FLNK", PVPutType::String);
+    InputWidget desc(app, record_name + ".DESC");
+    InputWidget prec(app, record_name + ".PREC");
+    InputWidget flnk(app, record_name + ".FLNK");
 
     auto head_container = Container::Horizontal({
         desc.component(),
