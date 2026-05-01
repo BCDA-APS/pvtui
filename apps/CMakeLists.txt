@@ -21,6 +21,9 @@ target_link_libraries(pvtui_monitor PRIVATE pvtui)
 add_executable(pvtui_demo demo.cpp)
 target_link_libraries(pvtui_demo PRIVATE pvtui)
 
+add_executable(pvtui_waveform waveform.cpp)
+target_link_libraries(pvtui_waveform PRIVATE pvtui ftxui-plot)
+
 include(FetchContent)
 FetchContent_Declare(
     ftxui-plot
@@ -41,5 +44,6 @@ install(TARGETS
     pvtui_monitor
     pvtui_demo
     pvtui_striptool
+    pvtui_waveform
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
