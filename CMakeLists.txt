@@ -53,7 +53,7 @@ if(BUILD_LIB)
 
         FetchContent_Declare(ftxui
             GIT_REPOSITORY https://github.com/arthursonzogni/ftxui.git
-            GIT_TAG         v6.1.9
+            GIT_TAG         v7.0.0
             GIT_PROGRESS    TRUE
             GIT_SHALLOW     TRUE
             EXCLUDE_FROM_ALL

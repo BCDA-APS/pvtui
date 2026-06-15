@@ -14,7 +14,6 @@ std::string rectangle(int len) {
     out.reserve(len * full_block.length());
     for (int i = 0; i < len; i++) {
         out.append(full_block);
-        out.append("\n");
     }
     return out;
 }

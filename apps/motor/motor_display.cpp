@@ -60,7 +60,7 @@ ftxui::Element SmallMotorDisplay::render() {
                 | size(WIDTH, EQUAL, 10)
                 | (use_set.value().index==0 ? EPICSColor::readback(use_set) : color(Color::Yellow2))
                 | (dmov.value() == 0 ? borderHeavy | color(Color::Green) : borderEmpty),
-            text(hls.value() ? unicode::rectangle(1) : "  ")
+            text(hls.value() ? unicode::rectangle(1)+" " : "  ")
                 | center
                 | color(Color::Red),
             text(egu.value())
