@@ -35,11 +35,6 @@ constexpr double DEFAULT_TIME_SPAN_SEC = 5.0;
 
 // We are abitrarily limiting it to 10 PVs on the plot at once
 constexpr int MAX_CHANNELS = 10;
-std::array<Color, MAX_CHANNELS> colors = {
-    Color::Red, Color::Blue, Color::Green, Color::Purple,
-    Color::GrayLight, Color::LightCoral, Color::LightGreenBis,
-    Color::LightSlateBlue, Color::DarkOrange, Color::Yellow
-};
 
 // Manages the data for a single PV channel
 struct Channel {
@@ -85,6 +80,12 @@ int main(int argc, char *argv[]) {
     std::transform(pv_names.begin(), pv_names.end(), pv_names.begin(), [&](auto& s){
         return prefix + s;
     });
+
+    std::array<Color, MAX_CHANNELS> colors = {
+        Color::Red, Color::Blue, Color::Green, Color::Purple,
+        Color::GrayLight, Color::LightCoral, Color::LightGreenBis,
+        Color::LightSlateBlue, Color::DarkOrange, Color::Yellow
+    };
 
     // Create Monitor for each requested PV
     std::vector<Channel> channels;

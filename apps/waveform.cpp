@@ -35,11 +35,7 @@ Examples:
 using PlotData = std::vector<ftxui::PlotSeries<std::deque<double>>>;
 // We are abitrarily limiting it to 10 PVs on the plot at once
 constexpr int MAX_CHANNELS = 10;
-std::vector<Color> colors = {
-    Color::Red, Color::Blue, Color::Green, Color::Purple,
-    Color::GrayLight, Color::LightCoral, Color::LightGreenBis,
-    Color::LightSlateBlue, Color::DarkOrange, Color::Yellow
-};
+
 struct WaveformChannel {
     WaveformChannel(pvtui::App& app, const std::string& pv_name, Color color_)
         : monitor(app.pvgroup, pv_name), name(pv_name), color(color_) {}
@@ -68,6 +64,12 @@ struct WaveformChannel {
 int run_waveform_app(pvtui::App& app, const std::vector<std::string>& pv_names) {
 
     std::vector<std::unique_ptr<WaveformChannel>> channels;
+
+    std::vector<Color> colors = {
+        Color::Red, Color::Blue, Color::Green, Color::Purple,
+        Color::GrayLight, Color::LightCoral, Color::LightGreenBis,
+        Color::LightSlateBlue, Color::DarkOrange, Color::Yellow
+    };
 
     for (size_t i = 0; i < pv_names.size(); ++i) {
         channels.push_back(std::make_unique<WaveformChannel>(app, pv_names[i], colors[i % colors.size()]));
