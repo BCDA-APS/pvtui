@@ -66,6 +66,12 @@ record(aao, "$(P)string_array") {
     field(NELM, 10)
 }
 
+record(waveform, "$(P)wf1") {
+    field(NELM, 3)
+    field(FTVL, "DOUBLE")
+    field(INP, "{const:[0.5, 1.0, 0.8]}")
+}
+
 record(calcout, "$(P)calcout1") {
     field(PREC, 4)
 }
