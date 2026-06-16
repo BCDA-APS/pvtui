@@ -76,11 +76,11 @@ int main(int argc, char *argv[]) {
     Monitor<std::string> time_and_date(app, "S:IOC:timeOfDayForm1SI");
     Monitor<std::string> current(app, "S-DCCT:CurrentM");
     Monitor<int> lifetime(app, "S-DCCT:LifetimeM");
-    Monitor<PVEnum> injection_status(app, "S-INJ:InjectionOperationM");
+    Monitor<pace::Enum> injection_status(app, "S-INJ:InjectionOperationM");
     Monitor<std::string> injection_period(app, "S-INJ:InjectionPeriodCounterM");
-    Monitor<PVEnum> desired_mode(app, "S:DesiredMode");
-    Monitor<PVEnum> actual_mode(app, "S:ActualMode");
-    Monitor<PVEnum> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM");
+    Monitor<pace::Enum> desired_mode(app, "S:DesiredMode");
+    Monitor<pace::Enum> actual_mode(app, "S:ActualMode");
+    Monitor<pace::Enum> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM");
     Monitor<int> num_shutters_open(app, "NoOfShuttersOpenA");
     Monitor<std::string> operators(app, "OPS:message1");
     Monitor<std::string> floor_coord(app, "OPS:message2");
@@ -95,12 +95,12 @@ int main(int argc, char *argv[]) {
 
     // Monitor does not work right here since there isn't a way to preallocate 1440
     std::vector<double> user_ops_current(1440, 0.0);
-    app.pvgroup.add("S:UserOpsCurrent");
-    app.pvgroup.set_monitor("S:UserOpsCurrent", user_ops_current);
+    app.context.connect("S:UserOpsCurrent");
+    app.context.bind(user_ops_current, "S:UserOpsCurrent");
 
     std::vector<double> other_current(1440, 0.0);
-    app.pvgroup.add("S:OtherCurrent");
-    app.pvgroup.set_monitor("S:OtherCurrent", other_current);
+    app.context.connect("S:OtherCurrent");
+    app.context.bind(other_current, "S:OtherCurrent");
 
     auto plot1_renderer = Renderer([&] {
         const double CURR_MAX = 200;

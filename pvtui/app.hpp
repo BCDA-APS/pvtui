@@ -9,7 +9,8 @@
 #include <ftxui/component/screen_interactive.hpp>
 
 #include <pvtui/detail/argh.h>
-#include <pvtui/pvgroup.hpp>
+// #include <pvtui/pvgroup.hpp>
+#include "pace.hpp"
 
 namespace pvtui {
 
@@ -80,8 +81,9 @@ struct App {
 
     int poll_period_ms = 100;        ///< Main loop poll period
     pvtui::ArgParser args;           ///< pvtui::ArgParser to store the cmd line arguments
-    pvac::ClientProvider provider;   ///< EPICS client provider
-    PVGroup pvgroup;                 ///< pvtui::PVGroup to manage PVs used in the application
+    // pvac::ClientProvider provider;   ///< EPICS client provider
+    // PVGroup pvgroup;                 ///< pvtui::PVGroup to manage PVs used in the application
+    pace::Context context;
     ftxui::ScreenInteractive screen; ///< screen instance for FTXUI rendering
 };
 

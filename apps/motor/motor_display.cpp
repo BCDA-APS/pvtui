@@ -2,7 +2,7 @@
 #include <pvtui/pvtui.hpp>
 #include <ftxui/component/component.hpp>
 
-SmallMotorDisplay::SmallMotorDisplay(pvtui::PVGroup& pvgroup, const std::string& record)
+SmallMotorDisplay::SmallMotorDisplay(pace::Context& pvgroup, const std::string& record)
     : record_name(record),
     desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
     val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),
@@ -93,7 +93,7 @@ ftxui::Element SmallMotorDisplay::render() {
 }
 
 
-LargeMotorDisplay::LargeMotorDisplay(pvtui::PVGroup& pvgroup, const std::string& record)
+LargeMotorDisplay::LargeMotorDisplay(pace::Context& pvgroup, const std::string& record)
     : record_name(record),
     desc(pvgroup, record + ".DESC", pvtui::PVPutType::String),
     val(pvgroup, record + ".VAL", pvtui::PVPutType::Double),

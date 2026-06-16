@@ -70,6 +70,28 @@ if(BUILD_LIB)
     endif()
     # ------------------------------------------------------------------------------
 
+    # --- PVXS --------------------------------------------------------------------
+    if(NOT DEFINED PVXS OR PVXS STREQUAL "")
+        set(PVXS $ENV{PVXS})
+    endif()
+    if(NOT DEFINED EPICS_HOST_ARCH)
+        set(EPICS_HOST_ARCH $ENV{EPICS_HOST_ARCH})
+    endif()
+    if(NOT PVXS OR PVXS STREQUAL "")
+        message(FATAL_ERROR "PVXS not set. Pass -DPVXS=... or set the environment variable.")
+    endif()
+    set(PVXS "${PVXS}" CACHE STRING "Path to PVXS")
+
+    set(PVXS_LIB_DIR "${PVXS}/lib/${EPICS_HOST_ARCH}")
+    message(STATUS "PVXS_LIB_DIR = ${PVXS_LIB_DIR}")
+    find_library(PVXS_pvxs pvxs
+        PATHS ${PVXS_LIB_DIR}
+        NO_DEFAULT_PATH
+        REQUIRED
+    )
+    set(PVXS_INCLUDES "${PVXS}/include")
+    message(STATUS "PVXS_INCLUDES = ${PVXS_INCLUDES}")
+    # ------------------------------------------------------------------------------
 
     # --- EPICS Base ---------------------------------------------------------------
     if(NOT DEFINED EPICS_BASE OR EPICS_BASE STREQUAL "")
@@ -136,7 +158,8 @@ if(BUILD_LIB)
     # ------------------------------------------------------------------------------
 
     # --- PVTUI static library -----------------------------------------------------
-    add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
+    # add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
+    add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp)
     add_library(pvtui::pvtui ALIAS pvtui)
     target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
     target_include_directories(pvtui
@@ -148,9 +171,11 @@ if(BUILD_LIB)
         SYSTEM
         PUBLIC
             ${EPICS_BASE_INCLUDES}
+            ${PVXS_INCLUDES}
     )
     target_link_libraries(pvtui
         PUBLIC ${EPICS_BASE_LIBRARIES}
+        PUBLIC ${PVXS_pvxs}
         PUBLIC ftxui::screen
         PUBLIC ftxui::dom
         PUBLIC ftxui::component

@@ -38,7 +38,7 @@ constexpr int MAX_CHANNELS = 10;
 
 struct WaveformChannel {
     WaveformChannel(pvtui::App& app, const std::string& pv_name, Color color_)
-        : monitor(app.pvgroup, pv_name), name(pv_name), color(color_) {}
+        : monitor(app.context, pv_name), name(pv_name), color(color_) {}
 
     void update_plot_data() {
         const auto& waveform = monitor.value();
@@ -161,7 +161,7 @@ int run_waveform_app(pvtui::App& app, const std::vector<std::string>& pv_names) 
         Loop loop(&app.screen, renderer);
 
         while (!loop.HasQuitted()) {
-            app.pvgroup.sync();
+            app.context.sync();
 
             for (auto& chan : channels) {
                 chan->update_plot_data();

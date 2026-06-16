@@ -51,18 +51,8 @@ int main(int argc, char* argv[]) {
 
     std::vector<std::unique_ptr<WidgetBase>> widgets;
     for (auto& name : pv_names) {
-        std::cout << name << std::endl;
-        auto chan = app.pvgroup[name].channel.get();
-        if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
-            widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
-        } else {
-            widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
-        }
+        widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
     }
-
-    // Force update since the above channel.get() calls prevent the monitors
-    // from firing at construction of the widgets
-    app.pvgroup.force_update();
 
     auto renderer = Renderer([&] {
         Elements name_col = {text("PV") | bold | italic};

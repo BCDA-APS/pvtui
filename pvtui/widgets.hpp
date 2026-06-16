@@ -10,7 +10,6 @@
 #include <ftxui/screen/color.hpp>
 
 #include <pvtui/app.hpp>
-#include <pvtui/pvgroup.hpp>
 
 namespace pvtui {
 
@@ -77,15 +76,15 @@ class WidgetBase {
     virtual std::string value_as_string() const { return ""; }
 
   protected:
-    /// \brief Constructs a WidgetBase and registers the PV with a PVGroup.
-    /// \param pvgroup The PVGroup used to manage PVs for this widget.
+    /// \brief Constructs a WidgetBase and registers the PV with a pace::Context.
+    /// \param ctxt The pace::Context used to manage PVs for this widget.
     /// \param pv_name The PV name.
-    WidgetBase(PVGroup& pvgroup, const std::string& pv_name);
+    WidgetBase(pace::Context& ctxt, const std::string& pv_name);
 
-    PVGroup& pvgroup_;                                      ///< The PVGroup
+    pace::Context& ctxt_;                                      ///< The pace::Context
     std::string pv_name_;                                   ///< The PV name.
     ftxui::Component component_;                            ///< Underlying FTXUI component.
-    std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors PV connection status.
+    // std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors PV connection status.
 };
 
 /// \brief An editable input field linked to a PV.
@@ -94,12 +93,12 @@ class WidgetBase {
 class InputWidget : public WidgetBase {
   public:
     /// \brief Constructs an InputWidget.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param put_type Specifies how the input value is written to the PV.
     /// \param fg Optional ftxui color for the input foreground (cursor and text).
     /// \param hover Optional ftxui color for the input box's background when hovered.
-    InputWidget(PVGroup& pvgroup, const std::string& pv_name, PVPutType put_type,
+    InputWidget(pace::Context& ctxt, const std::string& pv_name, PVPutType put_type,
                 ftxui::Color fg = ftxui::Color::Black, ftxui::Color hover = ftxui::Color::GrayLight);
 
     /// \brief Constructs an InputWidget from an App class
@@ -125,12 +124,12 @@ class InputWidget : public WidgetBase {
 class ButtonWidget : public WidgetBase {
   public:
     /// \brief Constructs a ButtonWidget.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param label The text displayed on the button.
     /// \param op Button style option to use
     /// \param press_val The value written to the PV on press.
-    ButtonWidget(PVGroup& pvgroup, const std::string& pv_name, const std::string& label,
+    ButtonWidget(pace::Context& ctxt, const std::string& pv_name, const std::string& label,
                  ftxui::ButtonOption op = ftxui::ButtonOption::Ascii(), int press_val = 1);
 
     /// \brief Constructs a ButtonWidget from an App class
@@ -150,11 +149,11 @@ template <typename T>
 class Monitor : public WidgetBase {
   public:
     /// \brief Constructs a Monitor.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
-    Monitor(PVGroup& pvgroup, const std::string& pv_name)
-        : WidgetBase(pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        pvgroup.set_monitor(pv_name_, *value_ptr_);
+    Monitor(pace::Context& ctxt, const std::string& pv_name)
+        : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<T>()) {
+        ctxt.bind(*value_ptr_, pv_name_);
         component_ = monitor_component_;
     }
 
@@ -162,8 +161,8 @@ class Monitor : public WidgetBase {
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
     Monitor(App& app, const std::string& pv_name)
-        : WidgetBase(app.pvgroup, pv_name), value_ptr_(std::make_shared<T>()) {
-        app.pvgroup.set_monitor(pv_name_, *value_ptr_);
+        : WidgetBase(app.context, pv_name), value_ptr_(std::make_shared<T>()) {
+        app.context.bind(*value_ptr_, pv_name_);
         component_ = monitor_component_;
     }
 
@@ -176,7 +175,7 @@ class Monitor : public WidgetBase {
             return *value_ptr_;
         } else if constexpr (std::is_arithmetic_v<T>) {
             return std::to_string(*value_ptr_);
-        } else if constexpr (std::is_same_v<T, PVEnum>) {
+        } else if constexpr (std::is_same_v<T, pace::Enum>) {
             return value_ptr_->choice;
         } else {
             return "<" + pv_name() + ">";
@@ -193,12 +192,12 @@ class Monitor : public WidgetBase {
 class BitsWidget : public WidgetBase {
   public:
     /// \brief Constructs a BitsWidget.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param range Bit range to display (start inclusive, end exclusive).
     /// \param color_on Color for set bits.
     /// \param color_off Color for unset bits.
-    BitsWidget(PVGroup& pvgroup, const std::string& pv_name, BitRange range,
+    BitsWidget(pace::Context& ctxt, const std::string& pv_name, BitRange range,
                ftxui::Color color_on = ftxui::Color::Green,
                ftxui::Color color_off = ftxui::Color::GrayDark);
 
@@ -228,10 +227,10 @@ class BitsWidget : public WidgetBase {
 class ChoiceWidget : public WidgetBase {
   public:
     /// \brief Constructs a ChoiceWidget.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param style Layout style (vertical, horizontal, dropdown).
-    ChoiceWidget(PVGroup& pvgroup, const std::string& pv_name, ChoiceStyle style);
+    ChoiceWidget(pace::Context& ctxt, const std::string& pv_name, ChoiceStyle style);
 
     /// \brief Constructs a ChoiceWidget from an App class
     /// \param app A reference to the App.
@@ -240,13 +239,13 @@ class ChoiceWidget : public WidgetBase {
     ChoiceWidget(App& app, const std::string& pv_name, ChoiceStyle style);
 
     /// \brief Gets the current enum value displayed in the UI.
-    /// \return The current PVEnum value from the UI.
-    const PVEnum& value() const;
+    /// \return The current pace::Enum value from the UI.
+    const pace::Enum& value() const;
 
     std::string value_as_string() const override;
 
   private:
-    std::shared_ptr<PVEnum> value_ptr_;
+    std::shared_ptr<pace::Enum> value_ptr_;
 };
 
 /// \brief A slider widget bound to a numeric PV.
@@ -254,12 +253,12 @@ class SliderWidget : public WidgetBase {
   public:
 
     /// \brief Constructs a SliderWidget.
-    /// \param pvgroup The PVGroup managing the PVs used in this widget.
+    /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     /// \param range Slider range (min, max, increment).
     /// \param color_active Color of the filled portion when the slider is focused.
     /// \param color_inactive Color of the filled portion when the slider is not focused.
-    SliderWidget(PVGroup& pvgroup, const std::string& pv_name, SliderRange range = {},
+    SliderWidget(pace::Context& ctxt, const std::string& pv_name, SliderRange range = {},
                  ftxui::Color color_active = ftxui::Color::White,
                  ftxui::Color color_inactive = ftxui::Color::GrayDark);
 
