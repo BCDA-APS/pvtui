@@ -157,6 +157,17 @@ if(BUILD_LIB)
     endforeach()
     # ------------------------------------------------------------------------------
 
+    # --- pace ---------------------------------------------------------------------
+    include(FetchContent)
+    FetchContent_Declare(pace
+        GIT_REPOSITORY https://github.com/nmarks99/pace.git
+        GIT_TAG        master
+        GIT_PROGRESS   TRUE
+        GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(pace)
+    # ------------------------------------------------------------------------------
+
     # --- PVTUI static library -----------------------------------------------------
     # add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
     add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp)
@@ -176,6 +187,7 @@ if(BUILD_LIB)
     target_link_libraries(pvtui
         PUBLIC ${EPICS_BASE_LIBRARIES}
         PUBLIC ${PVXS_pvxs}
+        PUBLIC pace::pace
         PUBLIC ftxui::screen
         PUBLIC ftxui::dom
         PUBLIC ftxui::component
@@ -189,7 +201,7 @@ if(BUILD_LIB)
             PATTERN "*.hpp"
             PATTERN "*.h")
 
-    install(TARGETS pvtui
+    install(TARGETS pvtui pace
         EXPORT pvtuiTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
