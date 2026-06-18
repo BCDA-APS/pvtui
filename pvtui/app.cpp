@@ -1,9 +1,3 @@
-#include <chrono>
-#include <thread>
-
-#include <ftxui/component/event.hpp>
-#include <ftxui/component/loop.hpp>
-
 #include <pvtui/app.hpp>
 
 namespace pvtui {
@@ -21,12 +15,6 @@ std::vector<std::string> ArgParser::positional_args() const { return cmdl_.pos_a
 bool ArgParser::flag(const std::string& f) const { return cmdl_[f]; }
 
 std::string ArgParser::param(const std::string& name) const { return cmdl_(name).str(); }
-
-// static pvac::ClientProvider init_epics_provider(const std::string& p) {
-    // epics::pvAccess::ca::CAClientFactory::start();
-    // pvac::ClientProvider provider(p);
-    // return provider;
-// }
 
 App::App(int argc, char* argv[], std::initializer_list<char const* const> extra_params)
     : args(argc, argv, extra_params), context(args.provider),

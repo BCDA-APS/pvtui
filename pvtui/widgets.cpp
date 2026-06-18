@@ -1,8 +1,3 @@
-#include <stdexcept>
-
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/component_options.hpp>
-
 #include <pvtui/widgets.hpp>
 
 namespace pvtui {

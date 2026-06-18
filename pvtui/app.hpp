@@ -1,15 +1,8 @@
 #pragma once
 
-#include <functional>
 #include <iostream>
-#include <string>
-#include <vector>
-
-#include <ftxui/component/component_options.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-
+#include <ftxui/ftxui.hpp>
 #include <pvtui/detail/argh.h>
-// #include <pvtui/pvgroup.hpp>
 #include "pace.hpp"
 
 namespace pvtui {

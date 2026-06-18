@@ -120,7 +120,7 @@ if(BUILD_LIB)
     if(EPICS_STATIC)
         set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
     endif()
-    foreach(LIB pvAccessCA ca pvAccess pvData Com)
+    foreach(LIB ca Com)
         find_library(EPICS_${LIB} ${LIB}
             PATHS ${EPICS_LIB_DIR}
             NO_DEFAULT_PATH
@@ -129,10 +129,7 @@ if(BUILD_LIB)
         message(STATUS "Found EPICS ${LIB}: ${EPICS_${LIB}}")
     endforeach()
     set(EPICS_BASE_LIBRARIES
-        ${EPICS_pvAccessCA}
         ${EPICS_ca}
-        ${EPICS_pvAccess}
-        ${EPICS_pvData}
         ${EPICS_Com}
     )
     if(EPICS_STATIC)
