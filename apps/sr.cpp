@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
             hbox({
                 text(" APS Storage Ring Status  ")  | bold | italic,
                 text(time_and_date.value()) | dim
-            }) | borderLight | size(WIDTH, EQUAL, 50),
+            }) | borderLight | size(WIDTH, EQUAL, 54),
             separatorEmpty(),
             hbox({
                 vbox({
