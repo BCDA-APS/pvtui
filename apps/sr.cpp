@@ -76,11 +76,11 @@ int main(int argc, char *argv[]) {
     Monitor<std::string> time_and_date(app, "S:IOC:timeOfDayForm1SI");
     Monitor<std::string> current(app, "S-DCCT:CurrentM");
     Monitor<int> lifetime(app, "S-DCCT:LifetimeM");
-    Monitor<pace::Enum> injection_status(app, "S-INJ:InjectionOperationM");
+    Monitor<int> injection_status(app, "S-INJ:InjectionOperationM");
     Monitor<std::string> injection_period(app, "S-INJ:InjectionPeriodCounterM");
     Monitor<pace::Enum> desired_mode(app, "S:DesiredMode");
     Monitor<pace::Enum> actual_mode(app, "S:ActualMode");
-    Monitor<pace::Enum> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM");
+    Monitor<int> shutter_status(app, "RF-ACIS:FePermit:Sect1To35IdM.RVAL");
     Monitor<int> num_shutters_open(app, "NoOfShuttersOpenA");
     Monitor<std::string> operators(app, "OPS:message1");
     Monitor<std::string> floor_coord(app, "OPS:message2");
@@ -163,13 +163,13 @@ int main(int argc, char *argv[]) {
                         text(" min")
                     }),
                     separatorEmpty(),
-                    inj_status_text.count(injection_status.value().index)
-                        ? inj_status_text.at(injection_status.value().index) | bold
+                    inj_status_text.count(injection_status.value())
+                        ? inj_status_text.at(injection_status.value()) | bold
                         : text(""),
                     text("Swapout In: " + injection_period.value() + " sec."),
                     separatorEmpty(),
-                    shutter_status_text.count(shutter_status.value().index)
-                        ? shutter_status_text.at(shutter_status.value().index) | bold
+                    shutter_status_text.count(shutter_status.value())
+                        ? shutter_status_text.at(shutter_status.value()) | bold
                         : text(""),
                     text("Machine Status: " + desired_mode.value().choice),
                     text("Operating Mode: " + actual_mode.value().choice),
