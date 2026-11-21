@@ -19,7 +19,6 @@
       "name": "release",
       "displayName": "Release build",
       "binaryDir": "${sourceDir}/build/release",
-      "installDir" : "$env{HOME}/.local",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }

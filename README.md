@@ -20,8 +20,8 @@ git clone https://github.com/BCDA-APS/pvtui
 cd pvtui
 cmake --preset release
 cmake --build build/release
-# optionally install (default prefix: `~/.local`, or specify --prefix)
-# cmake --install build/release
+# optionally install
+# cmake --install build/release --prefix /path/to/prefix
 ```
 
 See the [tutorial](https://bcda-aps.github.io/pvtui/tutorial.html) for creating your own applications.

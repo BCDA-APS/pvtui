@@ -37,4 +37,6 @@ PVTUI makes available several optional flags when running cmake
 
 To install the cmake configuration files so other cmake projects can find the PVTUI library,
 set an install prefix with ``cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/prefix`` and then
-run ``cmake --install <build_dir>``.
+run ``cmake --install <build_dir>``. When ``FETCH_FTXUI`` is ON, the fetched FTXUI headers,
+libraries and cmake files are installed to the same prefix. Choose a prefix that does not
+contain another FTXUI installation.

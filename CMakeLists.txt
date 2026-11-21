@@ -56,7 +56,6 @@ if(BUILD_LIB)
             GIT_TAG         v7.0.0
             GIT_PROGRESS    TRUE
             GIT_SHALLOW     TRUE
-            EXCLUDE_FROM_ALL
         )
         FetchContent_MakeAvailable(ftxui)
     else()
@@ -158,15 +157,13 @@ if(BUILD_LIB)
     include(FetchContent)
     FetchContent_Declare(pace
         GIT_REPOSITORY https://github.com/nmarks99/pace.git
-        GIT_TAG        master
+        GIT_TAG        e7adc029e4df70af8984974a8947e3611f6faee4
         GIT_PROGRESS   TRUE
-        GIT_SHALLOW    TRUE
     )
     FetchContent_MakeAvailable(pace)
     # ------------------------------------------------------------------------------
 
     # --- PVTUI static library -----------------------------------------------------
-    # add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
     add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp)
     add_library(pvtui::pvtui ALIAS pvtui)
     target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
@@ -197,6 +194,10 @@ if(BUILD_LIB)
         FILES_MATCHING
             PATTERN "*.hpp"
             PATTERN "*.h")
+
+    install(DIRECTORY ${pace_SOURCE_DIR}/pace
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hpp")
 
     install(TARGETS pvtui pace
         EXPORT pvtuiTargets
