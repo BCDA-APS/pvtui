@@ -49,9 +49,10 @@ int main(int argc, char* argv[]) {
         return prefix + s;
     });
 
-    std::vector<std::unique_ptr<WidgetBase>> widgets;
+    // std::vector<std::unique_ptr<WidgetBase>> widgets;
+    std::vector<WidgetBase> widgets;
     for (auto& name : pv_names) {
-        widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
+        widgets.push_back(Monitor<std::string>(app, name));
     }
 
     auto renderer = Renderer([&] {
@@ -60,9 +61,9 @@ int main(int argc, char* argv[]) {
 
         for (auto& widget : widgets) {
             name_col.push_back(separator());
-            name_col.push_back(text(widget->pv_name()));
+            name_col.push_back(text(widget.pv_name()));
             val_col.push_back(separator());
-            val_col.push_back(widget->component()->Render() | color(Color::RGB(125, 174, 227)));
+            val_col.push_back(widget.component()->Render() | color(Color::RGB(125, 174, 227)));
         }
 
         return hbox({

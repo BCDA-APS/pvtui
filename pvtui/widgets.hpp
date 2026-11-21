@@ -146,38 +146,35 @@ class Monitor : public WidgetBase {
     Monitor(pace::Context& ctxt, const std::string& pv_name)
         : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<T>()) {
         ctxt.bind(*value_ptr_, pv_name_);
-        component_ = monitor_component_;
+        component_ = ftxui::Renderer([v = value_ptr_, n = pv_name_] {
+            return ftxui::text(to_string(*v, n)); });
     }
 
     /// \brief Constructs a Monitor from an App class
     /// \param app A reference to the App.
     /// \param pv_name The PV name.
-    Monitor(App& app, const std::string& pv_name)
-        : WidgetBase(app.context, pv_name), value_ptr_(std::make_shared<T>()) {
-        app.context.bind(*value_ptr_, pv_name_);
-        component_ = monitor_component_;
-    }
+    Monitor(App& app, const std::string& pv_name) : Monitor(app.context, pv_name) {}
 
     /// \brief Gets the current value of the variable for use with the UI.
     /// \return The current value stored in the widget.
     const T& value() const { return *value_ptr_; };
 
-    std::string value_as_string() const override {
+    std::string value_as_string() const override { return to_string(*value_ptr_, pv_name_); }
+
+  private:
+    static std::string to_string(const T& v, const std::string& name) {
         if constexpr (std::is_same_v<T, std::string>) {
-            return *value_ptr_;
+            return v;
         } else if constexpr (std::is_arithmetic_v<T>) {
-            return std::to_string(*value_ptr_);
+            return std::to_string(v);
         } else if constexpr (std::is_same_v<T, pace::Enum>) {
-            return value_ptr_->choice;
+            return v.choice;
         } else {
-            return "<" + pv_name() + ">";
+            return "<" + name + ">";
         }
     }
 
-  private:
     std::shared_ptr<T> value_ptr_;
-
-    ftxui::Component monitor_component_ = ftxui::Renderer([this] { return ftxui::text(value_as_string()); });
 };
 
 /// \brief A widget to display an integer in binary

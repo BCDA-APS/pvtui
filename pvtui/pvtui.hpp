@@ -1,5 +1,5 @@
 #pragma once
 
 #include <pvtui/app.hpp>
-#include "pace.hpp"
+#include <pace/pace.hpp>
 #include <pvtui/widgets.hpp>

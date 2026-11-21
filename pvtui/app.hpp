@@ -3,7 +3,7 @@
 #include <iostream>
 #include <ftxui/ftxui.hpp>
 #include <pvtui/detail/argh.h>
-#include "pace.hpp"
+#include <pace/pace.hpp>
 
 namespace pvtui {
 
