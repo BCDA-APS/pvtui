@@ -6,7 +6,7 @@
 
 class SmallMotorDisplay : public ftxui::ComponentBase {
   public:
-    SmallMotorDisplay(pace::Context &pvgroup, const std::string &record);
+    SmallMotorDisplay(pace::Context &ctxt, const std::string &record);
   private:
     std::string record_name;
     pvtui::InputWidget desc;
@@ -30,7 +30,7 @@ class SmallMotorDisplay : public ftxui::ComponentBase {
 
 class LargeMotorDisplay : public ftxui::ComponentBase {
   public:
-    LargeMotorDisplay(pace::Context &pvgroup, const std::string &record);
+    LargeMotorDisplay(pace::Context &ctxt, const std::string &record);
   private:
     std::string record_name;
     pvtui::InputWidget desc;

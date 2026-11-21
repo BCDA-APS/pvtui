@@ -49,7 +49,6 @@ int main(int argc, char* argv[]) {
         return prefix + s;
     });
 
-    // std::vector<std::unique_ptr<WidgetBase>> widgets;
     std::vector<WidgetBase> widgets;
     for (auto& name : pv_names) {
         widgets.push_back(Monitor<std::string>(app, name));

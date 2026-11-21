@@ -190,7 +190,6 @@ ftxui::Component make_slider_widget(pace::ChannelBase& pv, std::shared_ptr<doubl
 
 WidgetBase::WidgetBase(pace::Context& ctxt, const std::string& pv_name) : ctxt_(ctxt), pv_name_(pv_name) {
     ctxt.connect(pv_name_);
-    // connection_monitor_ = pvgroup[pv_name_].get_connection_monitor();
 }
 
 std::string WidgetBase::pv_name() const { return pv_name_; }

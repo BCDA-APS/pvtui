@@ -76,7 +76,6 @@ class WidgetBase {
     pace::Context& ctxt_;                                      ///< The pace::Context
     std::string pv_name_;                                   ///< The PV name.
     ftxui::Component component_;                            ///< Underlying FTXUI component.
-    // std::shared_ptr<ConnectionMonitor> connection_monitor_; ///< Monitors PV connection status.
 };
 
 /// \brief An editable input field linked to a PV.

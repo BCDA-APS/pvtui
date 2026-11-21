@@ -1,3 +1,8 @@
+#include <chrono>
+#include <thread>
+
+#include <ftxui/component/loop.hpp>
+
 #include <pvtui/app.hpp>
 
 namespace pvtui {

@@ -13,14 +13,6 @@ Core Classes
    :project: pvtui
    :members:
 
-.. doxygenclass:: pvtui::PVGroup
-   :project: pvtui
-   :members:
-
-.. doxygenclass:: pvtui::PVHandler
-   :project: pvtui
-   :members:
-
 
 UI Widgets
 ----------
@@ -66,10 +58,6 @@ Utility Namespaces
 
 Enums and Types
 ---------------
-
-.. doxygenstruct:: pvtui::PVEnum
-   :project: pvtui
-   :members:
 
 .. doxygenenum:: pvtui::PVPutType
    :project: pvtui
