@@ -11,6 +11,7 @@ PVTUI is a library for creating terminal/text based user interfaces for EPICS bu
 - C++17 compiler (e.g. GCC 8+)
 - [CMake](https://cmake.org) (3.22+)
 - [EPICS Base](https://epics-controls.org/resources-and-support/base/)
+- [PVXS](https://github.com/epics-base/pvxs)
 - [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (fetched automatically by default)
 
 ## Quick Start

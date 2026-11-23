@@ -12,6 +12,12 @@ Dependencies
 * `CMake <https://cmake.org>`_
 * `FTXUI <https://github.com/ArthurSonzogni/FTXUI>`_
 * `EPICS Base <https://epics-controls.org/resources-and-support/base/>`_
+* `PVXS <https://github.com/epics-base/pvxs>`_
+
+.. note::
+
+   PVXS is expected to be bundled as a submodule of EPICS Base starting with EPICS Base 7.1.
+   After that release, PVXS will not be a separate dependency.
 
 
 Building
@@ -21,14 +27,15 @@ Clone PVTUI from GitHub and build with cmake ::
 
     git clone https://github.com/BCDA-APS/pvtui
     cd pvtui
-    cmake --preset release -DEPICS_BASE=/path/to/epics/base
+    cmake --preset release -DEPICS_BASE=/path/to/epics/base -DPVXS=/path/to/pvxs
     cmake --build build/release
 
-If the ``EPICS_BASE`` environment variable is set, the ``-DEPICS_BASE`` flag can be omitted.
+If the ``EPICS_BASE`` or ``PVXS`` environment variables are set, the corresponding flags can be omitted.
 
 PVTUI makes available several optional flags when running cmake
 
 * ``-DEPICS_BASE``: (Default from environment) The path to EPICS base installation
+* ``-DPVXS``: (Default from environment) The path to PVXS installation
 * ``-DEPICS_STATIC``: (Default OFF) Whether or not to link EPICS statically
 * ``-DFETCH_FTXUI``: (Default ON) Whether or not to clone and compile FTXUI
 * ``-DBUILD_APPS``: (Default ON) Whether or not to build applications in apps/ directory
