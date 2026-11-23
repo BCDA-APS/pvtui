@@ -1,8 +1,4 @@
 #include <numeric>
-
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/loop.hpp>
 #include <ftxui/component/screen_interactive.hpp>

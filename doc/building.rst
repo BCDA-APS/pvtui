@@ -36,7 +36,10 @@ PVTUI makes available several optional flags when running cmake
 
 * ``-DEPICS_BASE``: (Default from environment) The path to EPICS base installation
 * ``-DPVXS``: (Default from environment) The path to PVXS installation
-* ``-DEPICS_STATIC``: (Default OFF) Whether or not to link EPICS statically
+* ``-DEPICS_STATIC``: (Default OFF) Whether or not to link EPICS statically. libevent (required by PVXS)
+  is linked statically if ``libevent_core.a`` and ``libevent_pthreads.a`` are found, otherwise it is
+  linked as a shared library and must be present at runtime. PVXS can provide static libevent when
+  built with ``make -C bundle libevent``.
 * ``-DFETCH_FTXUI``: (Default ON) Whether or not to clone and compile FTXUI
 * ``-DBUILD_APPS``: (Default ON) Whether or not to build applications in apps/ directory
 * ``-DBUILD_TESTS``: (Default OFF) Whether or not to build tests in tests/ directory

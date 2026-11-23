@@ -1,7 +1,4 @@
 #pragma once
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <pvtui/pvtui.hpp>
 
 class SmallMotorDisplay : public ftxui::ComponentBase {

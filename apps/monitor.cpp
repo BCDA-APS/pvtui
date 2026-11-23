@@ -1,7 +1,4 @@
 #include <cstdlib>
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
 #include <ftxui/component/loop.hpp>

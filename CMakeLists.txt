@@ -81,6 +81,10 @@ if(BUILD_LIB)
     endif()
     set(PVXS "${PVXS}" CACHE STRING "Path to PVXS")
 
+    if(EPICS_STATIC)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    endif()
+
     set(PVXS_LIB_DIR "${PVXS}/lib/${EPICS_HOST_ARCH}")
     message(STATUS "PVXS_LIB_DIR = ${PVXS_LIB_DIR}")
     find_library(PVXS_pvxs pvxs
@@ -88,6 +92,23 @@ if(BUILD_LIB)
         NO_DEFAULT_PATH
         REQUIRED
     )
+    set(PVXS_LIBRARIES ${PVXS_pvxs})
+    if(EPICS_STATIC)
+        foreach(LIB event_core event_pthreads)
+            find_library(LIBEVENT_${LIB} ${LIB}
+                HINTS ${PVXS}/bundle/usr/${EPICS_HOST_ARCH}/lib
+            )
+            if(NOT LIBEVENT_${LIB})
+                set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
+                find_library(LIBEVENT_${LIB} ${LIB} REQUIRED)
+                set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+                message(WARNING "Static lib${LIB}.a not found. Linking shared ${LIBEVENT_${LIB}}. "
+                    "Binaries will need libevent at runtime.")
+            endif()
+            message(STATUS "Found libevent ${LIB}: ${LIBEVENT_${LIB}}")
+            list(APPEND PVXS_LIBRARIES ${LIBEVENT_${LIB}})
+        endforeach()
+    endif()
     set(PVXS_INCLUDES "${PVXS}/include")
     message(STATUS "PVXS_INCLUDES = ${PVXS_INCLUDES}")
     # ------------------------------------------------------------------------------
@@ -114,10 +135,7 @@ if(BUILD_LIB)
 
     set(EPICS_LIB_DIR "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}")
     if(NOT DEFINED CMAKE_INSTALL_RPATH AND NOT EPICS_STATIC)
-        set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
-    endif()
-    if(EPICS_STATIC)
-        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+        set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR};${PVXS_LIB_DIR}")
     endif()
     foreach(LIB ca Com)
         find_library(EPICS_${LIB} ${LIB}
@@ -179,8 +197,8 @@ if(BUILD_LIB)
             ${PVXS_INCLUDES}
     )
     target_link_libraries(pvtui
+        PUBLIC ${PVXS_LIBRARIES}
         PUBLIC ${EPICS_BASE_LIBRARIES}
-        PUBLIC ${PVXS_pvxs}
         PUBLIC pace::pace
         PUBLIC ftxui::screen
         PUBLIC ftxui::dom
