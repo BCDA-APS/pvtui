@@ -79,10 +79,10 @@ class WidgetBase {
     /// \param pv_name The PV name.
     WidgetBase(pace::Context& ctxt, const std::string& pv_name);
 
-    std::reference_wrapper<pace::Context> ctxt_;            ///< The pace::Context
-    std::string pv_name_;                                   ///< The PV name.
-    ftxui::Component component_;                            ///< Underlying FTXUI component.
-    std::function<std::string()> value_as_string_;          ///< Set by derived classes.
+    std::reference_wrapper<pace::Context> ctxt_;   ///< The pace::Context
+    std::string pv_name_;                          ///< The PV name.
+    ftxui::Component component_;                   ///< Underlying FTXUI component.
+    std::function<std::string()> value_as_string_; ///< Set by derived classes.
 };
 
 /// \brief An editable input field linked to a PV.
@@ -150,8 +150,8 @@ class Monitor : public WidgetBase {
     Monitor(pace::Context& ctxt, const std::string& pv_name)
         : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<T>()) {
         ctxt.bind(*value_ptr_, pv_name_);
-        component_ = ftxui::Renderer([v = value_ptr_, n = pv_name_] {
-            return ftxui::text(to_string(*v, n)); });
+        component_ =
+            ftxui::Renderer([v = value_ptr_, n = pv_name_] { return ftxui::text(to_string(*v, n)); });
         value_as_string_ = [v = value_ptr_, n = pv_name_] { return to_string(*v, n); };
     }
 
@@ -190,8 +190,7 @@ class BitsWidget : public WidgetBase {
     /// \param color_on Color for set bits.
     /// \param color_off Color for unset bits.
     BitsWidget(pace::Context& ctxt, const std::string& pv_name, BitRange range,
-               ftxui::Color color_on = ftxui::Color::Green,
-               ftxui::Color color_off = ftxui::Color::GrayDark);
+               ftxui::Color color_on = ftxui::Color::Green, ftxui::Color color_off = ftxui::Color::GrayDark);
 
     /// \brief Constructs a BitsWidget from an App class.
     /// \param app A reference to the App.
@@ -200,8 +199,7 @@ class BitsWidget : public WidgetBase {
     /// \param color_on Color for set bits.
     /// \param color_off Color for unset bits.
     BitsWidget(App& app, const std::string& pv_name, BitRange range,
-               ftxui::Color color_on = ftxui::Color::Green,
-               ftxui::Color color_off = ftxui::Color::GrayDark);
+               ftxui::Color color_on = ftxui::Color::Green, ftxui::Color color_off = ftxui::Color::GrayDark);
 
     /// \brief Gets the current integer value displayed in the UI.
     /// \return The current integer value from the UI.
@@ -239,7 +237,6 @@ class ChoiceWidget : public WidgetBase {
 /// \brief A slider widget bound to a numeric PV.
 class SliderWidget : public WidgetBase {
   public:
-
     /// \brief Constructs a SliderWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.

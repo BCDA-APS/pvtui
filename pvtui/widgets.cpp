@@ -46,8 +46,8 @@ bool put_string_as(std::string_view str, pace::ChannelBase& pv) {
     return true;
 }
 
-ftxui::Component make_input_widget(pace::ChannelBase& pv, std::shared_ptr<std::string> disp_str, PVPutType put_type, ftxui::Color fg,
-                                   ftxui::Color hover) {
+ftxui::Component make_input_widget(pace::ChannelBase& pv, std::shared_ptr<std::string> disp_str,
+                                   PVPutType put_type, ftxui::Color fg, ftxui::Color hover) {
 
     ftxui::InputOption input_op;
 
@@ -165,8 +165,8 @@ ftxui::Component make_bits_widget(std::shared_ptr<int> value, BitRange range, ft
 }
 
 ftxui::Component make_slider_widget(pace::ChannelBase& pv, std::shared_ptr<double> value,
-                                    const SliderRange& range,
-                                    ftxui::Color color_active, ftxui::Color color_inactive) {
+                                    const SliderRange& range, ftxui::Color color_active,
+                                    ftxui::Color color_inactive) {
     using namespace ftxui;
     auto op = SliderOption<double>();
     op.value = value.get();
@@ -207,7 +207,8 @@ ftxui::Component WidgetBase::component() const {
 }
 
 InputWidget::InputWidget(App& app, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
-                         ftxui::Color hover) : InputWidget(app.context, pv_name, put_type, fg, hover) {}
+                         ftxui::Color hover)
+    : InputWidget(app.context, pv_name, put_type, fg, hover) {}
 
 InputWidget::InputWidget(pace::Context& ctxt, const std::string& pv_name, PVPutType put_type, ftxui::Color fg,
                          ftxui::Color hover)
@@ -267,8 +268,8 @@ ButtonWidget::ButtonWidget(pace::Context& ctxt, const std::string& pv_name, cons
     component_ = make_button_widget(ctxt.get_channel(pv_name_), label, press_val, op);
 }
 
-SliderWidget::SliderWidget(App& app, const std::string& pv_name, SliderRange range,
-                           ftxui::Color color_active, ftxui::Color color_inactive)
+SliderWidget::SliderWidget(App& app, const std::string& pv_name, SliderRange range, ftxui::Color color_active,
+                           ftxui::Color color_inactive)
     : SliderWidget(app.context, pv_name, range, color_active, color_inactive) {}
 
 SliderWidget::SliderWidget(pace::Context& ctxt, const std::string& pv_name, SliderRange range,
