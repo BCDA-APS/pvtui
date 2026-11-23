@@ -32,6 +32,9 @@ Clone PVTUI from GitHub and build with cmake ::
 
 If the ``EPICS_BASE`` or ``PVXS`` environment variables are set, the corresponding flags can be omitted.
 
+The ``release`` preset links EPICS and PVXS statically (``EPICS_STATIC=ON``). Add ``-DEPICS_STATIC=OFF``
+to link them as shared libraries. The ``dev`` preset links them as shared libraries and builds the tests.
+
 PVTUI makes available several optional flags when running cmake
 
 * ``-DEPICS_BASE``: (Default from environment) The path to EPICS base installation
