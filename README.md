@@ -6,7 +6,21 @@ PVTUI is a library for creating terminal/text based user interfaces for EPICS bu
 
 ![pvtui_motor](https://github.com/user-attachments/assets/9351f025-f1f6-4d99-acf6-e0e78a7e4adc)
 
-## Dependencies
+## Pre-built binaries
+
+Static binaries for linux-x86_64 (glibc 2.34+, e.g. RHEL 9) are attached to each
+[release](https://github.com/BCDA-APS/pvtui/releases):
+
+```bash
+curl -LO https://github.com/BCDA-APS/pvtui/releases/download/v0.4.0/pvtui-v0.4.0-linux-x86_64.tar.gz
+tar -xzf pvtui-v0.4.0-linux-x86_64.tar.gz
+```
+
+The applications are in `pvtui-v0.4.0-linux-x86_64/bin/`.
+
+## Building from source
+
+Dependencies:
 
 - C++17 compiler (e.g. GCC 8+)
 - [CMake](https://cmake.org) (3.22+)
@@ -14,7 +28,7 @@ PVTUI is a library for creating terminal/text based user interfaces for EPICS bu
 - [PVXS](https://github.com/epics-base/pvxs)
 - [FTXUI](https://github.com/ArthurSonzogni/FTXUI) (fetched automatically by default)
 
-## Quick Start
+Set `EPICS_BASE`, `PVXS` and `EPICS_HOST_ARCH` in the environment or pass them with `-D`, then:
 
 ```bash
 git clone https://github.com/BCDA-APS/pvtui
@@ -24,6 +38,8 @@ cmake --build build/release
 # optionally install
 # cmake --install build/release --prefix /path/to/prefix
 ```
+
+See [building](https://bcda-aps.github.io/pvtui/building.html) for all build options.
 
 See the [tutorial](https://bcda-aps.github.io/pvtui/tutorial.html) for creating your own applications.
 
