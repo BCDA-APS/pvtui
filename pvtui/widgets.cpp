@@ -194,7 +194,9 @@ WidgetBase::WidgetBase(pace::Context& ctxt, const std::string& pv_name) : ctxt_(
 
 std::string WidgetBase::pv_name() const { return pv_name_; }
 
-bool WidgetBase::connected() const { return ctxt_[pv_name_].connected(); }
+bool WidgetBase::connected() const { return ctxt_.get()[pv_name_].connected(); }
+
+std::string WidgetBase::value_as_string() const { return value_as_string_ ? value_as_string_() : ""; }
 
 ftxui::Component WidgetBase::component() const {
     if (component_) {
@@ -212,17 +214,17 @@ InputWidget::InputWidget(pace::Context& ctxt, const std::string& pv_name, PVPutT
     : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<std::string>()) {
     ctxt.bind(*value_ptr_, pv_name_);
     component_ = make_input_widget(ctxt.get_channel(pv_name_), value_ptr_, put_type, fg, hover);
+    value_as_string_ = [v = value_ptr_] { return *v; };
 }
 
 const std::string& InputWidget::value() const { return *value_ptr_; }
-
-std::string InputWidget::value_as_string() const { return *value_ptr_; }
 
 BitsWidget::BitsWidget(pace::Context& ctxt, const std::string& pv_name, BitRange range, ftxui::Color color_on,
                        ftxui::Color color_off)
     : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<int>()) {
     ctxt.bind(*value_ptr_, pv_name_);
     component_ = make_bits_widget(value_ptr_, range, color_on, color_off);
+    value_as_string_ = [v = value_ptr_] { return std::to_string(*v); };
 }
 
 BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range, ftxui::Color color_on,
@@ -230,8 +232,6 @@ BitsWidget::BitsWidget(App& app, const std::string& pv_name, BitRange range, ftx
     : BitsWidget(app.context, pv_name, range, color_on, color_off) {}
 
 const int& BitsWidget::value() const { return *value_ptr_; }
-
-std::string BitsWidget::value_as_string() const { return std::to_string(*value_ptr_); }
 
 ChoiceWidget::ChoiceWidget(App& app, const std::string& pv_name, ChoiceStyle style)
     : ChoiceWidget(app.context, pv_name, style) {}
@@ -250,11 +250,10 @@ ChoiceWidget::ChoiceWidget(pace::Context& ctxt, const std::string& pv_name, Choi
         component_ = make_dropdown_widget(ctxt.get_channel(pv_name_), value_ptr_);
         break;
     }
+    value_as_string_ = [v = value_ptr_] { return v->choice; };
 }
 
 const pace::Enum& ChoiceWidget::value() const { return *value_ptr_; }
-
-std::string ChoiceWidget::value_as_string() const { return value_ptr_->choice; }
 
 ButtonWidget::ButtonWidget(App& app, const std::string& pv_name, const std::string& label,
                            ftxui::ButtonOption op, int press_val)
@@ -278,10 +277,9 @@ SliderWidget::SliderWidget(pace::Context& ctxt, const std::string& pv_name, Slid
     ctxt.bind(*value_ptr_, pv_name_);
     component_ =
         make_slider_widget(ctxt.get_channel(pv_name_), value_ptr_, range, color_active, color_inactive);
+    value_as_string_ = [v = value_ptr_] { return std::to_string(*v); };
 }
 
 const double& SliderWidget::value() const { return *value_ptr_; }
-
-std::string SliderWidget::value_as_string() const { return std::to_string(*value_ptr_); }
 
 } // namespace pvtui

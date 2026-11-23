@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <ftxui/ftxui.hpp>
 #include <pvtui/app.hpp>
 
@@ -49,6 +51,10 @@ struct SliderRange {
 class WidgetBase {
   public:
     virtual ~WidgetBase() = default;
+    WidgetBase(const WidgetBase&) = default;
+    WidgetBase& operator=(const WidgetBase&) = default;
+    WidgetBase(WidgetBase&&) = default;
+    WidgetBase& operator=(WidgetBase&&) = default;
 
     /// \brief Gets the PV name associated with the widget.
     /// \return The fully expanded PV name.
@@ -65,7 +71,7 @@ class WidgetBase {
 
     /// \brief Returns the widget's current PV value as a string.
     /// \return A string representation of the underlying PV value.
-    virtual std::string value_as_string() const { return ""; }
+    std::string value_as_string() const;
 
   protected:
     /// \brief Constructs a WidgetBase and registers the PV with a pace::Context.
@@ -73,9 +79,10 @@ class WidgetBase {
     /// \param pv_name The PV name.
     WidgetBase(pace::Context& ctxt, const std::string& pv_name);
 
-    pace::Context& ctxt_;                                      ///< The pace::Context
+    std::reference_wrapper<pace::Context> ctxt_;            ///< The pace::Context
     std::string pv_name_;                                   ///< The PV name.
     ftxui::Component component_;                            ///< Underlying FTXUI component.
+    std::function<std::string()> value_as_string_;          ///< Set by derived classes.
 };
 
 /// \brief An editable input field linked to a PV.
@@ -104,8 +111,6 @@ class InputWidget : public WidgetBase {
     /// \brief Gets the current value of the string displayed in the UI.
     /// \return The current string value from the UI.
     const std::string& value() const;
-
-    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<std::string> value_ptr_; ///< Value displayed on the UI
@@ -147,6 +152,7 @@ class Monitor : public WidgetBase {
         ctxt.bind(*value_ptr_, pv_name_);
         component_ = ftxui::Renderer([v = value_ptr_, n = pv_name_] {
             return ftxui::text(to_string(*v, n)); });
+        value_as_string_ = [v = value_ptr_, n = pv_name_] { return to_string(*v, n); };
     }
 
     /// \brief Constructs a Monitor from an App class
@@ -157,8 +163,6 @@ class Monitor : public WidgetBase {
     /// \brief Gets the current value of the variable for use with the UI.
     /// \return The current value stored in the widget.
     const T& value() const { return *value_ptr_; };
-
-    std::string value_as_string() const override { return to_string(*value_ptr_, pv_name_); }
 
   private:
     static std::string to_string(const T& v, const std::string& name) {
@@ -203,8 +207,6 @@ class BitsWidget : public WidgetBase {
     /// \return The current integer value from the UI.
     const int& value() const;
 
-    std::string value_as_string() const override;
-
   private:
     std::shared_ptr<int> value_ptr_;
 };
@@ -229,8 +231,6 @@ class ChoiceWidget : public WidgetBase {
     /// \brief Gets the current enum value displayed in the UI.
     /// \return The current pace::Enum value from the UI.
     const pace::Enum& value() const;
-
-    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<pace::Enum> value_ptr_;
@@ -263,8 +263,6 @@ class SliderWidget : public WidgetBase {
     /// \brief Gets the current slider value.
     /// \return The current slider (double) value from the UI.
     const double& value() const;
-
-    std::string value_as_string() const override;
 
   private:
     std::shared_ptr<double> value_ptr_;
