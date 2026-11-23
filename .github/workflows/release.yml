@@ -1,0 +1,94 @@
+name: Build Static Binaries
+on:
+  push:
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  EPICS_BASE_TAG: R7.0.11
+  PVXS_TAG: 1.5.3
+  EPICS_HOST_ARCH: linux-x86_64
+  EPICS_BASE: /opt/epics/base
+  PVXS: /opt/epics/pvxs
+
+jobs:
+  build-linux-x86_64:
+    runs-on: ubuntu-latest
+    container: almalinux:9
+    permissions:
+      contents: write
+    steps:
+      - name: Install system packages
+        run: dnf install -y gcc-c++ make perl git cmake tar gzip zstd findutils which diffutils
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache EPICS Base and PVXS
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: /opt/epics
+          key: deps-almalinux9-base-${{ env.EPICS_BASE_TAG }}-pvxs-${{ env.PVXS_TAG }}-v1
+
+      - name: Build EPICS Base
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 --branch ${EPICS_BASE_TAG} https://github.com/epics-base/epics-base.git ${EPICS_BASE}
+          echo "COMMANDLINE_LIBRARY = EPICS" > ${EPICS_BASE}/configure/CONFIG_SITE.local
+          make -C ${EPICS_BASE} -j$(nproc)
+
+      - name: Build PVXS with bundled libevent
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 --branch ${PVXS_TAG} https://github.com/epics-base/pvxs.git ${PVXS}
+          git -C ${PVXS} submodule update --init --depth 1 bundle/libevent
+          echo "EPICS_BASE = ${EPICS_BASE}" > ${PVXS}/configure/RELEASE.local
+          make -C ${PVXS}/bundle libevent
+          make -C ${PVXS} -j$(nproc)
+          ls ${PVXS}/bundle/usr/${EPICS_HOST_ARCH}/lib/libevent_core.a
+          ls ${PVXS}/bundle/usr/${EPICS_HOST_ARCH}/lib/libevent_pthreads.a
+
+      - name: Build pvtui
+        run: |
+          cmake --preset release -DEPICS_STATIC=ON -DCMAKE_INSTALL_RPATH="" \
+              -DEPICS_BASE=${EPICS_BASE} -DPVXS=${PVXS}
+          cmake --build build/release -j$(nproc)
+
+      - name: Check binaries are static
+        run: |
+          status=0
+          for f in build/release/bin/pvtui_*; do
+              echo "== $f"
+              ldd "$f"
+              if ldd "$f" | grep -E -q "pvxs|libevent|libca|libCom|readline"; then
+                  echo "ERROR: $f has unexpected shared dependencies"
+                  status=1
+              fi
+          done
+          exit $status
+
+      - name: Package
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+              version=${GITHUB_REF_NAME}
+          else
+              version=${GITHUB_SHA::7}
+          fi
+          name=pvtui-${version}-linux-x86_64
+          cmake --install build/release --prefix /tmp/${name}
+          tar -czf ${name}.tar.gz -C /tmp ${name}
+          echo "PKG_NAME=${name}" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PKG_NAME }}
+          path: ${{ env.PKG_NAME }}.tar.gz
+
+      - name: Attach to GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.PKG_NAME }}.tar.gz

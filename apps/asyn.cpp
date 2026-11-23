@@ -1,7 +1,4 @@
 #include <cstdlib>
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/loop.hpp>
 #include <ftxui/component/event.hpp>
@@ -63,8 +60,8 @@ int main(int argc, char *argv[]) {
     InputWidget tmot(app, record_name + ".TMOT", PVPutType::Double);
     InputWidget tfil(app, record_name + ".TFIL", PVPutType::String);
     InputWidget nowt(app, record_name + ".NOWT", PVPutType::Integer);
-    Monitor<PVEnum> stat(app, record_name + ".STAT");
-    Monitor<PVEnum> sevr(app, record_name + ".SEVR");
+    Monitor<pace::Enum> stat(app, record_name + ".STAT");
+    Monitor<pace::Enum> sevr(app, record_name + ".SEVR");
     Monitor<std::string> tinp(app, record_name + ".TINP");
     Monitor<std::string> nawt(app, record_name + ".NAWT");
     Monitor<std::string> nord(app, record_name + ".NORD");

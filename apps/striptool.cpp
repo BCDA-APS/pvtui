@@ -91,8 +91,8 @@ int main(int argc, char *argv[]) {
     std::vector<Channel> channels;
     auto color_it = colors.begin();
     for (const auto& pv_name : pv_names) {
-        Monitor<double> var(app.pvgroup, pv_name);
-        app.pvgroup.sync();
+        Monitor<double> var(app.context, pv_name);
+        app.context.sync();
         Channel chan(var, *color_it);
         channels.push_back(std::move(chan));
         color_it = std::next(color_it);
@@ -251,7 +251,7 @@ int main(int argc, char *argv[]) {
 
         auto last_sample = std::chrono::steady_clock::now();
         while (!loop.HasQuitted()) {
-            app.pvgroup.sync();
+            app.context.sync();
 
             auto now = std::chrono::steady_clock::now();
             auto elapsed = std::chrono::duration<double>(now - last_sample).count();

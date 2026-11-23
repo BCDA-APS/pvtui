@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(pvtui
     LANGUAGES CXX
-    VERSION 0.3.0
+    VERSION 0.4.0
 )
 
 # Generate compile_commands.json for LSP's
@@ -56,7 +56,6 @@ if(BUILD_LIB)
             GIT_TAG         v7.0.0
             GIT_PROGRESS    TRUE
             GIT_SHALLOW     TRUE
-            EXCLUDE_FROM_ALL
         )
         FetchContent_MakeAvailable(ftxui)
     else()
@@ -70,6 +69,49 @@ if(BUILD_LIB)
     endif()
     # ------------------------------------------------------------------------------
 
+    # --- PVXS --------------------------------------------------------------------
+    if(NOT DEFINED PVXS OR PVXS STREQUAL "")
+        set(PVXS $ENV{PVXS})
+    endif()
+    if(NOT DEFINED EPICS_HOST_ARCH)
+        set(EPICS_HOST_ARCH $ENV{EPICS_HOST_ARCH})
+    endif()
+    if(NOT PVXS OR PVXS STREQUAL "")
+        message(FATAL_ERROR "PVXS not set. Pass -DPVXS=... or set the environment variable.")
+    endif()
+    set(PVXS "${PVXS}" CACHE STRING "Path to PVXS")
+
+    if(EPICS_STATIC)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    endif()
+
+    set(PVXS_LIB_DIR "${PVXS}/lib/${EPICS_HOST_ARCH}")
+    message(STATUS "PVXS_LIB_DIR = ${PVXS_LIB_DIR}")
+    find_library(PVXS_pvxs pvxs
+        PATHS ${PVXS_LIB_DIR}
+        NO_DEFAULT_PATH
+        REQUIRED
+    )
+    set(PVXS_LIBRARIES ${PVXS_pvxs})
+    if(EPICS_STATIC)
+        foreach(LIB event_core event_pthreads)
+            find_library(LIBEVENT_${LIB} ${LIB}
+                HINTS ${PVXS}/bundle/usr/${EPICS_HOST_ARCH}/lib
+            )
+            if(NOT LIBEVENT_${LIB})
+                set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
+                find_library(LIBEVENT_${LIB} ${LIB} REQUIRED)
+                set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+                message(WARNING "Static lib${LIB}.a not found. Linking shared ${LIBEVENT_${LIB}}. "
+                    "Binaries will need libevent at runtime.")
+            endif()
+            message(STATUS "Found libevent ${LIB}: ${LIBEVENT_${LIB}}")
+            list(APPEND PVXS_LIBRARIES ${LIBEVENT_${LIB}})
+        endforeach()
+    endif()
+    set(PVXS_INCLUDES "${PVXS}/include")
+    message(STATUS "PVXS_INCLUDES = ${PVXS_INCLUDES}")
+    # ------------------------------------------------------------------------------
 
     # --- EPICS Base ---------------------------------------------------------------
     if(NOT DEFINED EPICS_BASE OR EPICS_BASE STREQUAL "")
@@ -93,12 +135,9 @@ if(BUILD_LIB)
 
     set(EPICS_LIB_DIR "${EPICS_BASE}/lib/${EPICS_HOST_ARCH}")
     if(NOT DEFINED CMAKE_INSTALL_RPATH AND NOT EPICS_STATIC)
-        set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR}")
+        set(CMAKE_INSTALL_RPATH "${EPICS_LIB_DIR};${PVXS_LIB_DIR}")
     endif()
-    if(EPICS_STATIC)
-        set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-    endif()
-    foreach(LIB pvAccessCA ca pvAccess pvData Com)
+    foreach(LIB ca Com)
         find_library(EPICS_${LIB} ${LIB}
             PATHS ${EPICS_LIB_DIR}
             NO_DEFAULT_PATH
@@ -107,14 +146,16 @@ if(BUILD_LIB)
         message(STATUS "Found EPICS ${LIB}: ${EPICS_${LIB}}")
     endforeach()
     set(EPICS_BASE_LIBRARIES
-        ${EPICS_pvAccessCA}
         ${EPICS_ca}
-        ${EPICS_pvAccess}
-        ${EPICS_pvData}
         ${EPICS_Com}
     )
     if(EPICS_STATIC)
-        list(APPEND EPICS_BASE_LIBRARIES readline dl rt pthread)
+        file(STRINGS "${EPICS_BASE}/cfg/TOOLCHAIN.${EPICS_HOST_ARCH}.${EPICS_HOST_ARCH}"
+            EPICS_COMMANDLINE_LIBRARY REGEX "^COMMANDLINE_LIBRARY")
+        if(EPICS_COMMANDLINE_LIBRARY MATCHES "READLINE")
+            list(APPEND EPICS_BASE_LIBRARIES readline)
+        endif()
+        list(APPEND EPICS_BASE_LIBRARIES dl rt pthread)
     endif()
 
     set(POTENTIAL_EPICS_INCLUDES
@@ -135,8 +176,18 @@ if(BUILD_LIB)
     endforeach()
     # ------------------------------------------------------------------------------
 
+    # --- pace ---------------------------------------------------------------------
+    include(FetchContent)
+    FetchContent_Declare(pace
+        GIT_REPOSITORY https://github.com/nmarks99/pace.git
+        GIT_TAG        e7adc029e4df70af8984974a8947e3611f6faee4
+        GIT_PROGRESS   TRUE
+    )
+    FetchContent_MakeAvailable(pace)
+    # ------------------------------------------------------------------------------
+
     # --- PVTUI static library -----------------------------------------------------
-    add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp pvtui/pvgroup.cpp)
+    add_library(pvtui STATIC pvtui/app.cpp pvtui/widgets.cpp)
     add_library(pvtui::pvtui ALIAS pvtui)
     target_compile_options(pvtui PRIVATE -Wall -Wextra -Wpedantic)
     target_include_directories(pvtui
@@ -148,9 +199,12 @@ if(BUILD_LIB)
         SYSTEM
         PUBLIC
             ${EPICS_BASE_INCLUDES}
+            ${PVXS_INCLUDES}
     )
     target_link_libraries(pvtui
+        PUBLIC ${PVXS_LIBRARIES}
         PUBLIC ${EPICS_BASE_LIBRARIES}
+        PUBLIC pace::pace
         PUBLIC ftxui::screen
         PUBLIC ftxui::dom
         PUBLIC ftxui::component
@@ -164,7 +218,11 @@ if(BUILD_LIB)
             PATTERN "*.hpp"
             PATTERN "*.h")
 
-    install(TARGETS pvtui
+    install(DIRECTORY ${pace_SOURCE_DIR}/pace
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.hpp")
+
+    install(TARGETS pvtui pace
         EXPORT pvtuiTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

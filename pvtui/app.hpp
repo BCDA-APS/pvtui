@@ -1,15 +1,9 @@
 #pragma once
 
-#include <functional>
 #include <iostream>
-#include <string>
-#include <vector>
-
-#include <ftxui/component/component_options.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-
+#include <ftxui/ftxui.hpp>
 #include <pvtui/detail/argh.h>
-#include <pvtui/pvgroup.hpp>
+#include <pace/pace.hpp>
 
 namespace pvtui {
 
@@ -58,12 +52,12 @@ class ArgParser {
 
 /// \brief Convenience struct for managing a TUI application
 ///
-/// This class holds the pvtui::ArgParser, pvtui::PVGroup, pvac::ClientProvider,
-/// and ftxui::ScreenInteractive to reduce boilerplate in PVTUI applications.
+/// This class holds the pvtui::ArgParser, pace::Context, and ftxui::ScreenInteractive
+/// to reduce boilerplate in PVTUI applications.
 struct App {
 
-    /// \brief Constructs an App which internally manages a pvac::ClientProvider
-    /// pvtui::PVGroup, pvtui::ArgParser, and ftxui::ScreenInteractive
+    /// \brief Constructs an App which internally manages a pace::Context,
+    /// pvtui::ArgParser, and ftxui::ScreenInteractive
     /// \param argc Command line argument count
     /// \param argv Command line arguments
     /// \param extra_params Additional named parameters to register with the ArgParser.
@@ -80,8 +74,7 @@ struct App {
 
     int poll_period_ms = 100;        ///< Main loop poll period
     pvtui::ArgParser args;           ///< pvtui::ArgParser to store the cmd line arguments
-    pvac::ClientProvider provider;   ///< EPICS client provider
-    PVGroup pvgroup;                 ///< pvtui::PVGroup to manage PVs used in the application
+    pace::Context context;           ///< pace::Context to manage PVs used in the application
     ftxui::ScreenInteractive screen; ///< screen instance for FTXUI rendering
 };
 

@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
     std::vector<MotorUIStack> displays;
     for (auto& name : motor_names) {
         displays.push_back(MotorUIStack{
-            ftxui::Make<SmallMotorDisplay>(app.pvgroup, name),
-            ftxui::Make<LargeMotorDisplay>(app.pvgroup, name),
+            ftxui::Make<SmallMotorDisplay>(app.context, name),
+            ftxui::Make<LargeMotorDisplay>(app.context, name),
         });
     }
 

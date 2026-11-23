@@ -1,7 +1,4 @@
 #include <cstdlib>
-#include <pv/caProvider.h>
-#include <pva/client.h>
-
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
 #include <ftxui/component/loop.hpp>
@@ -49,20 +46,10 @@ int main(int argc, char* argv[]) {
         return prefix + s;
     });
 
-    std::vector<std::unique_ptr<WidgetBase>> widgets;
+    std::vector<Widget> widgets;
     for (auto& name : pv_names) {
-        std::cout << name << std::endl;
-        auto chan = app.pvgroup[name].channel.get();
-        if (chan.get()->getStructure()->getField("value")->getID() == "enum_t") {
-            widgets.emplace_back(std::make_unique<Monitor<PVEnum>>(app, name));
-        } else {
-            widgets.emplace_back(std::make_unique<Monitor<std::string>>(app, name));
-        }
+        widgets.push_back(Monitor<std::string>(app, name));
     }
-
-    // Force update since the above channel.get() calls prevent the monitors
-    // from firing at construction of the widgets
-    app.pvgroup.force_update();
 
     auto renderer = Renderer([&] {
         Elements name_col = {text("PV") | bold | italic};
@@ -70,9 +57,9 @@ int main(int argc, char* argv[]) {
 
         for (auto& widget : widgets) {
             name_col.push_back(separator());
-            name_col.push_back(text(widget->pv_name()));
+            name_col.push_back(text(widget.pv_name()));
             val_col.push_back(separator());
-            val_col.push_back(widget->component()->Render() | color(Color::RGB(125, 174, 227)));
+            val_col.push_back(widget.component()->Render() | color(Color::RGB(125, 174, 227)));
         }
 
         return hbox({
