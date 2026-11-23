@@ -28,7 +28,7 @@ include(FetchContent)
 FetchContent_Declare(
     ftxui-plot
     GIT_REPOSITORY https://github.com/nmarks99/ftxui-plot.git
-    GIT_TAG origin/master
+    GIT_TAG 3802e4bfe6ed82e4eaf60e21183dc6c05bdb7222
 )
 FetchContent_MakeAvailable(ftxui-plot)
 add_executable(pvtui_striptool striptool.cpp)
