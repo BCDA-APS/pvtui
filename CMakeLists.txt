@@ -150,7 +150,12 @@ if(BUILD_LIB)
         ${EPICS_Com}
     )
     if(EPICS_STATIC)
-        list(APPEND EPICS_BASE_LIBRARIES readline dl rt pthread)
+        file(STRINGS "${EPICS_BASE}/cfg/TOOLCHAIN.${EPICS_HOST_ARCH}.${EPICS_HOST_ARCH}"
+            EPICS_COMMANDLINE_LIBRARY REGEX "^COMMANDLINE_LIBRARY")
+        if(EPICS_COMMANDLINE_LIBRARY MATCHES "READLINE")
+            list(APPEND EPICS_BASE_LIBRARIES readline)
+        endif()
+        list(APPEND EPICS_BASE_LIBRARIES dl rt pthread)
     endif()
 
     set(POTENTIAL_EPICS_INCLUDES
