@@ -1,7 +1,9 @@
 name: Build Static Binaries
 on:
   push:
-    branches: [ dev ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
 
 env:
   EPICS_BASE_TAG: R7.0.11
@@ -14,6 +16,8 @@ jobs:
   build-linux-x86_64:
     runs-on: ubuntu-latest
     container: almalinux:9
+    permissions:
+      contents: write
     steps:
       - name: Install system packages
         run: dnf install -y gcc-c++ make perl git cmake tar gzip zstd findutils which diffutils
@@ -67,7 +71,12 @@ jobs:
 
       - name: Package
         run: |
-          name=pvtui-${{ github.ref_name }}-linux-x86_64
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+              version=${GITHUB_REF_NAME}
+          else
+              version=${GITHUB_SHA::7}
+          fi
+          name=pvtui-${version}-linux-x86_64
           cmake --install build/release --prefix /tmp/${name}
           tar -czf ${name}.tar.gz -C /tmp ${name}
           echo "PKG_NAME=${name}" >> $GITHUB_ENV
@@ -77,3 +86,9 @@ jobs:
         with:
           name: ${{ env.PKG_NAME }}
           path: ${{ env.PKG_NAME }}.tar.gz
+
+      - name: Attach to GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.PKG_NAME }}.tar.gz
