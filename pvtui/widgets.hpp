@@ -48,13 +48,13 @@ struct SliderRange {
 ///
 /// This class provides a standard interface for managing PV connections, accessing
 /// PV names, and retrieving the underlying FTXUI component.
-class WidgetBase {
+class Widget {
   public:
-    virtual ~WidgetBase() = default;
-    WidgetBase(const WidgetBase&) = default;
-    WidgetBase& operator=(const WidgetBase&) = default;
-    WidgetBase(WidgetBase&&) = default;
-    WidgetBase& operator=(WidgetBase&&) = default;
+    virtual ~Widget() = default;
+    Widget(const Widget&) = default;
+    Widget& operator=(const Widget&) = default;
+    Widget(Widget&&) = default;
+    Widget& operator=(Widget&&) = default;
 
     /// \brief Gets the PV name associated with the widget.
     /// \return The fully expanded PV name.
@@ -74,10 +74,10 @@ class WidgetBase {
     std::string value_as_string() const;
 
   protected:
-    /// \brief Constructs a WidgetBase and registers the PV with a pace::Context.
+    /// \brief Constructs a Widget and registers the PV with a pace::Context.
     /// \param ctxt The pace::Context used to manage PVs for this widget.
     /// \param pv_name The PV name.
-    WidgetBase(pace::Context& ctxt, const std::string& pv_name);
+    Widget(pace::Context& ctxt, const std::string& pv_name);
 
     std::reference_wrapper<pace::Context> ctxt_;   ///< The pace::Context
     std::string pv_name_;                          ///< The PV name.
@@ -88,7 +88,7 @@ class WidgetBase {
 /// \brief An editable input field linked to a PV.
 ///
 /// Supports typed PV put operations (int, double, string).
-class InputWidget : public WidgetBase {
+class InputWidget : public Widget {
   public:
     /// \brief Constructs an InputWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
@@ -117,7 +117,7 @@ class InputWidget : public WidgetBase {
 };
 
 /// \brief A simple button widget that writes a fixed value when pressed.
-class ButtonWidget : public WidgetBase {
+class ButtonWidget : public Widget {
   public:
     /// \brief Constructs a ButtonWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
@@ -142,13 +142,13 @@ class ButtonWidget : public WidgetBase {
 /// renders the PV value as an ftxui::text() component.
 /// \tparam T The C++ type used to store the PV value.
 template <typename T>
-class Monitor : public WidgetBase {
+class Monitor : public Widget {
   public:
     /// \brief Constructs a Monitor.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
     /// \param pv_name The PV name.
     Monitor(pace::Context& ctxt, const std::string& pv_name)
-        : WidgetBase(ctxt, pv_name), value_ptr_(std::make_shared<T>()) {
+        : Widget(ctxt, pv_name), value_ptr_(std::make_shared<T>()) {
         ctxt.bind(*value_ptr_, pv_name_);
         component_ =
             ftxui::Renderer([v = value_ptr_, n = pv_name_] { return ftxui::text(to_string(*v, n)); });
@@ -181,7 +181,7 @@ class Monitor : public WidgetBase {
 };
 
 /// \brief A widget to display an integer in binary
-class BitsWidget : public WidgetBase {
+class BitsWidget : public Widget {
   public:
     /// \brief Constructs a BitsWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
@@ -212,7 +212,7 @@ class BitsWidget : public WidgetBase {
 /// \brief A widget for selecting an enum-style PV value from a list.
 ///
 /// Supports vertical, horizontal, or dropdown layout styles.
-class ChoiceWidget : public WidgetBase {
+class ChoiceWidget : public Widget {
   public:
     /// \brief Constructs a ChoiceWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
@@ -235,7 +235,7 @@ class ChoiceWidget : public WidgetBase {
 };
 
 /// \brief A slider widget bound to a numeric PV.
-class SliderWidget : public WidgetBase {
+class SliderWidget : public Widget {
   public:
     /// \brief Constructs a SliderWidget.
     /// \param ctxt The pace::Context managing the PVs used in this widget.
@@ -274,33 +274,33 @@ namespace EPICSColor {
 static const ftxui::Decorator WHITE_ON_WHITE = bgcolor(ftxui::Color::White) | color(ftxui::Color::White);
 
 /// \brief Light blue with black text for editable controls
-inline ftxui::Decorator edit(const WidgetBase& w) {
+inline ftxui::Decorator edit(const Widget& w) {
     return w.connected() ? ftxui::bgcolor(ftxui::Color::RGB(87, 202, 228)) | ftxui::color(ftxui::Color::Black)
                          : WHITE_ON_WHITE;
 }
 
 /// \brief Dark green with white text for "related display" menus
-inline ftxui::Decorator menu(const WidgetBase& w) {
+inline ftxui::Decorator menu(const Widget& w) {
     return w.connected() ? ftxui::bgcolor(ftxui::Color::RGB(16, 105, 25)) | ftxui::color(ftxui::Color::White)
                          : WHITE_ON_WHITE;
 }
 
 /// \brief Dark blue text on gray background for readbacks
-inline ftxui::Decorator readback(const WidgetBase& w) {
+inline ftxui::Decorator readback(const Widget& w) {
     return w.connected()
                ? ftxui::bgcolor(ftxui::Color::RGB(196, 196, 196)) | ftxui::color(ftxui::Color::DarkBlue)
                : WHITE_ON_WHITE;
 }
 
 /// \brief Pinkish/purple with black text for links
-inline ftxui::Decorator link(const WidgetBase& w) {
+inline ftxui::Decorator link(const Widget& w) {
     return w.connected()
                ? ftxui::bgcolor(ftxui::Color::RGB(148, 148, 228)) | ftxui::color(ftxui::Color::Black)
                : WHITE_ON_WHITE;
 }
 
 /// \brief A custom color
-inline ftxui::Decorator custom(const WidgetBase& w, ftxui::Decorator style) {
+inline ftxui::Decorator custom(const Widget& w, ftxui::Decorator style) {
     return w.connected() ? style : WHITE_ON_WHITE;
 }
 

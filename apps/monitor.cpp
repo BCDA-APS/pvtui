@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
         return prefix + s;
     });
 
-    std::vector<WidgetBase> widgets;
+    std::vector<Widget> widgets;
     for (auto& name : pv_names) {
         widgets.push_back(Monitor<std::string>(app, name));
     }
